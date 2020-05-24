@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://mintisan.github.io/</id>
-    <title>Gridea</title>
-    <updated>2020-05-24T06:14:43.880Z</updated>
+    <title>Mintisan</title>
+    <updated>2020-05-24T06:16:14.570Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://mintisan.github.io/"/>
     <link rel="self" href="https://mintisan.github.io/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
+    <subtitle>Mintisan&apos;s Personal WebLog</subtitle>
     <logo>https://mintisan.github.io/images/avatar.png</logo>
     <icon>https://mintisan.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2020, Gridea</rights>
+    <rights>All rights reserved 2020, Mintisan</rights>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://mintisan.github.io/post/hello-gridea/</id>
