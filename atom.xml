@@ -1,0 +1,1444 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://mintisan.github.io</id>
+    <title>Mintisan</title>
+    <updated>2024-03-26T15:17:54.980Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://mintisan.github.io"/>
+    <link rel="self" href="https://mintisan.github.io/atom.xml"/>
+    <subtitle>On the way to be a practical idealism</subtitle>
+    <logo>https://mintisan.github.io/images/avatar.png</logo>
+    <icon>https://mintisan.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2024, Mintisan</rights>
+    <entry>
+        <title type="html"><![CDATA[Aliyun 通过 WebDav 映射到本地]]></title>
+        <id>https://mintisan.github.io/post/aliyun-webdav-local-disk/</id>
+        <link href="https://mintisan.github.io/post/aliyun-webdav-local-disk/">
+        </link>
+        <updated>2024-03-23T08:37:57.000Z</updated>
+        <summary type="html"><![CDATA[<p>想重温<a href="https://www.aliyundrive.com/s/UaraG332B8q">大剑</a>，然后 Aliyun 资源最容易找到，然后在线不好使会压缩，然后就找到了 Alist，然后Alist 可以很方便挂在各种网盘，比如阿里云盘，但是在实际的使用过程中遇到一个问题就是网页版本显示的内容更新不及时或者说显示不出来，但是通过将 Alist 作为 WebDav 网络协议映射到本地好像可以解决这个问题，这里就记录下用资源管理器[小文件/速度慢]， Clouddrive 2[只能加载一个，但是可以映射为本地磁盘形式] 和 RailDrive[有广告，从网盘到本地磁盘形式需要付钱] 的映射方法以及使用过程中的注意点。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>想重温<a href="https://www.aliyundrive.com/s/UaraG332B8q">大剑</a>，然后 Aliyun 资源最容易找到，然后在线不好使会压缩，然后就找到了 Alist，然后Alist 可以很方便挂在各种网盘，比如阿里云盘，但是在实际的使用过程中遇到一个问题就是网页版本显示的内容更新不及时或者说显示不出来，但是通过将 Alist 作为 WebDav 网络协议映射到本地好像可以解决这个问题，这里就记录下用资源管理器[小文件/速度慢]， Clouddrive 2[只能加载一个，但是可以映射为本地磁盘形式] 和 RailDrive[有广告，从网盘到本地磁盘形式需要付钱] 的映射方法以及使用过程中的注意点。</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1711197209300.png" alt="" loading="lazy"></figure>
+<h2 id="raildrive">RailDrive</h2>
+<p><a href="https://www.raidrive.com/download">下载</a>安装后，打开选择添加，设置输入如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1711195811553.png" alt="" loading="lazy"></figure>
+<p>注意红框中的 <code>/dav/</code> 最后需要添加 <code>/</code> 不然会提示如下 401 错误：</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1711195875380.png" alt="" loading="lazy"></figure>
+<p>注意需要选将 <code>地址</code> 的选择去掉，也就是使用 <code>http</code> 方式，不然会出现如下的 <code>ProtocalVersion</code> 错误【一般 Alist 默认是 <code>http</code> 方式】：</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1711195952267.png" alt="" loading="lazy"></figure>
+<p>如果不付费，则只能作为网络盘如下。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1711197267647.png" alt="" loading="lazy"></figure>
+<h2 id="clouddrive-2">Clouddrive 2</h2>
+<p>安装完后，会默认打开 http://localhost:19798/ 地址，添加 <code>阿里云盘 Open</code>，扫码或者在线获取权限。<br>
+<img src="https://mintisan.github.io/post-images/1711196848041.png" alt="" loading="lazy"></p>
+<p>添加完后，就可以在浏览器里面操作，接着将导入的阿里云盘挂载到本地：</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1711196901719.png" alt="" loading="lazy"></figure>
+<p>这样就可以直接映射为硬盘的形式如下：</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1711196603072.png" alt="" loading="lazy"></figure>
+<p>在使用时，比如直接用 PotPlayer 播放的时候，也可以在网页端看到当前使用的下载速度信息如下：</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1711196469820.png" alt="" loading="lazy"></figure>
+<h2 id="资源管理器">资源管理器</h2>
+<p>资源管理器就太多坑了，不建议使用，这里只是记录这些坑。。。</p>
+<pre><code>计算机\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\WebClient\Parameters
+</code></pre>
+<p><code>services.msc</code></p>
+<pre><code>
+</code></pre>
+<p>修改了以上两个参数后需要重新映射下。</p>
+<p>完成后，在本地显示为网络盘符如下。</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1711197961123.png" alt="" loading="lazy"></figure>
+<h2 id="cyberduck">Cyberduck</h2>
+<p>Cyberduck 无法映射到本地网盘，只能在他的软件内可以下载和查看，不是太好用，设置界面如下。</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1711196154886.png" alt="" loading="lazy"></figure>
+<h2 id="rclone">RClone</h2>
+<p>TBD</p>
+<h2 id="macos">macOS</h2>
+<p>如果是 macOS 可以考虑直接使用 Finder 中的 <a href="https://support.apple.com/zh-cn/guide/mac-help/mchlp1546/mac">连接到服务器</a>，然后输入 Alist 提供的 WebDav 地址信息即可。</p>
+<p>输入地址</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1711201171228.png" alt="" loading="lazy"></figure>
+<p>输入账号密码</p>
+<figure data-type="image" tabindex="12"><img src="https://mintisan.github.io/post-images/1711201186423.png" alt="" loading="lazy"></figure>
+<p>就可以看到 Alist 下挂载的内容</p>
+<figure data-type="image" tabindex="13"><img src="https://mintisan.github.io/post-images/1711201204844.png" alt="" loading="lazy"></figure>
+<p>当然推荐最近推出的比较好用的 VidHub</p>
+<p>可以方便直接导入各种网盘，并解析建库，非常友好和美观</p>
+<figure data-type="image" tabindex="14"><img src="https://mintisan.github.io/post-images/1711201231881.png" alt="" loading="lazy"></figure>
+<p>也可以到输入 Alist 的WebDav 信息</p>
+<figure data-type="image" tabindex="15"><img src="https://mintisan.github.io/post-images/1711201268314.png" alt="" loading="lazy"></figure>
+<p>就可以看到 VidHub 帮你整理的各剧和电影</p>
+<figure data-type="image" tabindex="16"><img src="https://mintisan.github.io/post-images/1711201443264.png" alt="" loading="lazy"></figure>
+<h2 id="android">Android</h2>
+<p>安卓下有两个方法，一个是直接用 <a href="http://m.2265.com/down/261625.html">nPlayer</a>。</p>
+<p>安装完选择新建 WebDav 项目<br>
+<img src="https://mintisan.github.io/post-images/1711244448078.jpg" alt="" width="400" loading="lazy"></p>
+<p>输入 WedDav 设置如下：<br>
+<img src="https://mintisan.github.io/post-images/1711244455258.jpg" alt="" width="400" loading="lazy"></p>
+<p>另一种是 cx 文件管理 + VLC 打开，设置如下。</p>
+<figure data-type="image" tabindex="17"><img src="https://mintisan.github.io/post-images/1711244573211.jpg" alt="" width="400" loading="lazy"></figure>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li>https://alist-doc.nn.ci/docs/webdav</li>
+<li>https://mountainduck.io/</li>
+<li>https://cyberduck.io/</li>
+<li>https://www.thewindowsclub.com/how-to-map-webdav-in-windows</li>
+<li><a href="https://docs.qnap.com/operating-system/qts/4.5.x/zh-cn/GUID-31D5B05F-F29E-4D61-9758-C8CF839C14FD.html">在 Windows 上使用 WebDAV 装载共享文件夹</a></li>
+<li><a href="https://blog.csdn.net/qq_38894585/article/details/128818512">windows10挂载webdav</a></li>
+<li><a href="https://github.com/messense/aliyundrive-webdav/issues/117">windows添加本地位置之后无法打开文件 #117</a></li>
+<li>https://support.microsoft.com/en-us/topic/folder-copy-error-message-when-downloading-a-file-that-is-larger-than-50000000-bytes-from-a-web-folder-815e2949-0f56-ec25-db7d-b6d860a31f77</li>
+<li>https://www.topsite.jp/docs/windows-webdav-limit</li>
+<li><a href="https://sspai.com/post/47830">把网盘变成 Windows 网络硬盘，免费的 WebDAV 客户端：RaiDrive | App+1</a></li>
+<li><a href="https://forums.unraid.net/topic/153061-%E6%9C%80%E5%AE%8C%E6%95%B4rclone%E6%8C%82%E8%BD%BD%E7%BD%91%E7%9B%98%E5%88%B0%E6%9C%AC%E5%9C%B0%EF%BC%88alist%E7%AF%87%EF%BC%89%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">最完整RCLONE挂载网盘到本地（ALIST篇）解决方案</a></li>
+<li><a href="https://www.expoli.tech/articles/2020/12/30/1609327097930">Windows 挂载 WebDAV</a></li>
+<li><a href="https://support.apple.com/zh-cn/guide/mac-help/mchlp1546/mac">在 Mac 上连接到 WebDAV 服务器或断开连接</a></li>
+<li><a href="https://okaapps.com/product/1659622164">VidHub - The Ultimate Video Player for iOS, Mac, and tvOS</a></li>
+</ul>
+<figure data-type="image" tabindex="18"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Ollama 和 Continue.dev 构建 VS Code 本地代码 Copilot]]></title>
+        <id>https://mintisan.github.io/post/ollama-continue-dev-as-vs-code-code-copilot/</id>
+        <link href="https://mintisan.github.io/post/ollama-continue-dev-as-vs-code-code-copilot/">
+        </link>
+        <updated>2024-03-17T06:41:20.000Z</updated>
+        <summary type="html"><![CDATA[<p><a href="https://continue.dev/">Continue.dev</a> 可以方便的【自动提示补全】,【选中代码再编辑】，【选中聊天】以及【错误信息自动提问】，是目前开源框架里面功能比较完善的。结合 <a href="https://ollama.com/">Ollama</a> 后端，再配合本地开源代码模型，比如<a href="https://evalplus.github.io/leaderboard.html">排名</a>比较靠前的 <a href="https://huggingface.co/deepseek-ai/deepseek-coder-33b-instruct">Deepseek</a>。真正做到了 <a href="https://github.com/features/copilot">GitHub Copilot</a> 的低配平替。另外可以通过 <code>@</code> 和 <code>/</code> 比较方便的自定义扩展功能。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p><a href="https://continue.dev/">Continue.dev</a> 可以方便的【自动提示补全】,【选中代码再编辑】，【选中聊天】以及【错误信息自动提问】，是目前开源框架里面功能比较完善的。结合 <a href="https://ollama.com/">Ollama</a> 后端，再配合本地开源代码模型，比如<a href="https://evalplus.github.io/leaderboard.html">排名</a>比较靠前的 <a href="https://huggingface.co/deepseek-ai/deepseek-coder-33b-instruct">Deepseek</a>。真正做到了 <a href="https://github.com/features/copilot">GitHub Copilot</a> 的低配平替。另外可以通过 <code>@</code> 和 <code>/</code> 比较方便的自定义扩展功能。</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1710680220793.png" alt="" loading="lazy"></figure>
+<h2 id="安装插件">安装插件</h2>
+<p>直接在 VS Code 的插件市场输入 <code>continue</code> 就可以看到，然后直接安装即可。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1710678352940.png" alt="" loading="lazy"></figure>
+<p>安装完后，可以在设置里面看到操作的一些快捷键。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1710678402200.png" alt="" loading="lazy"></figure>
+<h2 id="修改配置文件">修改配置文件</h2>
+<p><code>.config</code> Windows 下的目录如下：<code>C:\Users\mintisan\.continue\config.json</code>，macOS 应该是 <code>~/.continue/config.json</code>，最好备份一个然后再修改为如下：【注意我这里的apiBase！！！是部署在其他电脑上的，如果是本地就使用 <code>localhost</code> 即可。】</p>
+<pre><code>{
+  &quot;slashCommands&quot;:[
+    {
+      &quot;name&quot;: &quot;edit&quot;,
+      &quot;description&quot;: &quot;Edit highlighted code&quot;
+    },
+    {
+      &quot;name&quot;: &quot;comment&quot;,
+      &quot;description&quot;: &quot;Write comments for the highlighted code&quot;
+    },
+    {
+      &quot;name&quot;: &quot;share&quot;,
+      &quot;description&quot;: &quot;Download and share this session&quot;
+    },
+    {
+      &quot;name&quot;: &quot;cmd&quot;,
+      &quot;description&quot;: &quot;Generate a shell command&quot;
+    },
+    {
+      &quot;name&quot;: &quot;commit&quot;,
+      &quot;description&quot;: &quot;Generate a commit message for the current changes&quot;
+    },
+    {
+      &quot;name&quot;: &quot;so&quot;,
+      &quot;description&quot;: &quot;Reference StackOverflow to answer the question&quot;
+    }
+  ],
+  &quot;contextProviders&quot;:[
+    { &quot;name&quot;: &quot;code&quot; },
+    { &quot;name&quot;: &quot;open&quot;, &quot;params&quot;: { &quot;onlyPinned&quot;: false } },
+    {
+      &quot;name&quot;: &quot;codebase&quot;,
+      &quot;params&quot;: {
+        &quot;nRetrieve&quot;: 25,
+        &quot;nFinal&quot;: 5,
+        &quot;useReranking&quot;: true
+      }
+    },
+    { &quot;name&quot;: &quot;folder&quot; },
+    { &quot;name&quot;: &quot;search&quot; },
+    { &quot;name&quot;: &quot;tree&quot; },
+    { &quot;name&quot;: &quot;outline&quot; },
+    { &quot;name&quot;: &quot;highlights&quot; },
+    { &quot;name&quot;: &quot;docs&quot; },
+    { &quot;name&quot;: &quot;terminal&quot; },
+    { &quot;name&quot;: &quot;diff&quot; }
+  ],
+  &quot;systemMessage&quot;: &quot;你是一个嵌入式软件开发专家，供职于汇顶科技蓝牙部门，有丰富使用 ARM Cortex-M4 内核相关芯片的使用经验，也有着丰富的设计低功耗蓝牙 BLE 的经验，也擅长帮助客户解决使用 GR551x_SDK_V2.0.2 过程中出现的问题&quot;,
+  &quot;embeddingsProvider&quot;: {
+    &quot;provider&quot;: &quot;ollama&quot;,
+    &quot;model&quot;: &quot;nomic-embed-text&quot;,
+    &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+  },
+  &quot;models&quot;: [
+    {
+      &quot;title&quot;: &quot;DeepSeek-33b&quot;,
+      &quot;provider&quot;: &quot;ollama&quot;,
+      &quot;model&quot;: &quot;deepseek-coder:33b&quot;,
+      &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+    }
+  ],
+  &quot;tabAutocompleteModel&quot;: {
+    &quot;title&quot;: &quot;Tab Autocomplete Model&quot;,
+    &quot;provider&quot;: &quot;ollama&quot;,
+    &quot;model&quot;: &quot;deepseek-coder:33b-base-q4_K_S&quot;,
+    &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+  }
+}
+</code></pre>
+<p>注：一般的模型采用 chat 或者 instruct 模型；自动补全采用 base 模型，<a href="https://continue.dev/docs/walkthroughs/tab-autocomplete">官方文档</a>里面有提。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1710681099742.png" alt="" loading="lazy"></figure>
+<p>如果 Ollama 不是和 VS Code 在同一台电脑上，那么配置完后需要重启下，否则会出现如下错误。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1710678929337.png" alt="" loading="lazy"></figure>
+<h2 id="使用场景">使用场景</h2>
+<p>VS Code 的项目直接把文件夹 <a href="https://www.goodix.com/en/software_tool/gr551x_sdk">GR551x_SDK_V2.0.2</a> 拖进来尽可以了，但是如果需要过滤掉不需要 embedding 的文件，可以在根目录新建 <code>.continueignore</code>，添加如下：</p>
+<pre><code>*.out
+*.pdf
+*.chm
+*.a
+*.dll
+*.pyd
+*.lib
+*.exe
+*.zip
+*.hex
+*.data
+*.svg
+*.bin
+*.enc
+*.doxyfile
+*.function
+*.uvoptx
+*.sln
+*.o
+*.eps
+*.tcl
+</code></pre>
+<p>注意，<a href="https://github.com/continuedev/continue/issues/1026">不能使用 <code>*</code>，然后 <code>!*.c</code> 这种反套路</a>，会导致无法触发无法 embedding，，，</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1711463860863.png" alt="" loading="lazy"></figure>
+<h3 id="自动提示补全">【自动提示补全】</h3>
+<p>Continue 会在后台默认查询你所在编辑内容的上下文，比如当你写完 <code>## write quick_sort in python</code> 后，敲下回车，那么可能就会触发自动提示补全功能，如果你同意就可以按 <code>tab</code> 同意，相当于 Code Snippet 功能。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1710679133746.png" alt="" loading="lazy"></figure>
+<p>以上前台操作过程显示的后台 Prompt 如下。</p>
+<pre><code>==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b-base-q4_K_S
+maxTokens: 1024
+stop: &lt;｜fim▁begin｜&gt;,&lt;｜fim▁hole｜&gt;,&lt;｜fim▁end｜&gt;,//,
+
+,/src/,```,def,class
+temperature: 0
+
+############################################
+
+&lt;｜fim▁begin｜&gt;&quot;&quot;&quot;Step 4: Use keyboard shortcuts to
+accept [⌘ ⇧ ⏎] or reject [⌘ ⇧ ⌫] the edit&quot;&quot;&quot;
+
+# endregion
+
+# region ———————————————————————————— Part 3: Debug automatically [⌘ ⇧ R] ————————————————————————————
+
+
+&quot;&quot;&quot;Step 1: Run this Python file (it should error!)&quot;&quot;&quot;
+
+
+def print_sum(list_to_print):
+    total = 0
+    for num in list_to_print:
+        if isinstance(num, int):
+            total += num
+        else:
+            raise ValueError(&quot;All elements in the list must be integers.&quot;)
+    print(total)
+
+
+
+&quot;&quot;&quot;Step 2: Use the keyboard shortcut [⌘ ⇧ R]
+to automatically debug the error&quot;&quot;&quot;
+print_sum([&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])
+
+# endregion
+
+## write quick_sort in python
+def quick_sort(arr):
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    for i in range(1, len(arr)):
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    return quick_sort(left) + [pivot] + quick_sort(right)
+&lt;｜fim▁hole｜&gt;&lt;｜fim▁end｜&gt;==========================================================================
+==========================================================================
+Completion:
+
+
+print(quick_sort([3, 2, 1]))
+
+</code></pre>
+<h3 id="选中代码再编辑">【选中代码再编辑】</h3>
+<p>此时，当我们写了一些代码后，我们需要对现有代码进行修改，比如添加注释，编写测试用例，，，</p>
+<p>选中需要处理的代码片段，按压 <code>CTRL + I</code> 可以触发指令输入。</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1710679342700.png" alt="" loading="lazy"></figure>
+<p>等待一会会出现如下修改后的对比，等待确认。</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1710679347079.png" alt="" loading="lazy"></figure>
+<p>以上前台显示的后台 Prompt 如下。</p>
+<pre><code>==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b
+maxTokens: 1024
+
+############################################
+
+### System Prompt
+You are an AI programming assistant, utilizing the DeepSeek Coder model, developed by DeepSeek Company, and you only answer questions related to computer science. For politically sensitive questions, security and privacy issues, and other non-computer science questions, you will refuse to answer.
+### Instruction:
+Rewrite the code to satisfy this request: &quot;add comment&quot;
+
+```python
+## write quick_sort in python
+def quick_sort(arr):
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    for i in range(1, len(arr)):
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    return quick_sort(left) + [pivot] + quick_sort(right)
+
+```&lt;|EOT|&gt;
+### Response:
+Sure! Here's the code you requested:
+
+</code></pre>
+<h3 id="选中聊天">【选中聊天】</h3>
+<p>当我们选中需要了解的代码段后，快捷键 <code>CTRL+L</code> 按下后，代码会自动同步到左侧的聊天框中。</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1710679604156.png" alt="" loading="lazy"></figure>
+<p>此时就可以输入你想要了解的指令说明即可。这里会返回比较快。</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1710679609660.png" alt="" loading="lazy"></figure>
+<p>以上前台显示的后台 Prompt 如下。</p>
+<pre><code>
+
+==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b
+maxTokens: 1024
+
+############################################
+
+&lt;user&gt;
+continue_tutorial.py (96-115)
+## write quick_sort in python
+# This function performs a Quick Sort on an input array. 
+def quick_sort(arr):
+  # Base case: if array has less than or equal to one element, it is already sorted
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    # Split the array into two parts based on a pivot
+    for i in range(1, len(arr)):
+        # If element is less than pivot, append it to left part. Else, append it to right part.
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    
+    # Recursive calls for sorting the two parts and merging them with pivot.
+    return quick_sort(left) + [pivot] + quick_sort(right)
+
+
+这段代码有什么问题么
+
+==========================================================================
+==========================================================================
+Completion:
+
+这段代码的实现是正确的，它实现了Quick Sort算法。然而，它选择了数组的第一个元素作为枢轴，在处理已经排序或接近有序的大数据集时，这种方式可能会导致较差的性能。
+
+一个更优化的方法是使用“三者中值”来选择枢轴，即从数组的第一个、中间和最后一个元素中选取中位数作为枢轴。这样可以更好地平衡分区，从而避免最坏情况（例如已经排序或接近有序的数据集）对性能的影响。
+
+此外，这段代码并没有使用原地分区的方式来节省空间，如果输入数组非常大，可能会导致堆栈溢出或者内存问题。在Python中实现Quick Sort时，通常会选择原地分区的版本。
+
+</code></pre>
+<h3 id="错误信息自动提问">【错误信息自动提问】</h3>
+<p>Continue 除了以上 3 个主要的功能外，在应用上还做了一个比较好的功能，就是按压 <code>CTRL+Shift + R</code> 后，可以直接在工作流中抓取错误信息，向 LLM 提出问题，比较方便。</p>
+<figure data-type="image" tabindex="12"><img src="https://mintisan.github.io/post-images/1710680151236.png" alt="" loading="lazy"></figure>
+<p>注：以上的所有过程都可以在 如下的输出窗口中得到确认。</p>
+<figure data-type="image" tabindex="13"><img src="https://mintisan.github.io/post-images/1710678594128.png" alt="" loading="lazy"></figure>
+<h2 id="功能"><a href="https://continue.dev/docs/customization/context-providers">@功能</a></h2>
+<p><code>@Open Files</code> 相当于获取目前在 VS Code 中打印的文件对象内容，可以咨询打开的文件</p>
+<figure data-type="image" tabindex="14"><img src="https://mintisan.github.io/post-images/1711464327384.png" alt="" loading="lazy"></figure>
+<p><code>@ File Tree</code> 相当于得到了代码仓库的所有目录接口和文件名字，LLM 可以查询所有文件信息，以下就是通过目录名字得到 adc 例程的路径。</p>
+<figure data-type="image" tabindex="15"><img src="https://mintisan.github.io/post-images/1711464333397.png" alt="" width="400" loading="lazy"></figure>
+<p><code>@Codebase </code>  相当于代码仓库级别的 RAG，可以索所有代码，可以看到我们 <code>config.json</code> 查询到的片段还是基本都是相关的。</p>
+<figure data-type="image" tabindex="16"><img src="https://mintisan.github.io/post-images/1711464392470.png" alt="" loading="lazy"></figure>
+<h2 id="功能-2"><a href="https://continue.dev/docs/customization/slash-commands">/ 功能</a></h2>
+<p>其实就是 CTRL+I 的另一种形式，可以先通过 CTRL+L将我们关注的代码片段先挪到聊天框，然后后续进一步编辑。这里以  <code>/comment</code> 为例进行演示，其他也类似。</p>
+<figure data-type="image" tabindex="17"><img src="https://mintisan.github.io/post-images/1711465206274.png" alt="" loading="lazy"></figure>
+<h2 id="注意事项">注意事项</h2>
+<ol>
+<li>如果你切换了模型，那么第一次将会等待比较久的时间</li>
+<li>更换了配置文件需要重启 vs code</li>
+</ol>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://continue.dev/">Continue</a> : The easiest way to code with any LLM</li>
+<li>https://github.com/continuedev/continue</li>
+<li>https://www.ycombinator.com/companies/continue</li>
+<li>https://marketplace.visualstudio.com/items?itemName=Continue.continue</li>
+<li>https://continue.dev/docs/reference/Model%20Providers/ollama</li>
+<li>https://continue.dev/docs/walkthroughs/tab-autocomplete</li>
+<li>https://continue.dev/docs/reference/config</li>
+<li>https://github.com/ollama/ollama</li>
+<li><a href="https://www.andreagrandi.it/posts/self-hosting-copilot-replacement/">Self hosting a Copilot replacement: my personal experience</a></li>
+<li><a href="https://www.reddit.com/r/LocalLLaMA/comments/198aq2l/is_there_anything_that_can_complete_with_github/">Is there anything that can complete with GitHub Copilot right now I can run in VS Code?</a></li>
+<li><a href="https://crushingcode.nisrulz.com/en/posts/local-copilot-your-own-off-the-grid-and-local-code-assistant/">Local Copilot: Your own off the grid and local code assistant</a></li>
+<li><a href="https://news.ycombinator.com/item?id=39552826">	Show HN: Continue.dev releases local, open-source tab-autocomplete (continue.dev)</a></li>
+<li><a href="https://news.ycombinator.com/item?id=36882146">Show HN: Continue – Open-source coding autopilot (github.com/continuedev)</a></li>
+<li><a href="https://www.reddit.com/r/LocalLLaMA/comments/17h7j4h/what_coding_llm_is_the_best_today/">What coding llm is the best today?Discussion (self.LocalLLaMA)</a></li>
+</ul>
+<h3 id="问题链接">问题链接</h3>
+<ul>
+<li><a href="https://github.com/continuedev/continue/issues/946">Unresponsive chat when using remote self-hosted Ollama server #946</a></li>
+<li><a href="https://github.com/sourcegraph/cody/issues/3074">bug: cannot configure unstable-ollama provider, ignores model and Server Endpoint settings #3074</a></li>
+</ul>
+<h3 id="同类竞品">同类竞品</h3>
+<ul>
+<li><a href="https://github.com/TabbyML/tabby">Tabby</a> : Self-hosted AI coding assistant[docker + vs code + Jetbrains ][Tabby 需要启动自身 docker 服务器，无法和 Ollama 结合。]</li>
+<li><a href="https://github.com/fauxpilot/fauxpilot">FauxPilot</a> : an open-source alternative to GitHub Copilot server</li>
+<li><a href="https://github.com/sourcegraph/cody">Cody</a> : AI that knows your entire codebase[vs code+ollama+Jetbrains] [Cody 安装使用 Ollama 返回错误；]
+<ul>
+<li><a href="https://sourcegraph.com/blog/local-code-completion-with-ollama-and-cody">Local code completion with Ollama and Cody</a></li>
+<li><a href="https://generativeai.pub/100-local-llama-coding-assistant-bye-bye-gpt-4-cbd2b507b822">100% Open-Source Llama Coding Assistant: Bye, bye GPT-4!</a></li>
+</ul>
+</li>
+<li><a href="https://github.com/Exafunction/codeium.vim">Codeium</a> : Free, ultrafast Copilot alternative for Vim and Neovim[Codeium 也不支持和 Ollama 的结合。]</li>
+<li><a href="https://github.com/rjmacarthy/twinny">Twinny</a> : The most no-nonsense locally hosted (or API hosted) AI code completion plugin for Visual Studio Code, like GitHub Copilot but 100% free and 100% private.[vs code+ollama][可以用时 base 模型进行【行内下一句提示】，只能提示下一句，看起来笨笨的。]</li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ex3ndr.llama-coder">Llama Coder</a></li>
+<li><a href="https://github.com/srikanth235/privy">Privy</a> : An open-source alternative to GitHub copilot that runs locally.</li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=DanielSanMedium.dscodegpt">Code GPT: Chat &amp; AI Agents</a> : [Code GPT 不支持自定义服务器地址，也不支持开源。]</li>
+<li><a href="https://cursor.sh/">Cursor</a> : Build software faster in an editor designed for pair-programming with AI</li>
+</ul>
+<figure data-type="image" tabindex="18"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[关于 ESP32 下着下着就不让下了这件事]]></title>
+        <id>https://mintisan.github.io/post/about-esp32-flash-download-md5-error/</id>
+        <link href="https://mintisan.github.io/post/about-esp32-flash-download-md5-error/">
+        </link>
+        <updated>2024-03-11T12:02:40.000Z</updated>
+        <summary type="html"><![CDATA[<p>下午在调试过程一直使用 <code>460800</code> 波特率进行下载，相安无事，但是突然不知咋的，就一直报 <code>A fatal error occurred: MD5 of file does not match data in flash!</code> 错误，期间退回程序，重启都没用，和软件代码无关，遂 <a href="https://www.esp32.com/viewtopic.php?t=4061">Google</a> 之，以及 <a href="https://shareg.pt/SGmolhN">GPT</a> 之。尝试降低下载波特率解决。XD</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>下午在调试过程一直使用 <code>460800</code> 波特率进行下载，相安无事，但是突然不知咋的，就一直报 <code>A fatal error occurred: MD5 of file does not match data in flash!</code> 错误，期间退回程序，重启都没用，和软件代码无关，遂 <a href="https://www.esp32.com/viewtopic.php?t=4061">Google</a> 之，以及 <a href="https://shareg.pt/SGmolhN">GPT</a> 之。尝试降低下载波特率解决。XD</p>
+<!-- more -->
+<p>如概述所述，这种好好用着用着就歇菜了的，，，也不知道是哪个环节在之前处于临界的状态，下次碰到不换波特率直接换个线再看下，，，</p>
+<p>GPT 给的建议顺序还是比较靠谱的，这里对我而言是通过第二条搞定，这里有一个注意点就是日志信息尽量多些信息，这样比较能触发 GPT 的一些具体相关，所给的答案也会和你的问题可能更加符合相关。</p>
+<p>比如这里具体的 <code>460800</code> 波特率信息。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1710159136094.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[关于 ESP32 的 IIC 初始化报错这件事]]></title>
+        <id>https://mintisan.github.io/post/about-esp32-arduino-iic-init-error/</id>
+        <link href="https://mintisan.github.io/post/about-esp32-arduino-iic-init-error/">
+        </link>
+        <updated>2024-03-05T11:45:16.000Z</updated>
+        <summary type="html"><![CDATA[<p>从来没有想过 IIC 主控芯片初始化也有可能出错，在 GPT 上聊了整个<a href="https://shareg.pt/xdH7K56">过程</a>，最后总结一句话就是：把电源/地接到了 IIC 上，会导致 Arduino 的库本身初始化的时候检查 IIC 时序是否可以拉起来，如果拉不起来则会在串口输出错误信息，所以 Arduino 的库背后估计也有人遇到类似的问题，才做的吧。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>从来没有想过 IIC 主控芯片初始化也有可能出错，在 GPT 上聊了整个<a href="https://shareg.pt/xdH7K56">过程</a>，最后总结一句话就是：把电源/地接到了 IIC 上，会导致 Arduino 的库本身初始化的时候检查 IIC 时序是否可以拉起来，如果拉不起来则会在串口输出错误信息，所以 Arduino 的库背后估计也有人遇到类似的问题，才做的吧。</p>
+<!-- more -->
+<h2 id="初始化代码">初始化代码</h2>
+<p>让 GPT 写了一个遍历总线上所有 IIC 从设备的简单代码，想看下连接性和对应的地址，代码如下：</p>
+<pre><code class="language-c">#include &lt;Arduino.h&gt;  // 如果使用 PlatformIO 框架，则需要显式添加 Arduino 头文件
+#include &lt;Wire.h&gt;
+
+void setup() {
+  Wire.begin(21, 22); // 初始化I2C总线，SDA为21号引脚，SCL为22号引脚
+  Serial.begin(115200); // 初始化串口通信，波特率为115200
+  while (!Serial); // 等待串口连接
+  Serial.println(&quot;\nI2C Scanner&quot;);
+}
+
+void loop() {
+  byte error, address;
+  int nDevices;
+
+  Serial.println(&quot;Scanning...&quot;);
+
+  nDevices = 0;
+  for(address = 1; address &lt; 127; address++ ) {
+    // The i2c_scanner uses the return value of
+    // the Write.endTransmisstion to see if
+    // a device did acknowledge to the address.
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+
+    if (error == 0) {
+      Serial.print(&quot;I2C device found at address 0x&quot;);
+      if (address &lt; 16)
+        Serial.print(&quot;0&quot;);
+      Serial.print(address, HEX);
+      Serial.println(&quot;  !&quot;);
+
+      nDevices++;
+    }
+    else if (error == 4) {
+      Serial.print(&quot;Unknown error at address 0x&quot;);
+      if (address &lt; 16)
+        Serial.print(&quot;0&quot;);
+      Serial.println(address, HEX);
+    }    
+  }
+  if (nDevices == 0)
+    Serial.println(&quot;No I2C devices found\n&quot;);
+  else
+    Serial.println(&quot;done\n&quot;);
+
+  delay(5000); // 等待5秒后再次扫描
+}
+
+</code></pre>
+<h2 id="错误日志">错误日志</h2>
+<p>烧录后运行，初始化运行后，串口打印如下错误日志如下：</p>
+<pre><code>[W][esp32-hal-i2c.c:1419] i2cCheckLineState(): invalid state sda(21)=1, scl(22)=0
+[D][esp32-hal-i2c.c:1427] i2cCheckLineState(): Recovered after 1 Cycles
+[E][esp32-hal-i2c.c:1434] i2cCheckL
+</code></pre>
+<p>都还没跑到遍历，在初始化就失败，后面检查发现尽然线接错了，，，</p>
+<p>在和 GPT 的聊天过程中，其实给的第一条就是方向，还可以。这里其实看到log信息应该要很快就想到那个硬件上的上拉约束不满足，不过也还好很快就怀疑到那里了。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1709639913701.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[关于 ESP32 开发板深度睡眠模式电流 11mA 这件事]]></title>
+        <id>https://mintisan.github.io/post/about-esp32-deepsleep-11ma-abnormal/</id>
+        <link href="https://mintisan.github.io/post/about-esp32-deepsleep-11ma-abnormal/">
+        </link>
+        <updated>2024-03-03T10:13:22.000Z</updated>
+        <summary type="html"><![CDATA[<p>在官方渠道购买的 ESP32-Pico-Kit V4.1 的板子，然后尝试了 ESPIDF 官方例程以及 GPT 帮忙生成的 Arduino 和 ESPIDF 的最小代码烧录测量，结果发现通过 USB 测量板子进入深度睡眠之后的电流均为 11mA 多点，和官方说的 10uA 以下有这天然之别，但是看过程也确实在重启，看内存也只有 RTC 内存会保留状态，也就是说模块符合预期，但是结果功耗不符合，哪里出了问题呢？查了一圈，看到<a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html">两篇相关</a> 的答案：CP2102转换芯片和线性稳压器芯片导致的。<br>
+【其实 <a href="https://shareg.pt/dfeWyyb">GPT</a> 告诉我答案了，但是我不是硬件工程师，没法办进一步定位，最后还是 Google 给了我认知范围内的答案！！！】</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>在官方渠道购买的 ESP32-Pico-Kit V4.1 的板子，然后尝试了 ESPIDF 官方例程以及 GPT 帮忙生成的 Arduino 和 ESPIDF 的最小代码烧录测量，结果发现通过 USB 测量板子进入深度睡眠之后的电流均为 11mA 多点，和官方说的 10uA 以下有这天然之别，但是看过程也确实在重启，看内存也只有 RTC 内存会保留状态，也就是说模块符合预期，但是结果功耗不符合，哪里出了问题呢？查了一圈，看到<a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html">两篇相关</a> 的答案：CP2102转换芯片和线性稳压器芯片导致的。<br>
+【其实 <a href="https://shareg.pt/dfeWyyb">GPT</a> 告诉我答案了，但是我不是硬件工程师，没法办进一步定位，最后还是 Google 给了我认知范围内的答案！！！】</p>
+<!-- more -->
+<h2 id="尝试各种姿势的例程">尝试各种姿势的例程</h2>
+<p>尝试了各种最小 deepsleep 的例程代码后，直接把板子接到 USB 测量器上，发现都是 11mA 最左右如下：</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1709464079695.jpg" alt="" loading="lazy"></figure>
+<p>但是各种现象和功能模块确实是符合预期的，有意思的是，这个过程 GPT 其实已经告诉我答案了，就在第一条，但是我还是没有办法在我能力范围内确定，也被我忽略了接着 Google 找来找去【如果是硬件工程师，可能一下子就知道啥原理以及定位到哪个芯片了】。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1709464421875.png" alt="" loading="lazy"></figure>
+<p>直到在 Google 中找到很<a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html">类似</a> 的，也给出了具体芯片，这时候就基本确定了。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1709464505567.png" alt="" loading="lazy"></figure>
+<p>有机会把下面那两个拆掉看下吧，，，【估计就搁置了XD】<br>
+<img src="https://mintisan.github.io/post-images/1709464989226.png" alt="" loading="lazy"></p>
+<h3 id="最简单的-arduino-例程">最简单的 Arduino 例程</h3>
+<pre><code class="language-c">#include &lt;Arduino.h&gt;
+#include &lt;esp_sleep.h&gt;
+
+void setup() {
+  Serial.begin(115200);
+
+  // 给串口足够的时间来初始化
+  delay(1000);
+  Serial.println(&quot;Entering deep sleep for 10 seconds&quot;);
+
+  // 设置ESP32在10秒后自动唤醒
+  esp_sleep_enable_timer_wakeup(10 * 1000000);
+
+  // 进入深度睡眠
+  esp_deep_sleep_start();
+
+  // 注意：ESP32进入深度睡眠后，不会执行下面的代码
+}
+
+void loop() {
+  // 这里的代码在深度睡眠后不会被执行
+}
+
+</code></pre>
+<h3 id="最简单的-espidf-例程">最简单的 ESPIDF 例程</h3>
+<pre><code class="language-c">#include &quot;esp_sleep.h&quot;
+#include &quot;freertos/FreeRTOS.h&quot;
+#include &quot;freertos/task.h&quot;
+#include &quot;esp_log.h&quot;
+
+void app_main() {
+    // 在进入深度睡眠之前打印一条日志
+    ESP_LOGI(&quot;Sleep&quot;, &quot;Entering deep sleep for 10 seconds&quot;);
+
+    // 设置唤醒设备的条件，这里设置为10秒后自动唤醒
+    esp_sleep_enable_timer_wakeup(10 * 1000000);
+
+    // 进入深度睡眠模式
+    esp_deep_sleep_start();
+
+    // 代码不会执行到这里
+}
+</code></pre>
+<h3 id="官方例程"><a href="https://github.com/espressif/esp-idf/tree/v5.2/examples/system/deep_sleep">官方例程</a></h3>
+<pre><code class="language-c">/*
+ * SPDX-FileCopyrightText: 2017-2023 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Unlicense OR CC0-1.0
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;time.h&gt;
+#include &lt;sys/time.h&gt;
+#include &quot;sdkconfig.h&quot;
+#include &quot;soc/soc_caps.h&quot;
+#include &quot;freertos/FreeRTOS.h&quot;
+#include &quot;freertos/task.h&quot;
+#include &quot;esp_sleep.h&quot;
+#include &quot;esp_log.h&quot;
+#include &quot;driver/rtc_io.h&quot;
+#include &quot;nvs_flash.h&quot;
+#include &quot;nvs.h&quot;
+//#include &quot;deep_sleep_example.h&quot;
+
+#if SOC_RTC_FAST_MEM_SUPPORTED
+static RTC_DATA_ATTR struct timeval sleep_enter_time;
+#else
+static struct timeval sleep_enter_time;
+#endif
+
+static void deep_sleep_task(void *args)
+{
+    /**
+     * Prefer to use RTC mem instead of NVS to save the deep sleep enter time, unless the chip
+     * does not support RTC mem(such as esp32c2). Because the time overhead of NVS will cause
+     * the recorded deep sleep enter time to be not very accurate.
+     */
+#if !SOC_RTC_FAST_MEM_SUPPORTED
+    // Initialize NVS
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        // NVS partition was truncated and needs to be erased
+        // Retry nvs_flash_init
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        err = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(err);
+
+    nvs_handle_t nvs_handle;
+    err = nvs_open(&quot;storage&quot;, NVS_READWRITE, &amp;nvs_handle);
+    if (err != ESP_OK) {
+        printf(&quot;Error (%s) opening NVS handle!\n&quot;, esp_err_to_name(err));
+    } else {
+        printf(&quot;Open NVS done\n&quot;);
+    }
+
+    // Get deep sleep enter time
+    nvs_get_i32(nvs_handle, &quot;slp_enter_sec&quot;, (int32_t *)&amp;sleep_enter_time.tv_sec);
+    nvs_get_i32(nvs_handle, &quot;slp_enter_usec&quot;, (int32_t *)&amp;sleep_enter_time.tv_usec);
+#endif
+
+    struct timeval now;
+    gettimeofday(&amp;now, NULL);
+    int sleep_time_ms = (now.tv_sec - sleep_enter_time.tv_sec) * 1000 + (now.tv_usec - sleep_enter_time.tv_usec) / 1000;
+
+    switch (esp_sleep_get_wakeup_cause()) {
+        case ESP_SLEEP_WAKEUP_TIMER: {
+            printf(&quot;Wake up from timer. Time spent in deep sleep: %dms\n&quot;, sleep_time_ms);
+            break;
+        }
+
+#if CONFIG_EXAMPLE_GPIO_WAKEUP
+        case ESP_SLEEP_WAKEUP_GPIO: {
+            uint64_t wakeup_pin_mask = esp_sleep_get_gpio_wakeup_status();
+            if (wakeup_pin_mask != 0) {
+                int pin = __builtin_ffsll(wakeup_pin_mask) - 1;
+                printf(&quot;Wake up from GPIO %d\n&quot;, pin);
+            } else {
+                printf(&quot;Wake up from GPIO\n&quot;);
+            }
+            break;
+        }
+#endif //CONFIG_EXAMPLE_GPIO_WAKEUP
+
+#if CONFIG_EXAMPLE_EXT0_WAKEUP
+        case ESP_SLEEP_WAKEUP_EXT0: {
+            printf(&quot;Wake up from ext0\n&quot;);
+            break;
+        }
+#endif // CONFIG_EXAMPLE_EXT0_WAKEUP
+
+#ifdef CONFIG_EXAMPLE_EXT1_WAKEUP
+        case ESP_SLEEP_WAKEUP_EXT1: {
+            uint64_t wakeup_pin_mask = esp_sleep_get_ext1_wakeup_status();
+            if (wakeup_pin_mask != 0) {
+                int pin = __builtin_ffsll(wakeup_pin_mask) - 1;
+                printf(&quot;Wake up from GPIO %d\n&quot;, pin);
+            } else {
+                printf(&quot;Wake up from GPIO\n&quot;);
+            }
+            break;
+        }
+#endif // CONFIG_EXAMPLE_EXT1_WAKEUP
+
+#ifdef CONFIG_EXAMPLE_TOUCH_WAKEUP
+        case ESP_SLEEP_WAKEUP_TOUCHPAD: {
+            printf(&quot;Wake up from touch on pad %d\n&quot;, esp_sleep_get_touchpad_wakeup_status());
+            break;
+        }
+#endif // CONFIG_EXAMPLE_TOUCH_WAKEUP
+
+        case ESP_SLEEP_WAKEUP_UNDEFINED:
+        default:
+            printf(&quot;Not a deep sleep reset\n&quot;);
+    }
+
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+#if CONFIG_IDF_TARGET_ESP32
+    // Isolate GPIO12 pin from external circuits. This is needed for modules
+    // which have an external pull-up resistor on GPIO12 (such as ESP32-WROVER)
+    // to minimize current consumption.
+    rtc_gpio_isolate(GPIO_NUM_12);
+#endif
+
+    printf(&quot;Entering deep sleep\n&quot;);
+
+    // get deep sleep enter time
+    gettimeofday(&amp;sleep_enter_time, NULL);
+
+#if !SOC_RTC_FAST_MEM_SUPPORTED
+    // record deep sleep enter time via nvs
+    ESP_ERROR_CHECK(nvs_set_i32(nvs_handle, &quot;slp_enter_sec&quot;, sleep_enter_time.tv_sec));
+    ESP_ERROR_CHECK(nvs_set_i32(nvs_handle, &quot;slp_enter_usec&quot;, sleep_enter_time.tv_usec));
+    ESP_ERROR_CHECK(nvs_commit(nvs_handle));
+    nvs_close(nvs_handle);
+#endif
+
+    // enter deep sleep
+    esp_deep_sleep_start();
+}
+
+static void example_deep_sleep_register_rtc_timer_wakeup(void)
+{
+    const int wakeup_time_sec = 20;
+    printf(&quot;Enabling timer wakeup, %ds\n&quot;, wakeup_time_sec);
+    ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(wakeup_time_sec * 1000000));
+}
+
+void app_main(void)
+{
+    /* Enable wakeup from deep sleep by rtc timer */
+    example_deep_sleep_register_rtc_timer_wakeup();
+
+#if CONFIG_EXAMPLE_GPIO_WAKEUP
+    /* Enable wakeup from deep sleep by gpio */
+    example_deep_sleep_register_gpio_wakeup();
+#endif
+
+#if CONFIG_EXAMPLE_EXT0_WAKEUP
+    /* Enable wakeup from deep sleep by ext0 */
+    example_deep_sleep_register_ext0_wakeup();
+#endif
+
+#if CONFIG_EXAMPLE_EXT1_WAKEUP
+    /* Enable wakeup from deep sleep by ext1 */
+    example_deep_sleep_register_ext1_wakeup();
+#endif
+
+#if CONFIG_EXAMPLE_TOUCH_WAKEUP
+    /* Enable wakeup from deep sleep by touch */
+    example_deep_sleep_register_touch_wakeup();
+#endif
+
+    xTaskCreate(deep_sleep_task, &quot;deep_sleep_task&quot;, 4096, NULL, 6, NULL);
+}
+</code></pre>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html"><strong>ESP32-DevKitC's DeepSleep is consuming quite a bit of current, so I investigated the cause.</strong></a> : 从 11.8mA 理清到 8.15mA 到 10uA【主要是电源转换芯片和USB转换芯片带来的】</li>
+<li><a href="https://www.yiboard.com/thread-1644-1-1.html">ESP32正常工作模式和深度睡眠模式的功耗对比</a></li>
+<li><a href="https://en.kohacraft.com/archives/esp32-reduced-current-consumption-during-deepsleep-by-putting-hx711-into-power-down-mode.html">ESP32 reduced current consumption during DeepSleep by putting HX711 into power down mode.</a></li>
+<li><a href="https://blog.csdn.net/chentuo2000/article/details/125033711">ESP32深度睡眠电流怎样低于10uA</a></li>
+<li><a href="https://shareg.pt/dfeWyyb">Implementing and Measuring Deep Sleep Power Consumption on ESP32 with ESP-IDF</a></li>
+<li><a href="https://github.com/espressif/esp-idf/tree/v5.2/examples/system/deep_sleep">Deep Sleep Example</a></li>
+<li><a href="https://www.instructables.com/ESP32-Deep-Sleep-Tutorial/">ESP32 Deep Sleep Tutorial</a></li>
+<li><a href="https://deepbluembedded.com/esp32-sleep-modes-power-consumption/">ESP32 Sleep Modes &amp; Power Consumption in Each Mode</a></li>
+<li><a href="https://docs.espressif.com/projects/esp-faq/en/latest/test-verification/power-consumption-verification.html">Power Consumption Verification</a></li>
+<li><a href="https://www.esp32.com/viewtopic.php?t=21766">Deep sleep Power consumption Problem.</a></li>
+<li><a href="https://learn.circuit.rocks/esp32-deep-sleep">FreeRTOS: ESP32 Deep Sleep</a></li>
+<li><a href="https://www.programmingelectronics.com/esp32-deep-sleep-mode/">A Practical Guide To ESP32 Deep Sleep Modes</a></li>
+<li><a href="https://lastminuteengineers.com/esp32-sleep-modes-power-consumption/">Insight Into ESP32 Sleep Modes &amp; Their Power Consumption</a></li>
+<li><a href="https://community.home-assistant.io/t/why-is-it-using-so-much-power-while-deep-sleeping/560884">Why is it using so much power while deep-sleeping?</a></li>
+<li><a href="https://forum.arduino.cc/t/deep-sleep-power-consumtion-esp32-devkit/1201123">Deep sleep power consumtion ESP32 devkit</a></li>
+<li><a href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+</ul>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[ESP32-C6 接收速率测试对比 ESP32-Pico]]></title>
+        <id>https://mintisan.github.io/post/esp32-c6-throughput-compare-esp32-pico/</id>
+        <link href="https://mintisan.github.io/post/esp32-c6-throughput-compare-esp32-pico/">
+        </link>
+        <updated>2024-02-28T11:51:38.000Z</updated>
+        <summary type="html"><![CDATA[<p>在 <a href="https://mintisan.github.io/post/esp32-platformio-arduino-devops/">基于 PlatformIO 的 ESP32 开发环境</a> 中用小米手机13做热点，测试了下从 PC 端上传单个大文件到 ESP32-Pico 上的速率大概是 140KB/s，这里对比同样的硬件环境。对比 ESP32-C6 的速率大概为 250KB/s，有不小的提升，但是距离我认为的起码上 M 还是有点差距。。。<br>
+【当然应该把软件也全部弄成一样才更加严谨，不过有时间再弄吧 XD】</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>在 <a href="https://mintisan.github.io/post/esp32-platformio-arduino-devops/">基于 PlatformIO 的 ESP32 开发环境</a> 中用小米手机13做热点，测试了下从 PC 端上传单个大文件到 ESP32-Pico 上的速率大概是 140KB/s，这里对比同样的硬件环境。对比 ESP32-C6 的速率大概为 250KB/s，有不小的提升，但是距离我认为的起码上 M 还是有点差距。。。<br>
+【当然应该把软件也全部弄成一样才更加严谨，不过有时间再弄吧 XD】</p>
+<!-- more -->
+<h2 id="编写测试代码">编写测试代码</h2>
+<p>借助 GPT 帮忙把之前的 PC 端上传代码修改为 IDF，<a href="https://sharegpt.com/c/FST2tgZ">聊天转换过程</a>没有什么难度，中间去除了打印日志带来的影响。因为目前 ESP32-C6 仅支持 espidf 的框架，如下所示。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1709123126054.png" alt="" loading="lazy"></figure>
+<h2 id="修改默认串口波特率">修改默认串口波特率</h2>
+<p>因为 PlatformIO Monitor 默认的波特率为 9600 ，而代码默认不修改则为 115200，所以需要修改下 PlatformIO Monitor 串口的波特率。添加 <code>monitor_speed = 115200</code> 到 <code>platformio.ini</code> 的最后一行即可。不然打印出来的是乱码。</p>
+<pre><code>; PlatformIO Project Configuration File
+;
+;   Build options: build flags, source filter
+;   Upload options: custom upload port, speed and extra flags
+;   Library options: dependencies, extra library storages
+;   Advanced options: extra scripting
+;
+; Please visit documentation for the other options and examples
+; https://docs.platformio.org/page/projectconf.html
+
+[env:esp32-c6-devkitc-1]
+platform = espressif32
+board = esp32-c6-devkitc-1
+framework = espidf
+monitor_speed = 115200
+</code></pre>
+<h2 id="修改板子信息">修改板子信息</h2>
+<p>因为 C6 板子比较新，对 C6 的 Flash 信息不知道为啥是 2M，需要手动再修改下，打开状态栏的终端图标操作如下：</p>
+<p>输入 <code>pio run -t memuconfig</code><br>
+<img src="https://mintisan.github.io/post-images/1709123464142.png" alt="" loading="lazy"></p>
+<p>选择 <code>Serial flasher config</code><br>
+<img src="https://mintisan.github.io/post-images/1709123467546.png" alt="" loading="lazy"></p>
+<p>选择 <code>Flash size</code>，首次新建工程后应该是 2M，而不是目前显示的 8M，不过最终都需要修改为 8M。<br>
+<img src="https://mintisan.github.io/post-images/1709123470526.png" alt="" loading="lazy"></p>
+<p>选择 <code>8 MB</code><br>
+<img src="https://mintisan.github.io/post-images/1709123473606.png" alt="" loading="lazy"></p>
+<p>修改完退出后，可以看 sdkconfig 文件，会由原来的 2M 修改为 8M：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1709123881949.png" alt="" loading="lazy"></figure>
+<p>不然会有如下编译生成 elf 时报的错误：</p>
+<pre><code>
+
+编译显示如下错误：RAM:   [=         ]   6.1% (used 32156 bytes from 524288 bytes)
+Flash: [========  ]  79.8% (used 836332 bytes from 1048576 bytes)
+Building .pio\build\esp32-c6-devkitc-1\firmware.bin
+esptool.py v4.5.1
+Creating esp32c6 image...
+Merged 2 ELF sections
+
+A fatal error occurred: Contents of segment at SHA256 digest offset 0xb0 are not all zero. Refusing to overwrite.
+*** [.pio\build\esp32-c6-devkitc-1\firmware.bin] Error 2
+====================================================== [FAILED] Took 3.14 seconds ======================================================
+</code></pre>
+<p>注意：修改后如果编译还是报错，需要删除 <code>.pio</code> 缓存目录再编译，如果还不行，则重启 VS Code！！！</p>
+<h2 id="不同网络">不同网络</h2>
+<p>结论：无法进入 5G 网络频段；小米手机热点还不错，有256KB/s；小米路由器6000 的 2.4G 频段拉跨，才不到150KB/s。。。</p>
+<p>小米 AX6000 2.4G 频段的热点：<br>
+<img src="https://mintisan.github.io/post-images/1709123571632.png" alt="" loading="lazy"></p>
+<p>小米 13 手机的热点：<br>
+<img src="https://mintisan.github.io/post-images/1709123576485.png" alt="" loading="lazy"></p>
+<p>小米 AX6000 5G 频段的热点：一直在尝试连接<br>
+<img src="https://mintisan.github.io/post-images/1709124118257.png" alt="" loading="lazy"></p>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li>[ESP32-C6, espidf, error when using components folder, led_strip,h #cc1243](https://github.com/platformio/platform-espressif32/issues/1243</li>
+<li><a href="https://community.platformio.org/t/esp32-c6-espidf-error-when-using-components-folder-led-strip-h/37006/2">https://community.platformio.org/t/）esp32-c6-espidf-error-when-using-components-folder-led-strip-h/37006/2</a></li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+<h2 id="测试代码">测试代码</h2>
+<pre><code class="language-c">#include &lt;string.h&gt;
+#include &lt;sys/param.h&gt;
+#include &quot;freertos/FreeRTOS.h&quot;
+#include &quot;freertos/task.h&quot;
+#include &quot;esp_wifi.h&quot;
+#include &quot;esp_event.h&quot;
+#include &quot;esp_log.h&quot;
+#include &quot;nvs_flash.h&quot;
+#include &quot;esp_http_server.h&quot;
+#include &quot;esp_timer.h&quot; // Include esp_timer.h to resolve esp_timer_get_time
+#include &lt;inttypes.h&gt; // Include inttypes.h for format specifier macros
+
+#define EXAMPLE_ESP_WIFI_SSID      &quot;Xiaomi13&quot;
+#define EXAMPLE_ESP_WIFI_PASS      &quot;1234567890&quot;
+#define EXAMPLE_MAX_STA_CONN       1
+
+static const char *TAG = &quot;speed_test_server&quot;;
+
+/* Event handler for catching system events */
+static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+    if (event_base == WIFI_EVENT &amp;&amp; event_id == WIFI_EVENT_STA_START) {
+        esp_wifi_connect();
+    } else if (event_base == WIFI_EVENT &amp;&amp; event_id == WIFI_EVENT_STA_DISCONNECTED) {
+        esp_wifi_connect();
+        ESP_LOGI(TAG, &quot;retry to connect to the AP&quot;);
+    } else if (event_base == IP_EVENT &amp;&amp; event_id == IP_EVENT_STA_GOT_IP) {
+        ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+        ESP_LOGI(TAG, &quot;got ip:&quot; IPSTR, IP2STR(&amp;event-&gt;ip_info.ip));
+    }
+}
+
+/* Initialize Wi-Fi as sta and set scan method */
+static void wifi_init_sta() {
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    esp_netif_create_default_wifi_sta();
+
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&amp;cfg));
+
+    esp_event_handler_instance_t instance_any_id;
+    esp_event_handler_instance_t instance_got_ip;
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                        ESP_EVENT_ANY_ID,
+                                                        &amp;event_handler,
+                                                        NULL,
+                                                        &amp;instance_any_id));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
+                                                        IP_EVENT_STA_GOT_IP,
+                                                        &amp;event_handler,
+                                                        NULL,
+                                                        &amp;instance_got_ip));
+
+    wifi_config_t wifi_config = {
+        .sta = {
+            .ssid = EXAMPLE_ESP_WIFI_SSID,
+            .password = EXAMPLE_ESP_WIFI_PASS,
+            .threshold.authmode = WIFI_AUTH_WPA2_PSK,
+            .pmf_cfg = {
+                .capable = true,
+                .required = false
+            },
+        },
+    };
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &amp;wifi_config) );
+    ESP_ERROR_CHECK(esp_wifi_start() );
+
+    ESP_LOGI(TAG, &quot;wifi_init_sta finished.&quot;);
+}
+
+/* HTTP POST 处理函数 */
+static esp_err_t upload_handler(httpd_req_t *req) {
+    char buf[100]; // 缓冲区大小可根据需求调整
+    int ret;
+    int remaining = req-&gt;content_len;
+
+    static uint32_t totalBytesReceived = 0;
+    static uint64_t downloadStart = 0;
+
+    if (remaining == req-&gt;content_len) {
+        downloadStart = esp_timer_get_time(); // 获取开始时间（微秒）
+    }
+
+    while (remaining &gt; 0) {
+        // 读取请求数据
+        if ((ret = httpd_req_recv(req, buf, MIN(remaining, sizeof(buf)))) &lt;= 0) {
+            if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
+                // 如果超时，则重试接收
+                continue;
+            }
+            return ESP_FAIL;
+        }
+
+        remaining -= ret;
+        totalBytesReceived += ret;
+    }
+
+    if (remaining == 0) {
+        uint64_t downloadEnd = esp_timer_get_time(); // 获取结束时间（微秒）
+        double downloadTime = (downloadEnd - downloadStart) / 1e6; // 转换为秒
+        double speed = totalBytesReceived / downloadTime; // 计算速度（字节/秒）
+
+        // 打印下载速度
+        ESP_LOGI(TAG, &quot;Download speed: %.2f bytes/s&quot;, speed);
+
+        // 重置计数器以便下一次测量
+        totalBytesReceived = 0;
+    }
+
+    // 发送响应
+    httpd_resp_send_chunk(req, NULL, 0);
+    return ESP_OK;
+}
+
+static const httpd_uri_t upload = {
+    .uri       = &quot;/upload&quot;,
+    .method    = HTTP_POST,
+    .handler   = upload_handler,
+    .user_ctx  = NULL
+};
+
+/* Function for starting the webserver */
+static httpd_handle_t start_webserver(void) {
+    httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+    httpd_handle_t server = NULL;
+
+    // Start the httpd server
+    ESP_LOGI(TAG, &quot;Starting server on port: '%d'&quot;, config.server_port);
+    if (httpd_start(&amp;server, &amp;config) == ESP_OK) {
+        // Set URI handlers
+        ESP_LOGI(TAG, &quot;Registering URI handlers&quot;);
+        httpd_register_uri_handler(server, &amp;upload);
+        return server;
+    }
+
+    ESP_LOGI(TAG, &quot;Error starting server!&quot;);
+    return NULL;
+}
+
+/* Function for stopping the webserver */
+static void stop_webserver(httpd_handle_t server) {
+    // Stop the httpd server
+    httpd_stop(server);
+}
+
+void app_main(void) {
+    // Initialize NVS
+    ESP_ERROR_CHECK(nvs_flash_init());
+    // Initialize Wi-Fi
+    wifi_init_sta();
+    // Start the webserver
+    start_webserver();
+}
+
+</code></pre>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[基于 PlatformIO 的 ESP32 开发环境]]></title>
+        <id>https://mintisan.github.io/post/esp32-platformio-arduino-devops/</id>
+        <link href="https://mintisan.github.io/post/esp32-platformio-arduino-devops/">
+        </link>
+        <updated>2024-02-24T07:26:14.000Z</updated>
+        <summary type="html"><![CDATA[<p>ESP32 的开发环境有很多，有<a href="https://docs.espressif.com/projects/esp-idf/zh_CN/v5.1.2/esp32/get-started/index.html">官方</a>的 <a href="https://github.com/espressif/idf-eclipse-plugin/blob/master/README.md">Eclipse Plugin</a> 和 <a href="https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md">VSCode Extension</a> ，但是后续还需要其他依赖啥的，比较麻烦。而 <a href="https://platformio.org/platformio-ide">PlatformIO IDE</a> 支持很多的开发板，当然也包括我们的 ESP32 ，唯一的缺点应该是需要能上外网，而这对我来说正好不是问题。这里在 Windows 环境下记录下这个过程，以及一些例程的资源记录。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>ESP32 的开发环境有很多，有<a href="https://docs.espressif.com/projects/esp-idf/zh_CN/v5.1.2/esp32/get-started/index.html">官方</a>的 <a href="https://github.com/espressif/idf-eclipse-plugin/blob/master/README.md">Eclipse Plugin</a> 和 <a href="https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md">VSCode Extension</a> ，但是后续还需要其他依赖啥的，比较麻烦。而 <a href="https://platformio.org/platformio-ide">PlatformIO IDE</a> 支持很多的开发板，当然也包括我们的 ESP32 ，唯一的缺点应该是需要能上外网，而这对我来说正好不是问题。这里在 Windows 环境下记录下这个过程，以及一些例程的资源记录。</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1708764242858.png" alt="" loading="lazy"></figure>
+<h2 id="安装驱动">安装驱动</h2>
+<p>将 ESP32 开发板连接 Micro-B USB 接口连接到电脑，可以看到电脑上默认是没有安装串口转 USB 的驱动的，打开设备管理器显示如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1708760697286.png" alt="" loading="lazy"></figure>
+<p>在 Silabs 官网<a href="https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers">下载</a>后解压，再手动右键安装驱动选择解压后的目录：</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1708761050668.png" alt="" loading="lazy"></figure>
+<p>待安装结束可以看到驱动显示正常如下：</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1708761100200.png" alt="" loading="lazy"></figure>
+<h2 id="安装-vs-code-和插件">安装 VS Code 和插件</h2>
+<p>在 VS Code 的<a href="https://code.visualstudio.com/">官网</a>下载安装后，在插件里面安装  <a href="https://platformio.org/">PlatformIO</a> 插件：</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1708761223180.png" alt="" loading="lazy"></figure>
+<p>安装完后会提示自动重启 VS Code，然后可以看到左侧出现 PIatformIO 的图标，点开选择 <code>Open</code> 新建一个工程【我这里选择Pico+Arduino】：</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1708761348263.png" alt="" loading="lazy"></figure>
+<p>点击确认后会自动下载那些依赖，完后会在工程中出现刚才新建的工程文件夹。<br>
+打开官方的<a href="https://registry.platformio.org/platforms/platformio/espressif32/examples/arduino-blink/src/Blink.cpp">跑马灯例程</a>，将其复制拷贝到工程中的 <code>main.cpp</code> 文件中，显示如下：</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1708761586307.png" alt="" loading="lazy"></figure>
+<p>代码如下：</p>
+<pre><code class="language-c">/*
+ * Blink
+ * Turns on an LED on for one second,
+ * then off for one second, repeatedly.
+ */
+// https://registry.platformio.org/platforms/platformio/espressif32/examples/arduino-blink/src/Blink.cpp
+#include &lt;Arduino.h&gt;
+
+// Set LED_BUILTIN if it is not defined by Arduino framework
+#ifndef LED_BUILTIN
+    #define LED_BUILTIN 2
+#endif
+
+void setup()
+{
+  // initialize LED digital pin as an output.
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop()
+{
+  // turn the LED on (HIGH is the voltage level)
+  digitalWrite(LED_BUILTIN, HIGH);
+  // wait for a second
+  delay(1000);
+  // turn the LED off by making the voltage LOW
+  digitalWrite(LED_BUILTIN, LOW);
+   // wait for a second
+  delay(1000);
+}
+</code></pre>
+<h2 id="编译-设置-下载跑马灯例程">编译-设置-下载跑马灯例程</h2>
+<p>点击右上角的箭头展开，可以选择编译或者下载：</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1708763121121.png" alt="" loading="lazy"></figure>
+<p>编译成功后，终端显示如下：</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1708763145631.png" alt="" loading="lazy"></figure>
+<p>然后再下载到板子，但是有可能默认串口会选择错误，显示错误如下：</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1708763195053.png" alt="" loading="lazy"></figure>
+<p>此时，需要点击状态栏的 <code>Auto</code> 后，在顶部选择 Silabs 的那个串口如下：</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1708763289056.png" alt="" loading="lazy"></figure>
+<p>然后再下载，就可以看到如下终端显示的正确日志信息：</p>
+<figure data-type="image" tabindex="12"><img src="https://mintisan.github.io/post-images/1708763335359.png" alt="" loading="lazy"></figure>
+<p>这里的代码采用的 PIN2 ，所以我们直接把示波器接到 GND 和 IO2 上，就可以看到翻转如下：</p>
+<figure data-type="image" tabindex="13"><img src="https://mintisan.github.io/post-images/1708763911208.bmp" alt="" loading="lazy"></figure>
+<h2 id="http-server-测速例程导入">HTTP Server 测速例程导入</h2>
+<p>以上是新建一个工程，然后添加代码运行。这里以打开已经有的工程为例，点开选择 <code>Open</code>  打开一个工程目录到 <code>platformio.ini</code> 的目录，再设置完开发板类型，点击确认导入即可。</p>
+<figure data-type="image" tabindex="14"><img src="https://mintisan.github.io/post-images/1708763450752.png" alt="" loading="lazy"></figure>
+<p>这里的速率测试代码如下：</p>
+<pre><code class="language-c">#include &lt;WiFi.h&gt;
+#include &lt;ESPAsyncWebServer.h&gt;
+
+// 替换为你的 WiFi 名称和密码:mintisan 防火墙会拦截，手机热点可以，VPN也需要关闭
+const char* ssid = &quot;Xiaomi13&quot;;
+const char* password = &quot;1234567890&quot;;
+
+AsyncWebServer server(80);
+
+uint32_t downloadStart;
+uint32_t totalBytesReceived;
+
+void setup() {
+  Serial.begin(9600);
+
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println(&quot;Connecting to WiFi...&quot;);
+  }
+
+  Serial.println(WiFi.localIP());
+  // curl -F &quot;file=@bigfile.bin&quot; http://esp8266_ip_address/upload
+  server.on(&quot;/upload&quot;, HTTP_POST, [](AsyncWebServerRequest *request) {
+    request-&gt;send(200);
+    uint32_t downloadEnd = millis();
+    float downloadTime = (downloadEnd - downloadStart) / 1000.0;
+    float speed = totalBytesReceived / downloadTime;
+    Serial.printf(&quot;Download speed: %.2f bytes/s\n&quot;, speed);
+  }, [](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+    if(!index){
+      downloadStart = millis();
+      totalBytesReceived = 0;
+    }
+    totalBytesReceived += len;
+  });
+
+  server.begin();
+}
+
+void loop() { }
+</code></pre>
+<p>同样编译烧录后，打开终端的串口显示 ESP32 设备的 IP 地址信息如下[注意波特率匹配！]：</p>
+<figure data-type="image" tabindex="15"><img src="https://mintisan.github.io/post-images/1708763576332.png" alt="" loading="lazy"></figure>
+<p>此时在 PC 上打开终端 <a href="https://cmder.app/">cmder</a> 【自带 curl 工具】，将本地的不管啥文件上传上去【不要太大，1-2MB 即可】，就可以看到最后我们的 ESP32 Pico 速率是也就 180 kb/s 左右。</p>
+<figure data-type="image" tabindex="16"><img src="https://mintisan.github.io/post-images/1708763702146.png" alt="" loading="lazy"></figure>
+<p>【注：如果开了 VPN，则会超时！！！】</p>
+<h2 id="参考以及例程">参考以及例程</h2>
+<ul>
+<li>https://registry.platformio.org/platforms/platformio/espressif32</li>
+<li>https://docs.platformio.org/en/latest/platforms/espressif32.html</li>
+<li>https://docs.espressif.com/projects/esp-idf/en/stable/esp32/hw-reference/esp32/get-started-pico-kit.html</li>
+<li>https://github.com/platformio/platform-espressif32/</li>
+<li>https://github.com/me-no-dev/ESPAsyncWebServer</li>
+<li>https://registry.platformio.org/libraries/nkolban/ESP32%20BLE%20Arduino</li>
+<li>https://github.com/nkolban/ESP32_BLE_Arduino</li>
+<li>https://github.com/nkolban/esp32-snippets</li>
+<li>https://github.com/espressif/esp-idf</li>
+<li>https://github.com/espressif/esp-idf/tree/master/examples</li>
+<li>https://github.com/espressif/arduino-esp32</li>
+</ul>
+<figure data-type="image" tabindex="17"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Tailscale - 简单好用的 VPN 组网工具]]></title>
+        <id>https://mintisan.github.io/post/tailscale-simple-vpn/</id>
+        <link href="https://mintisan.github.io/post/tailscale-simple-vpn/">
+        </link>
+        <updated>2023-06-17T10:14:08.000Z</updated>
+        <summary type="html"><![CDATA[<blockquote>
+<p>Tailscale connects your team's devices and development environments for easy access to remote resources.</p>
+</blockquote>
+<p>官方介绍如上，其实就是虚拟局域网组网，而且底层是基于 <a href="https://www.wireguard.com/">Wireguard</a> 分布式的，相比于 <a href="https://www.zerotier.com/">Zerotier</a> 使用起来更加简单，参考网友的说法，【如果 Zerotier 是手动挡的话，那么 Tailscale 就是自动挡】。自测联通宽带可以到达 50MB/s 还不错，移动运营商 0.5MB/s 左右，，，</p>
+]]></summary>
+        <content type="html"><![CDATA[<blockquote>
+<p>Tailscale connects your team's devices and development environments for easy access to remote resources.</p>
+</blockquote>
+<p>官方介绍如上，其实就是虚拟局域网组网，而且底层是基于 <a href="https://www.wireguard.com/">Wireguard</a> 分布式的，相比于 <a href="https://www.zerotier.com/">Zerotier</a> 使用起来更加简单，参考网友的说法，【如果 Zerotier 是手动挡的话，那么 Tailscale 就是自动挡】。自测联通宽带可以到达 50MB/s 还不错，移动运营商 0.5MB/s 左右，，，</p>
+<!-- more -->
+<h2 id="套餐">套餐</h2>
+<p>虽然不是开源的，但是<a href="https://login.tailscale.com/admin/settings/billing/plans">免费模式</a>很良心，足够使用了。</p>
+<figure data-type="image" tabindex="1"><img src="https://user-images.githubusercontent.com/9136049/246599354-6f0778d9-ee33-4512-ae93-88a72dc55548.png" alt="image" loading="lazy"></figure>
+<h2 id="windowsmacosiosandroidnas">Windows/macOS/iOS/Android/NAS</h2>
+<p>客户端非常齐全，各种你想得到的平台都可以<a href="https://tailscale.com/download/">下载</a>。不过对于 macOS 需要<a href="https://pkgs.tailscale.com/stable/">手动下载</a>，并在设置用允许打开。<br>
+【还不是国内区域不提供 AppStore 不提供下载，😓】</p>
+<img width="477" alt="image" src="https://user-images.githubusercontent.com/9136049/246601297-99ce8b83-7a2e-4712-8467-03fcfa27504f.png">
+<h2 id="mt-3000">MT-3000</h2>
+<p>在用 R4S 的 OpenWRT 折腾时【见 iStore OS】，无法安装，突然想到 MT-3000 也是基于 OpenWRT 系统开发的，可能也可以整。</p>
+<p>没想到还有惊喜，主页面都已经帮你弄好了，非常方便，虽然不是最新版本，但也可以使用，Happy～～～</p>
+<figure data-type="image" tabindex="2"><img src="https://user-images.githubusercontent.com/9136049/246599147-3dc366ea-e9e4-47f4-a1fd-46c965ec78de.png" alt="image" loading="lazy"></figure>
+<h2 id="istore-os">iStore OS</h2>
+<p>执行 <code>tailscale up</code> 时遇到如下错误，感觉像是服务器端没有给到正确的文件名，后面再看吧，现在有 MT-3000 先顶着可以用。。。</p>
+<pre><code>
+root@iStoreOS:~# tailscale up --accept-dns=false --advertise-routes=192.168.31.0/24
+--2023-06-17 16:20:57--  https://pkgs.tailscale.com/stable/
+Resolving pkgs.tailscale.com... 199.38.181.239
+Connecting to pkgs.tailscale.com|199.38.181.239|:443... connected.
+Unable to establish SSL connection.
+Downloading Tailscale _arm64 ..
+--2023-06-17 16:20:58--  https://pkgs.tailscale.com/stable/tailscale__arm64.tgz
+Resolving pkgs.tailscale.com... 199.38.181.239
+Connecting to pkgs.tailscale.com|199.38.181.239|:443... connected.
+Unable to establish SSL connection.
+gzip: invalid magic
+tar: Child returned status 1
+tar: Error is not recoverable: exiting now
+root@iStoreOS:~# gzip
+gzip: compressed data not read from terminal, use -f to force it
+root@iStoreOS:~# 
+</code></pre>
+<h2 id="高级功能">高级功能</h2>
+<ul>
+<li>Subnet routes : 就是 MT-3000 中 <code>允许远程访问 LAN</code>，就是将其设置为局域网的 Tailscale 的路由器</li>
+<li>Exit node ： 提供跳转功能，可以拿来翻墙用，，，具体参考<a href="https://blog.csdn.net/sillydanny/article/details/120653504">这篇</a></li>
+<li><a href="https://github.com/juanfont/headscale">headscale</a> ：开源服务器实现</li>
+<li><code>Expiry disabled</code>：设置授权一次，不会过期，默认6个月需要重新设置一次</li>
+<li><a href="https://tailscale.com/kb/1223/tailscale-funnel/">tailscale Funnel</a> : 可以将内网映射到公网</li>
+<li>修改设备名称啥的如下</li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://user-images.githubusercontent.com/9136049/246598275-34efab38-31b2-4525-b6f6-2d15fbcfe483.png" alt="image" loading="lazy"></figure>
+<ul>
+<li>共享网络</li>
+</ul>
+<p>可以通过邀请用户加到你的网络</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1686998913618.png" alt="" loading="lazy"></figure>
+<h3 id="iperf3-测速">iperf3 测速</h3>
+<p>中国移动与深圳宽带联通，移动 4G 的速率还是差一些，大概 <code>4.86 Mbits/sec</code></p>
+<p>服务端</p>
+<pre><code>C:\Users\admin\Downloads\iperf-3.1.3-win64&gt;iperf3 -s -i 2 -p 5201
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from 100.102.191.33, port 45016
+[  5] local 100.127.221.18 port 5201 connected to 100.102.191.33 port 45024
+[ ID] Interval           Transfer     Bandwidth
+[  5]   0.00-2.01   sec  1.01 MBytes  4.23 Mbits/sec
+[  5]   2.01-4.01   sec   594 KBytes  2.43 Mbits/sec
+[  5]   4.01-6.00   sec  1.26 MBytes  5.30 Mbits/sec
+[  5]   6.00-8.00   sec  1.43 MBytes  5.98 Mbits/sec
+[  5]   8.00-10.01  sec  1.50 MBytes  6.27 Mbits/sec
+[  5]  10.01-10.29  sec   199 KBytes  5.77 Mbits/sec
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  5]   0.00-10.29  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  5]   0.00-10.29  sec  5.97 MBytes  4.86 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+</code></pre>
+<p>客户端</p>
+<pre><code>./iperf3 -c 10.0.10.15 -p 5201 -i 2 -t 10 --get-server-output
+
+</code></pre>
+<p>如何时服务端和客户端都在联通宽带，大概 <code>50.5 Mbits/sec</code> 的速率，还行吧</p>
+<pre><code>Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from 100.102.191.33, port 38660
+[  5] local 100.127.221.18 port 5201 connected to 100.102.191.33 port 38664
+[ ID] Interval           Transfer     Bandwidth
+[  5]   0.00-2.01   sec  11.8 MBytes  49.6 Mbits/sec
+[  5]   2.01-4.01   sec  11.7 MBytes  48.9 Mbits/sec
+[  5]   4.01-6.00   sec  11.9 MBytes  50.1 Mbits/sec
+[  5]   6.00-8.00   sec  12.6 MBytes  53.0 Mbits/sec
+[  5]   8.00-10.00  sec  12.1 MBytes  50.7 Mbits/sec
+[  5]  10.00-10.03  sec   253 KBytes  76.7 Mbits/sec
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  5]   0.00-10.03  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  5]   0.00-10.03  sec  60.4 MBytes  50.5 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+</code></pre>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li>https://tailscale.com/</li>
+<li>https://pkgs.tailscale.com/stable/</li>
+<li><a href="http://iqotom.com/?p=1873">OpenWrt安装配置Tailscale实现内网穿透，异地组网</a></li>
+<li>https://github.com/adyanth/openwrt-tailscale-enabler</li>
+<li>https://github.com/adyanth/openwrt-tailscale-enabler</li>
+<li><a href="https://www.youtube.com/watch?v=pQi4DJ-9CGQ&amp;ab_channel=%E5%90%91%E5%8C%97">Tailscale 免费组建个人VPN，轻松外网访问所有设备，速度快、超简单。OpenWrt也可安装Tailscale，内网穿透如此简单。</a></li>
+<li>https://www.wundertech.net/how-to-set-up-tailscale-on-openwrt/</li>
+<li><a href="https://einverne.github.io/post/2023/03/tailscale-exit-nodes.html">Tailscale 出口节点功能配置流量出口</a></li>
+<li><a href="https://blog.csdn.net/sillydanny/article/details/120653504">TailScale 实现「出口节点」Exit Node（导向所有流量经这出口节点）</a></li>
+<li><a href="https://blog.laisky.com/p/tailscale/">近期折腾 tailscale 的一些心得</a></li>
+<li><a href="https://www.youtube.com/watch?v=W-ZhtlEdS-M&amp;ab_channel=%E5%BC%A0%E5%A4%A7%E4%B8%83">不需要独立ip的公网访问（tailscale Funnel）|Tailscale高级功能篇</a></li>
+</ul>
+<h3 id="同类">同类</h3>
+<ul>
+<li><a href="https://github.com/fatedier/frp">frp</a> :A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.</li>
+<li><a href="https://www.cpolar.com/">cpolar</a> : 公开一个本地Web站点至公网</li>
+<li><a href="https://www.zerotier.com/">zerotier</a> :ZeroTier lets you build modern, secure multi-point virtualized networks of almost any type. From robust peer-to-peer networking to multi-cloud mesh infrastructure, we enable global connectivity with the simplicity of a local network.</li>
+<li><a href="https://github.com/slackhq/nebula">Nebula</a> : A scalable overlay networking tool with a focus on performance, simplicity and security</li>
+<li><a href="https://github.com/gravitl/netmaker">Netmaker</a> :Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.</li>
+<li><a href="https://github.com/tonarino/innernet">innernet</a> : A private network system that uses WireGuard under the hood.</li>
+</ul>
+<h3 id="iperf3">iperf3</h3>
+<ul>
+<li>https://iperf.fr/iperf-download.php</li>
+<li><a href="https://zhuanlan.zhihu.com/p/546330081">Iperf3测速教程</a></li>
+</ul>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[MT3000 科学上网-安装OpenClash中继一个科学节点]]></title>
+        <id>https://mintisan.github.io/post/mt3000-with-openclash/</id>
+        <link href="https://mintisan.github.io/post/mt3000-with-openclash/">
+        </link>
+        <updated>2023-05-04T15:35:11.000Z</updated>
+        <summary type="html"><![CDATA[<p>MT3000 本身的系统是基于 OpenWRT 开发，进行科学上网非常方便，本身也支持中继，USB等模式，非常适合出差在酒店用。</p>
+<p>所以如果你想拥有可以利用现有网络【手机/网线/无线】，得到一个可以无需任何设置的科学上网环境【无线有线均可以】，那么MT3000是一个比较省心的选择【嗯，439块】【理论上任何一个支持无线的 OpenWRT 的系统应该都是可以的】</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>MT3000 本身的系统是基于 OpenWRT 开发，进行科学上网非常方便，本身也支持中继，USB等模式，非常适合出差在酒店用。</p>
+<p>所以如果你想拥有可以利用现有网络【手机/网线/无线】，得到一个可以无需任何设置的科学上网环境【无线有线均可以】，那么MT3000是一个比较省心的选择【嗯，439块】【理论上任何一个支持无线的 OpenWRT 的系统应该都是可以的】</p>
+<!-- more -->
+<h2 id="设置模式">设置模式</h2>
+<p>我这里是对我自己无线网络的中继，也就是无线扩展模式：</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1685173520383.png" alt="" loading="lazy"></figure>
+<h2 id="配置-openwrt">配置 OpenWRT</h2>
+<h3 id="配置软件源">配置软件源</h3>
+<p>进入 <code>系统 - 软件包-配置OPKG</code>，配置如下：</p>
+<pre><code>src/gz dllkids https://op.dllkids.xyz/packages/aarch64_cortex-a53
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1685173719999.png" alt="" loading="lazy"></figure>
+<p>配置完后，点击更新列表。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1685173869580.png" alt="" loading="lazy"></figure>
+<p>如果更新失败，可以尝试多次更新，如果多次更新还是不行，建议重置固件。</p>
+<h3 id="修改主题皮肤">修改主题皮肤</h3>
+<p>在筛选器中输入 <code>argon</code>【只是为了好看一点】，显示如下：<br>
+<img src="https://mintisan.github.io/post-images/1685173991469.png" alt="" loading="lazy"></p>
+<p>安装成功后，切换到系统页面，保存应用即可。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1685174053350.png" alt="" loading="lazy"></figure>
+<h3 id="下载isotreos">下载iSotreOS</h3>
+<p>在筛选器中输入 <code>luci-app-store</code>【后续装个Alist啥的也方便】，显示如下：<br>
+<img src="https://mintisan.github.io/post-images/1685174117672.png" alt="" loading="lazy"></p>
+<p>安装完后就可以手动安装 ipk/run 的离线安装包，比较直观和方便。</p>
+<p>期间遇到安装如下错误无视即可。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1685174298853.png" alt="" loading="lazy"></figure>
+<h3 id="手动更新-clash-插件">手动更新 Clash 插件</h3>
+<p>打开 <a href="https://github.com/AUK9527/Are-u-ok">Are-u-ok</a> 页面，下载 App 版本的 OpenClash：<br>
+<img src="https://mintisan.github.io/post-images/1685174235149.png" alt="" loading="lazy"></p>
+<p>拖进去安装安装即可：</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1685174336269.png" alt="" loading="lazy"></figure>
+<p>然后就是配置节点啥的【目前已经运行了20多天，没有重启，中间也没有断流，还是蛮稳定的】</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1685174865338.png" alt="" loading="lazy"></figure>
+<h2 id="其他">其他</h2>
+<p>如果支持 mesh 就完美了，，，</p>
+<h2 id="错误">错误</h2>
+<p>如果无法更新源，我这里确实碰到安装完 Clash 后，网页可以打开，但是软件源无法更新的情况。</p>
+<p>如果多次更新后还是不行，复位固件再来就好了。</p>
+<pre><code>我现在可以连接 MT3000 的wifi上网，但是更新包如下错误，感觉连不上服务器：
+Failed to send request: Operation not permitted
+Failed to send request: Operation not permitted
+Failed to send request: Operation not permitted
+Collected errors:
+ * opkg_download: Failed to download https://fw.gl-inet.com/releases/v21.02.3/kmod-4.2.1/aarch64_cortex-a53/mediatek/mt7981/Packages.gz, wget returned 4.
+ * opkg_download: Check your network settings and connectivity.
+
+ * opkg_download: Failed to download https://fw.gl-inet.com/releases/v21.02.3/packages-4.0/aarch64_cortex-a53/glinet/Packages.gz, wget returned 4.
+ * opkg_download: Check your network settings and connectivity.
+
+ * opkg_download: Failed to download https://fw.gl-inet.com/releases/v21.02.3/packages-4.0/aarch64_cortex-a53/packages/Packages.gz, wget returned 4.
+ * opkg_download: Check your network settings and connectivity.
+</code></pre>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1685173566165.png" alt="" loading="lazy"></figure>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=vfbxiaWtkPw&amp;ab_channel=%E6%82%9F%E7%A9%BA%E7%9A%84%E6%97%A5%E5%B8%B8">GL.iNet MT-3000无线wifi6路由器新手使用指南 不刷固件如何使用 | 如何妥善安装必备插件Passwall、OpenClash</a></li>
+<li><a href="https://docs.gl-inet.cn/3/video/istore/">iStore</a></li>
+<li><a href="https://www.bilibili.com/video/BV18Y4y187L5/?spm_id_from=888.80997.embed_other.whitelist&amp;vd_source=941a0e83b3b5f2e01c1c0b4a2083fadb">【iStore】家里OpenWrt路由玩得6， 这个插件一定要装！</a></li>
+<li><a href="https://openwrt.org/faq/failed_to_download_wget_returned_4#:~:text=This%20%E2%80%9Cfamous%E2%80%9D%20wget%204%20error,to%20do%20with%20opkg%20itself.">Failed to download, wget returned 4</a></li>
+<li><a href="https://op.dllkids.xyz/packages/aarch64_cortex-a53/">OpenWrt固件插件: /packages/aarch64_cortex-a53/</a></li>
+<li><a href="https://www.youtube.com/watch?v=0y9QOzpLlD0&amp;ab_channel=%E5%90%91%E5%8C%97">自带OpenWrt的Wi-Fi 6软路由，网速和信号超好跑满千兆，可安装iStore轻松下载插件 | GL-MT3000体验分享</a></li>
+<li><a href="https://github.com/luochongjun/istore/releases">luochongjun/istore</a></li>
+</ul>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[WARP - Cloudflare 家的全平台免费 VPN]]></title>
+        <id>https://mintisan.github.io/post/cloudflware-warp-free-vpn/</id>
+        <link href="https://mintisan.github.io/post/cloudflware-warp-free-vpn/">
+        </link>
+        <updated>2023-04-15T11:59:57.000Z</updated>
+        <summary type="html"><![CDATA[<p>Cloudflare 家的免费 VPN，可以作为备份不时之需，这里记录下 WARP 如何获取 Key 来升级为 WARP+，以及申请更好用的团队 Zero Trust 版本。</p>
+<p>【不过感觉这个羊毛很快会被国人薅成翻墙工具，然后 GFW 又将其卡之，，，】</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>Cloudflare 家的免费 VPN，可以作为备份不时之需，这里记录下 WARP 如何获取 Key 来升级为 WARP+，以及申请更好用的团队 Zero Trust 版本。</p>
+<p>【不过感觉这个羊毛很快会被国人薅成翻墙工具，然后 GFW 又将其卡之，，，】</p>
+<!-- more -->
+<h2 id="提前准备">提前准备</h2>
+<ul>
+<li>注册 Cloudflare 账号</li>
+<li>下载 Telegram</li>
+<li>下载 WARP 客户端</li>
+</ul>
+<h2 id="warp-warp">WARP -&gt; WARP+</h2>
+<p>下载安装完 WARP 后，打开直接连接：<br>
+<img src="https://mintisan.github.io/post-images/1681572988733.png" alt="" width="400" loading="lazy"></p>
+<p>我这边是无法使用的，网上有人反馈可以连接成功，有人反馈不行，一直停留在如下的 <code>Connecting</code>界面。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1681573013827.png" alt="" width="400" loading="lazy"></figure>
+<p>添加Telegram机器人@generatewarpplusbot，发送 <code>/generate</code> ，并计算结果即可<br>
+<img src="https://mintisan.github.io/post-images/1681571983142.jpeg" alt="" width="400" loading="lazy"></p>
+<p>然后，回到 WARP ，进行 Key 的添加，一个 Key 只能被5台设备同时添加，如果不行就换一个：<br>
+<img src="https://mintisan.github.io/post-images/1681573093049.png" alt="" width="600" loading="lazy"></p>
+<p>等待添加成功后如下所示：<br>
+<img src="https://mintisan.github.io/post-images/1681573151997.png" alt="" width="600" loading="lazy"></p>
+<p>完成后，再次打开 WARP 自动转变为 WARP+，如下：<br>
+<img src="https://mintisan.github.io/post-images/1681573209143.png" alt="" width="400" loading="lazy"></p>
+<p>点击连接，等待成功即可。<br>
+<img src="https://mintisan.github.io/post-images/1681573243609.png" alt="" width="400" loading="lazy"></p>
+<p>而后可以在终端可以 Ping 通 Google，打开 SpeedTest 进行测试下，速度还可以。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1681573301128.png" alt="" width="600" loading="lazy"></figure>
+<p>但是这个需要自己去找 Key，如果后面 Key 少了，咋办呢，开个团队版本吧，，，</p>
+<h2 id="warp-zero-trust-team">WARP+ -&gt; Zero Trust Team</h2>
+<p>打开 Cloudflare 官网，点击左侧 Zero Trust 注册一个免费团队，过程中需要绑定一个信用卡或者 PyalPal，参考<a href="https://www.wangwangit.com/WARP/">网站</a>。<br>
+<img src="https://mintisan.github.io/post-images/1681573980618.png" alt="" width="200" loading="lazy"></p>
+<p>然后再切换到设置界面【Zero Trust-WARP Client-Device enrollment permissions manager】，设置进入 Team 所支持的邮箱后缀【注意这里不是邮箱】。<br>
+<img src="https://mintisan.github.io/post-images/1681573840597.png" alt="" loading="lazy"></p>
+<p>当然如果你想修改团队名称【Zero Trust-General Settings】，也是可以的。<br>
+<img src="https://mintisan.github.io/post-images/1681573881740.png" alt="" loading="lazy"></p>
+<p>打开 WARP 的设置界面，打开 Login to Cloudflare Zero Trust 自动弹出网页，按照网页的提示输入团队名字，然后再输入预设的后缀邮箱来进行接收授权。<br>
+<img src="https://mintisan.github.io/post-images/1681627523957.png" alt="" width="400" loading="lazy"></p>
+<p>等待授权成功再回来 WARP 界面自动修改为 Zero Trust 界面如下：</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1681573627367.png" alt="" width="400" loading="lazy"></figure>
+<p>再打开 SpeedTest 进行测试下，速度比 WARP+ 还更快些，也用的更加的放心。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1681573702793.png" alt="" width="600" loading="lazy"></figure>
+<h2 id="不足之处">不足之处</h2>
+<ul>
+<li>IP 是会暴露的，很多人无法使用这个来进行 OpenAI 的访问</li>
+</ul>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://1.1.1.1/">1.1.1.1 : The free app that makes your Internet safer.</a></li>
+<li><a href="https://dash.cloudflare.com/">Cloudflare</a></li>
+<li><a href="https://www.youtube.com/watch?v=Se5kI07k9eA&amp;ab_channel=%E7%94%AC%E5%93%A5%E4%BE%83%E4%BE%83%E4%BE%83">WARP系列第1期（账户篇）：最强免费VPN？详解warp、warp+、zero trust三账户在warp官方客户端与CFwarp脚本（wgcf）上的设置教程，注册warp teams账户详细步骤</a></li>
+<li><a href="https://blog.misaka.rest/2023/02/08/cf-warp/">CloudFlare WARP 官方客户端详细使用教程 （持续更新）</a></li>
+<li><a href="https://www.wangwangit.com/WARP/">WARP使用教程</a></li>
+<li><a href="https://guoyk.xyz/posts/2023-04-12-cloudflare-zero-trust">使用免费的 Cloudflare Zero Trust 服务访问全球互联网</a></li>
+</ul>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+</feed>
