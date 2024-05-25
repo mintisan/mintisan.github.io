@@ -1,0 +1,303 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tipi-省心的折腾VPS服务器 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1716642795907">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Tipi-省心的折腾VPS服务器 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="闲来无事，看到搬瓦工新一代神机出炉，没忍住买了一年【😮‍💨，管不住贪便宜的手】，买都买了，要用起来啊，然后推特上看到有人推荐这玩意，试试吧。嘿，还不错，省心省力，那就用它来榨干 VPS。。。
+
+安装配置
+安装只需要一条命令即可
+➜ cu..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1716642795907" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Tipi-省心的折腾VPS服务器
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-01-15
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/tipi-easy-way-to-use-vps.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>闲来无事，看到搬瓦工新一代神机出炉，没忍住买了一年【😮‍💨，管不住贪便宜的手】，买都买了，要用起来啊，然后推特上看到有人推荐这玩意，试试吧。嘿，还不错，省心省力，那就用它来榨干 VPS。。。</p>
+<!-- more -->
+<h2 id="安装配置">安装配置</h2>
+<p>安装只需要一条命令即可</p>
+<pre><code class="language-shell">➜ curl -L https://setup.runtipi.com | bash
+...
+Tipi is now running
+
+       _,.
+     ,` -.)
+    '( _/'-\\-.
+   /,|`--._,-^|            ,
+   \_| |`-._/||          ,'|
+     |  `-, / |         /  /
+     |     || |        /  /
+      `r-._||/   __   /  /
+  __,-&lt;_     )`-/  `./  /
+ '  \   `---'   \   /  /
+     |           |./  /
+     /           //  /
+ \_/' \         |/  /
+  |    |   _,^-'/  /
+  |    , ``  (\/  /_
+   \,.-&gt;._    \X-=/^
+   (  /   `-._//^`
+    `Y-.____(__}
+     |     {__)
+           ()`
+
+Visit http://23.106.143.212/ to view the dashboard
+</code></pre>
+<p>安装后默认以<code>80</code>端口运行，直接输入 VPS 的 IP 地址即可打开管理面板。<br>
+当然也可以自定义下端口，毕竟 80 端口就那么一个，Tipi 安装后很绿色，就是目录下生成一个<code>runtipi</code>的目录，进入里面可以<code>启动/停止/配置/更新/删除</code>，不能更棒了。。。</p>
+<pre><code class="language-shell">➜  ~ ls
+install.sh  runtipi  virt-sysprep-firstboot.log
+...
+</code></pre>
+<p>当然也可以通过以下命令修改端口号：</p>
+<pre><code class="language-shell">➜  ~ cd runtipi
+➜  runtipi sudo ./scripts/stop.sh
+
+Stopping filebrowser
+Starting app script
+...
+➜  runtipi sudo ./scripts/start.sh --port 7000
+
+Cleaning logs folder...
+Removing app.log
+...
+Tipi is now running
+
+       _,.
+     ,` -.)
+    '( _/'-\\-.
+   /,|`--._,-^|            ,
+   \_| |`-._/||          ,'|
+     |  `-, / |         /  /
+     |     || |        /  /
+      `r-._||/   __   /  /
+  __,-&lt;_     )`-/  `./  /
+ '  \   `---'   \   /  /
+     |           |./  /
+     /           //  /
+ \_/' \         |/  /
+  |    |   _,^-'/  /
+  |    , ``  (\/  /_
+   \,.-&gt;._    \X-=/^
+   (  /   `-._//^`
+    `Y-.____(__}
+     |     {__)
+           ()`
+
+Visit http://23.106.143.212:7000/ to view the dashboard
+</code></pre>
+<p>其他 DNS 啥的参考主页有详细说明。</p>
+<h2 id="注册使用">注册使用</h2>
+<p>第一次使用需要注册成为用户：<br>
+<img src="https://mintisan.github.io/post-images/1673752337185.png" alt="" width="300" loading="lazy"></p>
+<p>登陆后默认面板界面显示 CPU/内存/硬盘 如下：<br>
+<img src="https://mintisan.github.io/post-images/1673752453157.png" alt="" loading="lazy"></p>
+<p>然后切换到 App Store 界面，开始玩起就 ok 了。<br>
+<img src="https://mintisan.github.io/post-images/1673752501567.png" alt="" loading="lazy"></p>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://github.com/meienberger/runtipi">meienberger/runtipi</a> : ⛺️ Tipi is a homeserver for everyone! One command setup, one click installs for your favorites self-hosted apps. ✨</li>
+<li><a href="https://github.com/meienberger/runtipi-appstore">meienberger/runtipi-appstore</a> : Official repository hosting the Runtipi App Store. Submit apps and updates here.</li>
+<li><a href="https://news.ycombinator.com/item?id=32775339">Tipi on HackNews</a></li>
+<li><a href="https://www.reddit.com/r/selfhosted/comments/uq5844/tipi_a_home_server_orchestrator_using_docker/">Tipi on Reddit</a></li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE">安装配置</a></li>
+<li><a href="#%E6%B3%A8%E5%86%8C%E4%BD%BF%E7%94%A8">注册使用</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/alist-best-way-to-use-network-disk/">
+              <h3 class="post-title">
+                Alist-目前使用网盘的最佳姿势
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
