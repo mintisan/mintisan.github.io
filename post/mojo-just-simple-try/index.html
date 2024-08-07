@@ -1,0 +1,337 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mojo ： AI 原生编程语言初体验 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1723029991777">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Mojo ： AI 原生编程语言初体验 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="随着昨天 Mojo 开源到 GitHub 后，想着刚好到周末，简单安装后跑跑看看语法啥，还挺有意思的。基本继承了 Python 的语法，但是也为了后续效率提供了一些编译时特性，比如既可以 REPL 直接动态运行，也可以编译成二进制可执行方式..." />
+    <meta name="keywords" content="开箱尝鲜" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1723029991777" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Mojo ： AI 原生编程语言初体验
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-03-30
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/pGSuk5JHS/" class="post-tag">
+                  # 开箱尝鲜
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/mojo-just-simple-try.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>随着昨天 Mojo 开源到 <a href="https://github.com/modularml/mojo">GitHub</a> 后，想着刚好到周末，简单安装后跑跑看看语法啥，还挺有意思的。基本继承了 <code>Python</code> 的语法，但是也为了后续效率提供了一些<strong>编译时特性</strong>，比如既可以 REPL 直接动态运行，也可以编译成二进制可执行方式；设定两种函数定义方式，以及对应两种变量声明方式；函数入参有的编译时确定，有的运行时确定；动态内存也是折中的给用户一定规则去管理，而不是完全类似 C 的完全用户管理，或者对用户透明的 <code>Python</code> 放手。<br>
+另外除了语法，另一个我关注的对深度学习模型这块的原生支持【比如设计/调试/训练/压缩/部署等】因为平台还不支持，只能后续待看。</p>
+<!-- more -->
+<h2 id="安装">安装</h2>
+<p>目前 <code>Mojo</code> 不支持 Windows，所以我就在我的 <code>macOS</code> 下安装【因为相比我的<code>Linux</code>有稍微好点的 <code>GPU</code>】，直接按照<a href="https://docs.modular.com/mojo/manual/get-started/">官方命令</a>就可以走完。安装成功后如下：</p>
+<pre><code>(base) ➜  ~ modular install max
+modular: error: A compatible package is unavailable for the current operating system and hardware. Please check https://modul.ar/systems for the list of currently supported platforms
+(base) ➜  ~ modular install mojo
+# Found release for https://packages.modular.com/mojo @ 24.2.0-c2427bc5-release
+# Downloading archive: packages/24.2.0-c2427bc5-release/mojo-arm64-apple-darwin22.6.0-24.2.0-c2427bc5-release-11-0.tar.gz
+Done         [ ███████████████████████████████████████████████████████████████████████████████████████████████████████████████ ] 100%     167MiB/167MiB @  30.6MiB/s 
+# Extracting downloaded archives. 
+# Extraction complete, setting configs...
+# Configs complete, running post-install hooks...
+
+🔥 Mojo installed! 🔥
+
+Mojo's Python virtual environment created at /Users/mintisan/.modular/pkg/packages.modular.com_mojo/venv
+
+If you are using ZSH (default on macOS), run the following commands:
+
+echo 'export MODULAR_HOME=&quot;/Users/mintisan/.modular&quot;' &gt;&gt; ~/.zshrc
+echo 'export PATH=&quot;/Users/mintisan/.modular/pkg/packages.modular.com_mojo/bin:$PATH&quot;' &gt;&gt; ~/.zshrc
+source ~/.zshrc
+
+If you are using bash, run the following commands:
+
+BASHRC=$( [ -f &quot;$HOME/.bash_profile&quot; ] &amp;&amp; echo &quot;$HOME/.bash_profile&quot; || echo &quot;$HOME/.bashrc&quot; )
+echo 'export MODULAR_HOME=&quot;/Users/mintisan/.modular&quot;' &gt;&gt; &quot;$BASHRC&quot;
+echo 'export PATH=&quot;/Users/mintisan/.modular/pkg/packages.modular.com_mojo/bin:$PATH&quot;' &gt;&gt; &quot;$BASHRC&quot;
+source &quot;$BASHRC&quot;
+
+Then enter 'mojo' to start the Mojo REPL.
+
+For tool help, enter 'mojo --help'.
+For more docs, see https://docs.modular.com/mojo.
+
+(base) ➜  ~ mojo --version
+mojo 24.2.0 (c2427bc5)
+(base) ➜  ~ brew upgrade modular
+==&gt; Downloading https://formulae.brew.sh/api/formula.jws.json
+##O=#     #
+==&gt; Downloading https://formulae.brew.sh/api/cask.jws.json
+##O=#     #
+Warning: modularml/packages/modular 0.6.0 already installed
+</code></pre>
+<p>注意：目前<code>2024-03-30</code>时候，<code>macOS</code> 无法直接通过 <code>modular</code> 安装 <code>max</code>，会提示如下错误：</p>
+<pre><code>(base) ➜  ~ modular install max
+modular: error: A compatible package is unavailable for the current operating system and hardware. Please check https://modul.ar/systems for the list of currently supported platforms
+</code></pre>
+<h2 id="hello-world">Hello World</h2>
+<p><code>REPL</code> 环境直接输入 <code>mojo</code> 即可启动</p>
+<pre><code>(base) ➜  ~ mojo
+Welcome to Mojo! 🔥
+
+Expressions are delimited by a blank line.
+Type `:quit` to exit the REPL and `:mojo help` for further assistance.
+
+  1&gt; print(&quot;Hello Wordl!&quot;)
+Hello Wordl!
+  2&gt; 
+</code></pre>
+<p>也可以直接运行 <code>mojo</code> 文件名</p>
+<pre><code>(base) ➜  mojo vim hello.mojo
+(base) ➜  mojo
+(base) ➜  mojo mojo hello.mojo 
+Hello World!
+(base) ➜  mojo cat hello.mojo 
+fn main():
+        print(&quot;Hello World!&quot;)
+(base) ➜  mojo
+</code></pre>
+<p>到这里为止，看 <code>mojo</code> 和 <code>Python</code> 类似都是动态解释语言，但是接下来我们可以像 C 一样去编译，，，</p>
+<pre><code>(base) ➜  mojo mojo build hello.mojo 
+(base) ➜  mojo ls
+hello      hello.mojo
+(base) ➜  mojo ./hello 
+Hello World!
+(base) ➜  mojo
+</code></pre>
+<p>哈哈，有点意思。</p>
+<p>也可以下载官方<a href="https://github.com/modularml/mojo/tree/main/examples">例程</a>跑跑看。</p>
+<h2 id="基本语法">基本语法</h2>
+<h3 id="变量">变量</h3>
+<p>在 <code>def</code> 函数内声明【也即定义】需要可以省略 <code>var</code> 描述，但是如果使用 <code>fn</code> 来定义的函数，则必须使用使用 <code>var</code> 放在变量的前面。</p>
+<p>Q : 为啥搞两种形式的方式来支持函数内的变量定义？</p>
+<h3 id="结构体">结构体</h3>
+<p>用 <code>struct</code> 名字好评啊，<code>C</code> 党大爱，而且其特性也更加偏向静态特性，其成员是在编译时就确定了，运行时无法修改。【不过有计划添加 Python-style 类的特性】</p>
+<h3 id="特征traits">特征(Traits)</h3>
+<p>没太看懂这个名字的表达，，，从过程来看，感觉看起来像是通过函数指针方式，传递这个功能【一个函数就是一个功能实现】给到函数或者结构体，也就是将功能赋予其他对象，那后续对象就可以通过内部对象【实现的时候应该就是指针】拥有了某些功能</p>
+<p>注：来自古老 C 魔法师的角度，，，</p>
+<p>Q ：但是这个好处是啥呢，除了抽象和模块化看起来有帮助。</p>
+<h3 id="入参">入参</h3>
+<p><code>parametric</code> 意味着说的编译时确定参数；<code>argument</code>意味着运行时生成。</p>
+<p>这里也有点意思，对函数输入的参数分成两类，一类是编译时确定，一类是运行时确定，这样可以为后续的效率提供一些优化空间。</p>
+<h3 id="块和语句">块和语句</h3>
+<p>基本语法和 <code>Python</code> 类型，采用空格进行缩进【<code>tab</code>和<code>4*空格</code>都可以】标记分块。</p>
+<h3 id="代码注释">代码注释</h3>
+<p>这块和 Python 的 <code>#</code>和<code> &quot;&quot;&quot; &quot;&quot;&quot;</code> 一样，不用再记一种额外的注释符号，来自 <code>C/Python/Matlab</code> 三种语言来回切换的怨念！！！</p>
+<h3 id="python-集成"><code>Python</code> 集成</h3>
+<p>作为 <code>Python</code> 的超级，直接使用 <code>numpy</code> 那是不在话下。</p>
+<h3 id="动态内存管理"><a href="https://docs.modular.com/mojo/manual/values/#memory-management-strategies">动态内存管理</a></h3>
+<p>有点意思，我不知道之前有没有大规模的编程语言用【一定的语法和规则】来让用户内存管理做到【完全由用户行管理，比如C】和【完全和用户无关，编程语言内置垃圾回收器，比如 Python】之间的一种方式。之前自己无聊的时候也想过，难道就没有一种中间态么，只能是这两个极端？表示后续很关注，，，</p>
+<h2 id="跑个模型">跑个模型</h2>
+<p>目前其对应的引擎 <code>max</code> 无法在 <code>macOS</code> 上安装，所以没办法跑起来。</p>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li>https://docs.modular.com/mojo/manual/get-started/</li>
+<li><a href="https://www.youtube.com/watch?v=5Sm9IVMet9c&amp;t=1s&amp;ab_channel=freeCodeCamp.org">Mojo Programming Language – Full Course for Beginners</a></li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="#hello-world">Hello World</a></li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95">基本语法</a>
+<ul>
+<li><a href="#%E5%8F%98%E9%87%8F">变量</a></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93">结构体</a></li>
+<li><a href="#%E7%89%B9%E5%BE%81traits">特征(Traits)</a></li>
+<li><a href="#%E5%85%A5%E5%8F%82">入参</a></li>
+<li><a href="#%E5%9D%97%E5%92%8C%E8%AF%AD%E5%8F%A5">块和语句</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81%E6%B3%A8%E9%87%8A">代码注释</a></li>
+<li><a href="#python-%E9%9B%86%E6%88%90"><code>Python</code> 集成</a></li>
+<li><a href="#%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86">动态内存管理</a></li>
+</ul>
+</li>
+<li><a href="#%E8%B7%91%E4%B8%AA%E6%A8%A1%E5%9E%8B">跑个模型</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/aliyun-webdav-local-disk/">
+              <h3 class="post-title">
+                Aliyun 通过 WebDav 映射到本地
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

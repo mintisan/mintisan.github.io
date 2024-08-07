@@ -1,0 +1,1847 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://mintisan.github.io</id>
+    <title>Mintisan</title>
+    <updated>2024-08-07T11:27:31.752Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://mintisan.github.io"/>
+    <link rel="self" href="https://mintisan.github.io/atom.xml"/>
+    <subtitle>On the way to be a practical idealism</subtitle>
+    <logo>https://mintisan.github.io/images/avatar.png</logo>
+    <icon>https://mintisan.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2024, Mintisan</rights>
+    <entry>
+        <title type="html"><![CDATA[Seafile 服务端安装]]></title>
+        <id>https://mintisan.github.io/post/seafile-server-setup-docker/</id>
+        <link href="https://mintisan.github.io/post/seafile-server-setup-docker/">
+        </link>
+        <updated>2024-07-15T05:08:38.000Z</updated>
+        <summary type="html"><![CDATA[<p><a href="https://www.seafile.com/home/">Seafile</a> 作为个人开源网盘服务有一个自动备份历史修改的功能，已经基本足够了。而且几乎所有客户端也都有，分享和权限管理也做的刚好足够。但是其安装方式从原来的 GitHub 脚本<a href="https://github.com/haiwen/seafile-docker">一键安装</a>，到后续的各种老的 Docker 安装，以及目前<a href="https://cloud.seafile.com/published/seafile-manual-cn/docker/%E7%94%A8Docker%E9%83%A8%E7%BD%B2Seafile.md">官网主页最新的 Docker 安装方式</a>，变化较大，这里记录实际安装的环境版本以及安装好后与 Nginx 冲突的问题。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p><a href="https://www.seafile.com/home/">Seafile</a> 作为个人开源网盘服务有一个自动备份历史修改的功能，已经基本足够了。而且几乎所有客户端也都有，分享和权限管理也做的刚好足够。但是其安装方式从原来的 GitHub 脚本<a href="https://github.com/haiwen/seafile-docker">一键安装</a>，到后续的各种老的 Docker 安装，以及目前<a href="https://cloud.seafile.com/published/seafile-manual-cn/docker/%E7%94%A8Docker%E9%83%A8%E7%BD%B2Seafile.md">官网主页最新的 Docker 安装方式</a>，变化较大，这里记录实际安装的环境版本以及安装好后与 Nginx 冲突的问题。</p>
+<!-- more -->
+<h2 id="系统版本选择">系统版本选择</h2>
+<p>我这里选择的是 Ubuntu 20.04 版本.</p>
+<h2 id="docker-安装">Docker 安装</h2>
+<p>不能用 snap 安装，都否会出现类似如下没有权限新建文件夹的错误：</p>
+<pre><code>ERROR: for worker-1 Cannot start service worker-1: error while creating mount source path '/var/www/html/lensin/html': mkdir /var/www: read-only file system
+</code></pre>
+<p>用官方的 apt-get 安装：</p>
+<pre><code>sudo apt-get update
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg
+sudo mkdir -m 0755 -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo \
+  &quot;deb [arch=&quot;$(dpkg --print-architecture)&quot; signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  &quot;$(. /etc/os-release &amp;&amp; echo &quot;$VERSION_CODENAME&quot;)&quot; stable&quot; | \
+  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+</code></pre>
+<p>常用命令</p>
+<pre><code>查看 Docker 版本和详细信息
+docker info
+查看正在运行的容器
+docker ps
+列出所有容器，包括已停止的容器：
+docker ps -a
+删除引用该镜像的容器:
+docker rm &lt;CONTAINER ID&gt;
+列出所有安装的镜像
+docker images
+强制删除镜像
+docker rmi -f &lt;IMAGE ID&gt;
+
+</code></pre>
+<h2 id="seafile-安装">Seafile 安装</h2>
+<p>下载 <a href="https://cloud.seafile.com/d/f4e8883db63845d29350/"><code>docker-compose.yml</code> 文件</a>，我这里选择的是 11.0 CE 社区版本，并修改管理员账号(SEAFILE_ADMIN_EMAIL)，密码(SEAFILE_ADMIN_PASSWORD)以及服务器地址(SEAFILE_SERVER_HOSTNAME)。</p>
+<pre><code>services:
+  db:
+    image: mariadb:10.11
+    container_name: seafile-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=db_dev  # Requested, set the root's password of MySQL service.
+      - MYSQL_LOG_CONSOLE=true
+      - MARIADB_AUTO_UPGRADE=1
+    volumes:
+      - /opt/seafile-mysql/db:/var/lib/mysql  # Requested, specifies the path to MySQL data persistent store.
+    networks:
+      - seafile-net
+
+  memcached:
+    image: memcached:1.6.18
+    container_name: seafile-memcached
+    entrypoint: memcached -m 256
+    networks:
+      - seafile-net
+          
+  seafile:
+    image: seafileltd/seafile-mc:11.0-latest
+    container_name: seafile
+    ports:
+      - &quot;80:80&quot;
+#      - &quot;443:443&quot;  # If https is enabled, cancel the comment.
+    volumes:
+      - /opt/seafile-data:/shared   # Requested, specifies the path to Seafile data persistent store.
+    environment:
+      - DB_HOST=db
+      - DB_ROOT_PASSWD=db_dev  # Requested, the value shuold be root's password of MySQL service.
+      - TIME_ZONE=Asia/Shanghai # Optional, default is UTC. Should be uncomment and set to your local time zone.
+      - SEAFILE_ADMIN_EMAIL=xxx@163.com # Specifies Seafile admin user, default is 'me@example.com'.
+      - SEAFILE_ADMIN_PASSWORD=xxx     # Specifies Seafile admin password, default is 'asecret'.
+      - SEAFILE_SERVER_LETSENCRYPT=false   # Whether use letsencrypt to generate cert.
+      - SEAFILE_SERVER_HOSTNAME=161.xx.xxx.xx # Specifies your host name.
+    depends_on:
+      - db
+      - memcached
+    networks:
+      - seafile-net
+
+networks:
+  seafile-net:
+</code></pre>
+<p>然后，执行 <code>docker compose up -d</code> 命令即可。进入 Seafile 页面用 <code>docker-compose.yml</code> 设置的管理员账号密码登陆即可。</p>
+<p>注：如果有碰到 <code>80</code> 端口倍 Nginx 占用，表现为打开服务器地址显示 Nginx 页面，则通过 <code>sudo systemctl stop nginx</code> 将这个服务停止，然后再执行 docker 运行命令即可。完整过程如下所示：</p>
+<pre><code>root@MicroFB:~# docker compose up -d
+[+] Running 0/3
+[+] Running 33/33                                                                                                                                            0.3s 
+ ✔ db Pulled                                                                                                                                                27.7s 
+   ✔ 3713021b0277 Pull complete                                                                                                                             10.5s 
+   ✔ b7ed4502c671 Pull complete                                                                                                                             10.6s 
+   ✔ ccee233ae035 Pull complete                                                                                                                             12.5s 
+   ✔ 0c8d32e87829 Pull complete                                                                                                                             12.6s 
+   ✔ 257a4184da5c Pull complete                                                                                                                             12.7s 
+   ✔ 079eb852aa15 Pull complete                                                                                                                             26.3s 
+   ✔ c6b6414a516a Pull complete                                                                                                                             26.4s 
+   ✔ 96faa6efb673 Pull complete                                                                                                                             26.4s 
+ ✔ memcached Pulled                                                                                                                                         18.2s 
+   ✔ 3f9582a2cbe7 Pull complete                                                                                                                             16.0s 
+   ✔ 2b4a13da561f Pull complete                                                                                                                             16.2s 
+   ✔ 98ecfc959437 Pull complete                                                                                                                             16.4s 
+   ✔ 03ca80a0778b Pull complete                                                                                                                             16.8s 
+   ✔ 143814477eae Pull complete                                                                                                                             16.8s 
+   ✔ 3c2bc07c763e Pull complete                                                                                                                             16.8s 
+ ✔ seafile Pulled                                                                                                                                           56.5s 
+   ✔ 3dd181f9be59 Pull complete                                                                                                                             12.6s 
+   ✔ d700e64e05a2 Pull complete                                                                                                                             12.7s 
+   ✔ c378ae4eca3c Pull complete                                                                                                                             22.7s 
+   ✔ ebd7cb07e8d9 Pull complete                                                                                                                             22.8s 
+   ✔ 673ebd0b2c79 Pull complete                                                                                                                             27.3s 
+   ✔ 8f3a871686f0 Pull complete                                                                                                                             30.1s 
+   ✔ 491259946e61 Pull complete                                                                                                                             32.3s 
+   ✔ e6b2a7810eae Pull complete                                                                                                                             38.3s 
+   ✔ b733a29f4802 Pull complete                                                                                                                             49.2s 
+   ✔ 4260865b66b4 Pull complete                                                                                                                             49.3s 
+   ✔ 74053ed00b75 Pull complete                                                                                                                             49.3s 
+   ✔ 643b124b9da1 Pull complete                                                                                                                             49.3s 
+   ✔ eca46377af8e Pull complete                                                                                                                             49.5s 
+   ✔ 47c599991f4c Pull complete                                                                                                                             49.5s 
+   ✔ 1ae61a16c5a1 Pull complete                                                                                                                             49.5s 
+   ✔ 8fa7edb38442 Pull complete                                                                                                                             55.2s 
+[+] Running 3/4
+ ✔ Network root_seafile-net     Created                                                                                                                      0.1s 
+ ✔ Container seafile-memcached  Started                                                                                                                      1.5s 
+ ✔ Container seafile-mysql      Started                                                                                                                      1.5s 
+ ⠴ Container seafile            Starting                                                                                                                     1.5s 
+Error response from daemon: driver failed programming external connectivity on endpoint seafile (cb5121ad6d6fc6b826f87d668f8b3f960d15a017e8788637b6ecea6c050320f0): failed to bind port 0.0.0.0:80/tcp: Error starting userland proxy: listen tcp4 0.0.0.0:80: bind: address already in use
+root@MicroFB:~# 
+root@MicroFB:~# docker images
+REPOSITORY              TAG           IMAGE ID       CREATED         SIZE
+seafileltd/seafile-mc   11.0-latest   f513b59a77cd   2 hours ago     1.39GB
+mariadb                 10.11         fccf0a9f80df   8 weeks ago     404MB
+memcached               1.6.18        0730201b15c1   17 months ago   89.3MB
+root@MicroFB:~# sudo lsof -i :80
+COMMAND   PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+nginx   20048     root    6u  IPv4  79714      0t0  TCP *:http (LISTEN)
+nginx   20048     root    7u  IPv6  79715      0t0  TCP *:http (LISTEN)
+nginx   20049 www-data    3u  IPv4  79992      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60852 (ESTABLISHED)
+nginx   20049 www-data    6u  IPv4  79714      0t0  TCP *:http (LISTEN)
+nginx   20049 www-data    7u  IPv6  79715      0t0  TCP *:http (LISTEN)
+nginx   20049 www-data   11u  IPv4  80202      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:15291 (ESTABLISHED)
+nginx   20049 www-data   12u  IPv4  80203      0t0  TCP MicroFB:http-&gt;178.157.57.117.16clouds.com:51641 (ESTABLISHED)
+nginx   20049 www-data   13u  IPv4  80252      0t0  TCP MicroFB:http-&gt;175.152.79.16:10373 (ESTABLISHED)
+nginx   20049 www-data   14u  IPv4  81189      0t0  TCP MicroFB:http-&gt;178.157.57.117.16clouds.com:51642 (ESTABLISHED)
+nginx   20049 www-data   15u  IPv4  82164      0t0  TCP MicroFB:http-&gt;175.152.79.16:10374 (ESTABLISHED)
+nginx   20049 www-data   16u  IPv4  91290      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:61131 (ESTABLISHED)
+nginx   20049 www-data   17u  IPv4  84293      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:15317 (ESTABLISHED)
+nginx   20049 www-data   18u  IPv4  84993      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60872 (ESTABLISHED)
+nginx   20049 www-data   19u  IPv4  84994      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60870 (ESTABLISHED)
+nginx   20049 www-data   20u  IPv4  84995      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60871 (ESTABLISHED)
+nginx   20049 www-data   21u  IPv4  84997      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60873 (ESTABLISHED)
+nginx   20049 www-data   22u  IPv4  95716      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:15956 (ESTABLISHED)
+root@MicroFB:~# sudo systemctl stop nginx
+root@MicroFB:~# sudo netstat -tuln | grep :80
+sudo: netstat: command not found
+root@MicroFB:~# apt-get install netstat
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+E: Unable to locate package netstat
+root@MicroFB:~# docker images
+REPOSITORY              TAG           IMAGE ID       CREATED         SIZE
+seafileltd/seafile-mc   11.0-latest   f513b59a77cd   2 hours ago     1.39GB
+mariadb                 10.11         fccf0a9f80df   8 weeks ago     404MB
+memcached               1.6.18        0730201b15c1   17 months ago   89.3MB
+root@MicroFB:~# docker ps
+CONTAINER ID   IMAGE              COMMAND                  CREATED         STATUS         PORTS       NAMES
+503a0522b070   memcached:1.6.18   &quot;memcached -m 256&quot;       2 minutes ago   Up 2 minutes   11211/tcp   seafile-memcached
+e86086fd9f89   mariadb:10.11      &quot;docker-entrypoint.s…&quot;   2 minutes ago   Up 2 minutes   3306/tcp    seafile-mysql
+root@MicroFB:~# docker-compose up -d
+
+Command 'docker-compose' not found, but can be installed with:
+
+snap install docker          # version 24.0.5, or
+apt  install docker-compose  # version 1.25.0-1
+
+See 'snap info docker' for additional versions.
+
+root@MicroFB:~# docker compose up -d
+[+] Running 3/3
+ ✔ Container seafile-memcached  Running                                                                                                                      0.0s 
+ ✔ Container seafile-mysql      Running                                                                                                                      0.0s 
+ ✔ Container seafile            Started                                                                                                                      0.7s 
+root@MicroFB:~# 
+root@MicroFB:~# 
+root@MicroFB:~# docker ps
+CONTAINER ID   IMAGE                               COMMAND                  CREATED         STATUS          PORTS                               NAMES
+de29eaa96e6d   seafileltd/seafile-mc:11.0-latest   &quot;/sbin/my_init -- /s…&quot;   3 minutes ago   Up 13 seconds   0.0.0.0:80-&gt;80/tcp, :::80-&gt;80/tcp   seafile
+503a0522b070   memcached:1.6.18                    &quot;memcached -m 256&quot;       3 minutes ago   Up 3 minutes    11211/tcp                           seafile-memcached
+e86086fd9f89   mariadb:10.11                       &quot;docker-entrypoint.s…&quot;   3 minutes ago   Up 3 minutes    3306/tcp                            seafile-mysql
+root@MicroFB:~# docker ps
+CONTAINER ID   IMAGE                               COMMAND                  CREATED         STATUS          PORTS                               NAMES
+de29eaa96e6d   seafileltd/seafile-mc:11.0-latest   &quot;/sbin/my_init -- /s…&quot;   3 minutes ago   Up 21 seconds   0.0.0.0:80-&gt;80/tcp, :::80-&gt;80/tcp   seafile
+503a0522b070   memcached:1.6.18                    &quot;memcached -m 256&quot;       3 minutes ago   Up 3 minutes    11211/tcp                           seafile-memcached
+e86086fd9f89   mariadb:10.11                       &quot;docker-entrypoint.s…&quot;   3 minutes ago   Up 3 minutes    3306/tcp                            seafile-mysql
+</code></pre>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li>https://cloud.seafile.com/published/seafile-manual-cn/docker/%E7%94%A8Docker%E9%83%A8%E7%BD%B2Seafile.md</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[OpenVPN 服务器自建和使用]]></title>
+        <id>https://mintisan.github.io/post/openvpn-server-selfhost/</id>
+        <link href="https://mintisan.github.io/post/openvpn-server-selfhost/">
+        </link>
+        <updated>2024-06-28T09:46:54.000Z</updated>
+        <summary type="html"><![CDATA[<p>OpenVPN 这个技术是很老的技术，常用于企业或者学校比较多。之前买了 VPS 后想过用这个来科学上网，但是服务器端搭建安装还是挺麻烦的，最近看到 <a href="https://github.com/angristan/openvpn-install">openvpn-install</a> 项目可以一键安装，就试试看喽。对比 <code>tailscale</code> 下载速率相差不大，上传速率没有其优秀。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>OpenVPN 这个技术是很老的技术，常用于企业或者学校比较多。之前买了 VPS 后想过用这个来科学上网，但是服务器端搭建安装还是挺麻烦的，最近看到 <a href="https://github.com/angristan/openvpn-install">openvpn-install</a> 项目可以一键安装，就试试看喽。对比 <code>tailscale</code> 下载速率相差不大，上传速率没有其优秀。</p>
+<!-- more -->
+<h2 id="安装-openvpn-服务器">安装 OpenVPN 服务器</h2>
+<p>用<a href="https://github.com/angristan/openvpn-install">仓库</a>的三步走即可启动安装【VPS 需要在海外，你懂得】。</p>
+<pre><code>root@warm-bump-2:~# curl -O https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 40923  100 40923    0     0  92004      0 --:--:-- --:--:-- --:--:-- 92168
+root@warm-bump-2:~# ls
+openvpn-install.sh  virt-sysprep-firstboot.log
+root@warm-bump-2:~# chmod +x openvpn-install.sh
+root@warm-bump-2:~# ./openvpn-install.sh
+Welcome to the OpenVPN installer!
+...
+</code></pre>
+<p>一路下一步使用默认配置即可。</p>
+<pre><code>root@warm-bump-2:~# ./openvpn-install.sh
+Welcome to the OpenVPN installer!
+The git repository is available at: https://github.com/angristan/openvpn-install
+
+I need to ask you a few questions before starting the setup.
+You can leave the default options and just press enter if you are ok with them.
+
+I need to know the IPv4 address of the network interface you want OpenVPN listening to.
+Unless your server is behind NAT, it should be your public IPv4 address.
+IP address: 28.xxx.xxx.xxx
+
+Checking for IPv6 connectivity...
+
+Your host does not appear to have IPv6 connectivity.
+
+Do you want to enable IPv6 support (NAT)? [y/n]: n
+
+What port do you want OpenVPN to listen to?
+   1) Default: 1194
+   2) Custom
+   3) Random [49152-65535]
+Port choice [1-3]: 1
+
+What protocol do you want OpenVPN to use?
+UDP is faster. Unless it is not available, you shouldn't use TCP.
+   1) UDP
+   2) TCP
+Protocol [1-2]: 1
+
+What DNS resolvers do you want to use with the VPN?
+   1) Current system resolvers (from /etc/resolv.conf)
+   2) Self-hosted DNS Resolver (Unbound)
+   3) Cloudflare (Anycast: worldwide)
+   4) Quad9 (Anycast: worldwide)
+   5) Quad9 uncensored (Anycast: worldwide)
+   6) FDN (France)
+   7) DNS.WATCH (Germany)
+   8) OpenDNS (Anycast: worldwide)
+   9) Google (Anycast: worldwide)
+   10) Yandex Basic (Russia)
+   11) AdGuard DNS (Anycast: worldwide)
+   12) NextDNS (Anycast: worldwide)
+   13) Custom
+DNS [1-12]: 11
+
+Do you want to use compression? It is not recommended since the VORACLE attack makes use of it.
+Enable compression? [y/n]: n
+
+Do you want to customize encryption settings?
+Unless you know what you're doing, you should stick with the default parameters provided by the script.
+Note that whatever you choose, all the choices presented in the script are safe. (Unlike OpenVPN's defaults)
+See https://github.com/angristan/openvpn-install#security-and-encryption to learn more.
+
+Customize encryption settings? [y/n]: n
+
+Okay, that was all I needed. We are ready to setup your OpenVPN server now.
+You will be able to generate a client at the end of the installation.
+Press any key to continue...
+Hit:1 http://archive.ubuntu.com/ubuntu jammy InRelease
+...
+</code></pre>
+<p>等待安装结束，输入文件名并回车即可。</p>
+<pre><code>...
+Created symlink /etc/systemd/system/multi-user.target.wants/iptables-openvpn.service → /etc/systemd/system/iptables-openvpn.service.
+
+Tell me a name for the client.
+The name must consist of alphanumeric character. It may also include an underscore or a dash.
+Client name: mintisan
+
+Do you want to protect the configuration file with a password?
+(e.g. encrypt the private key with a password)
+   1) Add a passwordless client
+   2) Use a password for the client
+Select an option [1-2]: 1
+
+* Using SSL: openssl OpenSSL 3.0.2 15 Mar 2022 (Library: OpenSSL 3.0.2 15 Mar 2022)
+
+* Using Easy-RSA configuration: /etc/openvpn/easy-rsa/vars
+
+* The preferred location for 'vars' is within the PKI folder.
+  To silence this message move your 'vars' file to your PKI
+  or declare your 'vars' file with option: --vars=&lt;FILE&gt;
+-----
+
+Notice
+------
+Keypair and certificate request completed. Your files are:
+req: /etc/openvpn/easy-rsa/pki/reqs/mintisan.req
+key: /etc/openvpn/easy-rsa/pki/private/mintisan.key
+Using configuration from /etc/openvpn/easy-rsa/pki/eb0610d5/temp.a1d0189c
+Check that the request matches the signature
+Signature ok
+The Subject's Distinguished Name is as follows
+commonName            :ASN.1 12:'mintisan'
+Certificate is to be certified until Jul 26 09:57:14 2034 GMT (3650 days)
+
+Write out database with 1 new entries
+Data Base Updated
+
+Notice
+------
+Certificate created at:
+* /etc/openvpn/easy-rsa/pki/issued/mintisan.crt
+
+Notice
+------
+Inline file created:
+* /etc/openvpn/easy-rsa/pki/inline/mintisan.inline
+Client mintisan added.
+
+The configuration file has been written to /root/mintisan.ovpn.
+Download the .ovpn file and import it in your OpenVPN client.
+root@warm-bump-2:~# ls
+mintisan.ovpn  openvpn-install.sh  virt-sysprep-firstboot.log
+root@warm-bump-2:~# 
+
+</code></pre>
+<p>下载生成 <code>ovpn</code> 配置文件到本地</p>
+<pre><code>scp -P [端口号] [用户名]@[远程主机地址]:[远程文件路径] .
+</code></pre>
+<p>附加几个常用命令：</p>
+<pre><code># 查看状态
+sudo systemctl status openvpn-server@server.service
+# 重启服务
+sudo systemctl restart openvpn-server@server.service
+# 停止服务
+sudo systemctl stop openvpn-server@server.service
+# 启动服务
+sudo systemctl start openvpn-server@server.service
+</code></pre>
+<h2 id="下载并配置客户端">下载并配置客户端</h2>
+<p>直接从 <a href="https://openvpn.net/">OpenVPN 官网</a> 下载对应的客户端，并导入即可。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1722162269406.png" alt="" width="400" loading="lazy"></figure>
+<h2 id="tailscale-速度对比">tailscale 速度对比</h2>
+<p>采用同一个节点，对比先后对比测试，可以看到如果是同一个 IP 地址，以及供应商，两者的下载速率相差不大，上传速率 tailscale 优秀不少。</p>
+<p>OpenVPN 速度如下：<br>
+<img src="https://mintisan.github.io/post-images/1722162274089.png" alt="" loading="lazy"></p>
+<p>Tailscale 速率如下：<br>
+<img src="https://mintisan.github.io/post-images/1722162278024.png" alt="" loading="lazy"></p>
+<p>但是如果更换供应商，则速率有不少差异。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1722162282538.png" alt="" loading="lazy"></figure>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://omts.me/blog/openvpn-install/">OpenVPN 快速安装与使用</a></li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Ubuntu 20.04 eGPU CUDA 开发环境搭建]]></title>
+        <id>https://mintisan.github.io/post/ubuntu-2004-egpu-cuda-dev-environment/</id>
+        <link href="https://mintisan.github.io/post/ubuntu-2004-egpu-cuda-dev-environment/">
+        </link>
+        <updated>2024-05-09T04:32:58.000Z</updated>
+        <summary type="html"><![CDATA[<p>因为要用学习深度学习的剪枝量化，看到 <a href="https://github.com/quic/aimet">AI Model Efficiency Toolkit (AIMET)<br>
+</a> 最近更新还行，然后就去安装，发现只支持 Linux 系统，Ubuntu 的系统也有要求，然后加支持特定版本的 CUDA 以及特定版本的 Torch 和 Tensorflow，然后就有了这一篇记录。坑还是挺多的，记录一下方便后续搭建。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>因为要用学习深度学习的剪枝量化，看到 <a href="https://github.com/quic/aimet">AI Model Efficiency Toolkit (AIMET)<br>
+</a> 最近更新还行，然后就去安装，发现只支持 Linux 系统，Ubuntu 的系统也有要求，然后加支持特定版本的 CUDA 以及特定版本的 Torch 和 Tensorflow，然后就有了这一篇记录。坑还是挺多的，记录一下方便后续搭建。</p>
+<!-- more -->
+<h2 id="安装系统">安装系统</h2>
+<p>安装完 Ubuntu 20.04 后重启，如果看到如下提示升级 22.04，不能升级，点击 <code>Don't Upgrade</code>。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1716127418009.png" alt="" width="400" loading="lazy"></figure>
+<p>并且点击 ok 确认不进行升级。</p>
+<h2 id="安装-no-machine">安装 no-machine</h2>
+<p>需要预先准备好<a href="https://download.nomachine.com/download/8.11/Linux/nomachine_8.11.3_4_amd64.deb">离线 <code>deb</code> 安装包</a>，并用 <code>dbkg</code> 进行本地安装如下【比较好的是安装完设置好了自动重启】：</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sudo dpkg -i ./nomachine_8.11.3_4_amd64.deb 
+[sudo] password for mintisan: 
+Selecting previously unselected package nomachine.
+(Reading database ... 180009 files and directories currently installed.)
+Preparing to unpack ./nomachine_8.11.3_4_amd64.deb ...
+Unpacking nomachine (8.11.3-4) ...
+Setting up nomachine (8.11.3-4) ...
+NX&gt; 700 Starting installation at: Sun, 19 May 2024 21:55:08.
+NX&gt; 700 Using installation profile: Ubuntu.
+NX&gt; 700 Installation log is: /usr/NX/var/log/nxinstall.log.
+NX&gt; 700 Installing nxrunner version: 8.11.3.
+NX&gt; 700 Installing nxplayer version: 8.11.3.
+NX&gt; 700 Installing nxnode version: 8.11.3.
+NX&gt; 700 Installing nxserver version: 8.11.3.
+NX&gt; 700 Installation completed at: Sun, 19 May 2024 21:55:18.
+NX&gt; 700 NoMachine was configured to run the following services:
+NX&gt; 700 NX service on port: 4000
+</code></pre>
+<p>然后在打开 NoMachine Server 可以看到本地的地址以及端口如下：<br>
+<img src="https://mintisan.github.io/post-images/1716127248019.png" alt="" width="400" loading="lazy"></p>
+<p>本地连接，并用安装时候的账号和密码登录即可。</p>
+<p>注意在显示的时候需要适应本地窗口分辨率如下，否则会导致桌面显示不全。<br>
+<img src="https://mintisan.github.io/post-images/1716130310719.png" alt="" width="600" loading="lazy"></p>
+<h2 id="安装-tailscale">安装 tailscale</h2>
+<p>如果不安装 tailscale ，则终端啥的下载很慢，如下所示：<br>
+【当然也可以换源，不过后面还是需要全局翻墙，早换早省心】</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sudo apt-get update -y
+Hit:1 http://security.ubuntu.com/ubuntu focal-security InRelease
+Err:2 http://cn.archive.ubuntu.com/ubuntu focal InRelease     
+  Temporary failure resolving 'cn.archive.ubuntu.com'
+Err:3 http://cn.archive.ubuntu.com/ubuntu focal-updates InRelease
+  Temporary failure resolving 'cn.archive.ubuntu.com'
+Err:4 http://cn.archive.ubuntu.com/ubuntu focal-backports InRelease
+  Temporary failure resolving 'cn.archive.ubuntu.com'
+Reading package lists... Done           
+W: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/dists/focal/InRelease  Temporary failure resolving 'cn.archive.ubuntu.com'
+W: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/dists/focal-updates/InRelease  Temporary failure resolving 'cn.archive.ubuntu.com'
+W: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/dists/focal-backports/InRelease  Temporary failure resolving 'cn.archive.ubuntu.com'
+W: Some index files failed to download. They have been ignored, or old ones used instead.
+</code></pre>
+<p>安装 tailscale 需要登录 tailscale，而我的 tailscale 是用 Google 作为账号，那么就又到了一个鸡生蛋，蛋生鸡的时候。只能借助局域网内其他的代理来让浏览器可以登录 Google。设置本地代理如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1716127871126.png" alt="" width="400" loading="lazy"></figure>
+<p>注：我用的手机端的 SurfBoard 来进行代理，PC 端的 Clash 也可以，也就支持局域网代理中转的都是可以的。当然如果你有全局科学上网环境，也是可以的。</p>
+<p>此时，就可以在 Chrome 端登录 tailscale 账号了。接下来，用<a href="https://tailscale.com/download">命令行安装 tailscale</a> 如下【需要预先安装 curl 等常用工具】：</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ curl -fsSL https://tailscale.com/install.sh | sh
+
+Command 'curl' not found, but can be installed with:
+
+sudo snap install curl  # version 8.1.2, or
+sudo apt  install curl  # version 7.68.0-1ubuntu2.20
+
+See 'snap info curl' for additional versions.
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sudo apt-get install openssh-server tmux git zsh neofetch htop vim python3-pip wget curl hwinfo -y
+...
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ curl -fsSL https://tailscale.com/install.sh | sh
+Installing Tailscale for ubuntu focal, using method apt
+...
+Setting up tailscale (1.66.3) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/tailscaled.service → /lib/systemd/system/tailscaled.service.
++ [ false = true ]
++ set +x
+Installation complete! Log in to start using Tailscale by running:
+
+sudo tailscale up
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sudo tailscale up
+
+
+To authenticate, visit:
+
+	https://login.tailscale.com/a/1aeaea1801138c
+
+Success.
+Some peers are advertising routes but --accept-routes is false
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ 
+</code></pre>
+<p>输入 <code>sudo tailscale up</code> 再打开输出的链接，完成新设备到账号的绑定，绑定后就可以通过以下命令完成使用外部节点，完成所有的流量通过 VPN 来中专访问。</p>
+<p>查看可以用作 <code>exist-node</code> 的 IP 地址：</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ tailscale ip
+100.97.189.1
+fd7a:115c:a1e0::9a01:bd01
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ tailscale status
+100.97.189.1    ubuntu-nuc9vxqnx     fovwin@      linux   -
+100.70.247.65   bandwagong-768.tail1456b.ts.net ran.thinker@ linux   idle; offers exit node
+100.85.156.97   gl-mt3000            fovwin@      linux   -
+100.71.139.27   mac-mini-m1          fovwin@      macOS   offline
+100.122.227.134 mac-studio           fovwin@      macOS   -
+100.74.183.119  macbook-air-m3       fovwin@      macOS   offline
+100.88.126.81   macbook-pro-2018     fovwin@      macOS   offline
+100.70.233.114  nuc13-extreme-980pro fovwin@      windows offline
+100.75.92.65    oneplus-a6010        fovwin@      android offline
+100.123.114.32  r2s-istoreos         fovwin@      linux   offline
+100.122.151.42  r4s-istoreos         fovwin@      linux   -
+100.95.124.152  racknerd-6e9267-2t   fovwin@      linux   idle; offers exit node
+100.103.22.149  racknerd-f16b55-4t   fovwin@      linux   idle; offers exit node
+100.78.129.159  raspberrypi5         fovwin@      linux   -
+100.117.50.87   ser-pro-5800-archlinux fovwin@      linux   -
+100.108.77.59   ser6-pro-vest-windows fovwin@      windows offline
+100.80.43.50    tencent-ubuntu-2mbps fovwin@      linux   -
+100.120.74.6    thinkpad-pibo        fovwin@      windows offline
+100.110.45.44   vmware-ecg-server    fovwin@      linux   offline
+100.113.135.2   vps-bandwagon-1000g  fovwin@      linux   idle; offers exit node
+100.70.95.62    vps-bandwagon-500g   fovwin@      linux   idle; offers exit node
+100.81.105.47   vps-bandwagon-768g   fovwin@      linux   idle; offers exit node
+100.102.191.33  xiaomi-13            fovwin@      android offline
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sudo tailscale up --exit-node=100.113.135.2 --reset
+Some peers are advertising routes but --accept-routes is false
+</code></pre>
+<p>再输入以上命令后， no-machine 会自动断开，此时需要在 no-machine 中重新设置 tailscale 的地址如下：<br>
+<img src="https://mintisan.github.io/post-images/1716129321690.png" alt="" loading="lazy"></p>
+<p>此时在终端就可以看到 ping 通 Google 了，完成了本地全局科学上网。</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ ping google.com
+PING google.com (172.217.25.174) 56(84) bytes of data.
+64 bytes from sin01s16-in-f14.1e100.net (172.217.25.174): icmp_seq=1 ttl=118 time=201 ms
+64 bytes from sin01s16-in-f14.1e100.net (172.217.25.174): icmp_seq=2 ttl=118 time=204 ms
+^C
+--- google.com ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1000ms
+rtt min/avg/max/mdev = 200.994/202.248/203.503/1.254 ms
+</code></pre>
+<p>然后把网络代理也可以关掉了。</p>
+<h2 id="安装系统常用工具">安装系统常用工具</h2>
+<p><a href="https://ohmyz.sh/#install">安装 oh-my-zsh</a> 如下，并设置 zsh 为默认 shell：</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sh -c &quot;$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)&quot;
+Cloning Oh My Zsh...
+remote: Enumerating objects: 1416, done.
+remote: Counting objects: 100% (1416/1416), done.
+remote: Compressing objects: 100% (1361/1361), done.
+remote: Total 1416 (delta 47), reused 1091 (delta 25), pack-reused 0
+Receiving objects: 100% (1416/1416), 3.21 MiB | 6.79 MiB/s, done.
+Resolving deltas: 100% (47/47), done.
+From https://github.com/ohmyzsh/ohmyzsh
+ * [new branch]      master                   -&gt; origin/master
+ * [new branch]      update/plugins/wd/0.3.0  -&gt; origin/update/plugins/wd/0.3.0
+ * [new branch]      update/plugins/wd/v0.7.0 -&gt; origin/update/plugins/wd/v0.7.0
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+Already on 'master'
+/home/mintisan/UbuntuApps
+
+Looking for an existing zsh config...
+Using the Oh My Zsh template file and adding it to /home/mintisan/.zshrc.
+
+Time to change your default shell to zsh:
+Do you want to change your default shell to zsh? [Y/n] Invalid choice. Shell change skipped.
+         __                                     __   
+  ____  / /_     ____ ___  __  __   ____  _____/ /_  
+ / __ \/ __ \   / __ `__ \/ / / /  /_  / / ___/ __ \ 
+/ /_/ / / / /  / / / / / / /_/ /    / /_(__  ) / / / 
+\____/_/ /_/  /_/ /_/ /_/\__, /    /___/____/_/ /_/  
+                        /____/                       ....is now installed!
+
+
+Before you scream Oh My Zsh! look over the `.zshrc` file to select plugins, themes, and options.
+
+• Follow us on Twitter: @ohmyzsh
+• Join our Discord community: Discord server
+• Get stickers, t-shirts, coffee mugs and more: Planet Argon Shop
+
+➜  UbuntuApps chsh -s $(which zsh)
+
+Password: 
+➜  UbuntuApps 
+
+</code></pre>
+<p>将 open-ssh server 加入开机自启动，方便后续通过 ssh 命令行访问本机：</p>
+<pre><code>➜  UbuntuApps sudo systemctl status ssh
+
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/lib/systemd/system/ssh.service; enabled; vendor preset: enabled)
+     Active: active (running) since Sun 2024-05-19 22:19:07 CST; 21min ago
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+   Main PID: 18109 (sshd)
+      Tasks: 1 (limit: 76667)
+     Memory: 1.0M
+     CGroup: /system.slice/ssh.service
+             └─18109 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+
+5月 19 22:19:07 mintisan-NUC9VXQNX systemd[1]: Starting OpenBSD Secure Shell server...
+5月 19 22:19:07 mintisan-NUC9VXQNX sshd[18109]: Server listening on 0.0.0.0 port 22.
+5月 19 22:19:07 mintisan-NUC9VXQNX sshd[18109]: Server listening on :: port 22.
+5月 19 22:19:07 mintisan-NUC9VXQNX systemd[1]: Started OpenBSD Secure Shell server.
+➜  UbuntuApps sudo systemctl enable ssh
+
+Synchronizing state of ssh.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable ssh
+➜  UbuntuApps sudo systemctl restart ssh
+</code></pre>
+<h2 id="安装-nvidia-驱动环境">安装 Nvidia 驱动环境</h2>
+<p>此时没有接入 eGPU，输入如下查询显卡设备相关的命令，是没有输出的。</p>
+<pre><code>➜  UbuntuApps ls /usr/src | grep nvidia
+
+➜  UbuntuApps hwinfo --gfxcard --short   
+graphics card:                                                  
+                       Intel UHD Graphics 630 (Mobile)
+
+Primary display adapter: #34
+➜  UbuntuApps 
+➜  UbuntuApps lspci | grep -i nvidia
+</code></pre>
+<p>此时，输入 poweroff 可以进行关机：</p>
+<pre><code>➜  UbuntuApps sudo poweroff 
+</code></pre>
+<p>重启后，USB 属于热插拔，但是 eGPU 实验表明属于半个热插拔，可以随着系统启动；也可以系统启动后再启动 eGPU ，再把 USB 接上电脑；但是如果已经处于连接的状态，再拔掉 eGPU ，此时系统会卡死，鼠标键盘都不能动，需要强制系统关机重启恢复。正常连接后再未安装驱动的情况下，可以看到如下情况：</p>
+<pre><code>➜  UbuntuApps ls /usr/src | grep nvidia
+➜  UbuntuApps lspci | grep -i nvidia
+3c:00.0 VGA compatible controller: NVIDIA Corporation GP102 [GeForce GTX 1080 Ti] (rev a1)
+3c:00.1 Audio device: NVIDIA Corporation GP102 HDMI Audio Controller (rev a1)
+➜  UbuntuApps hwinfo --gfxcard --short   
+graphics card:                                                  
+                       nVidia GP102 [GeForce GTX 1080 Ti]
+                       Intel UHD Graphics 630 (Mobile)
+
+Primary display adapter: #39
+</code></pre>
+<p>打开限制级驱动，可以看到会自动罗列 nVidia 的驱动列表，如果没有接入显卡，则会显示为空。如果显卡已经被系统识别，就可以看到系统会自动列出可以使用的驱动版本。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1716633387207.png" alt="" width="600" loading="lazy"></figure>
+<p>然后拔掉鼠标键盘，外接显示器【最好用 HDMI 诱骗器接上，也就是一定要让后主机看起来有显示器，不然即使连接也无法看到桌面】，插上 eGPU 【我用 NUC9 的下面那个雷电口，这里只是记录下】，并给 eGPU 电源打开。再打开主机的电源启动系统，等待 tailscale 上线。</p>
+<h3 id="安装驱动">安装驱动</h3>
+<pre><code>➜  ~ ls /usr/src | grep nvidia
+
+➜  ~ sudo ubuntu-drivers list
+[sudo] password for mintisan: 
+nvidia-driver-535, (kernel modules provided by linux-modules-nvidia-535-generic-hwe-20.04)
+nvidia-driver-450-server, (kernel modules provided by linux-modules-nvidia-450-server-generic-hwe-20.04)
+nvidia-driver-390, (kernel modules provided by linux-modules-nvidia-390-generic-hwe-20.04)
+nvidia-driver-470, (kernel modules provided by linux-modules-nvidia-470-generic-hwe-20.04)
+nvidia-driver-535-server, (kernel modules provided by linux-modules-nvidia-535-server-generic-hwe-20.04)
+nvidia-driver-470-server, (kernel modules provided by linux-modules-nvidia-470-server-generic-hwe-20.04)
+nvidia-driver-418-server, (kernel modules provided by linux-modules-nvidia-418-server-generic-hwe-20.04)
+➜  ~ sudo apt install nvidia-driver-535 -y
+...
+➜  ~ nvidia-smi
+NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver. Make sure that the latest NVIDIA driver is installed and running.
+</code></pre>
+<p>在安装完驱动版本后，可以用 <code>nvidia-smi</code> 可执行程序，但是如上所示提示无法和显卡通信。打开后可以看到已经装上了，并且可以看到 535 的版本最高支持 12.2 CUDA 版本。<br>
+<img src="https://mintisan.github.io/post-images/1716635644845.png" alt="" loading="lazy"></p>
+<p>安装完需要重启 <code>sudo reboot</code>，然后就可以用命令行 <code>nvidia-smi</code> 看到驱动安装.</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1716635705626.png" alt="" loading="lazy"></figure>
+<p>也可以用 <code>nvitop</code> 来看 gpu 的实时状态</p>
+<pre><code>➜  ~ pip3 install nvitop
+➜  ~ python3 -m nvitop
+</code></pre>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1716635956542.png" alt="" loading="lazy"></figure>
+<h3 id="安装-cuda">安装 CUDA</h3>
+<p>在选项设置时，需要去掉 Driver，只安装 CUDA 相关的内容即可，显示如下：</p>
+<pre><code>➜  NVIDIA-DRIVER-CUDA-CUDNN sudo sh cuda_11.8.0_520.61.05_linux.run 
+
+[sudo] password for mintisan: 
+===========
+= Summary =
+===========
+
+Driver:   Not Selected
+Toolkit:  Installed in /usr/local/cuda-11.8/
+
+Please make sure that
+ -   PATH includes /usr/local/cuda-11.8/bin
+ -   LD_LIBRARY_PATH includes /usr/local/cuda-11.8/lib64, or, add /usr/local/cuda-11.8/lib64 to /etc/ld.so.conf and run ldconfig as root
+
+To uninstall the CUDA Toolkit, run cuda-uninstaller in /usr/local/cuda-11.8/bin
+***WARNING: Incomplete installation! This installation did not install the CUDA Driver. A driver of version at least 520.00 is required for CUDA 11.8 functionality to work.
+To install the driver using this installer, run the following command, replacing &lt;CudaInstaller&gt; with the name of this run file:
+    sudo &lt;CudaInstaller&gt;.run --silent --driver
+
+Logfile is /var/log/cuda-installer.log
+</code></pre>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1716638757497.png" alt="" loading="lazy"></figure>
+<p>安装完后，就将 cuda 的路径添加到 shell 的配置文件中：</p>
+<pre><code>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-11.8/lib64
+export PATH=$PATH:/usr/local/cuda-11.8/bin
+export CUDA_HOME=$CUDA_HOME:/usr/local/cuda-11.8
+</code></pre>
+<p>添加后， source 重新加载一下，即可以看到安装的 cuda 版本</p>
+<pre><code>  NVIDIA-DRIVER-CUDA-CUDNN nvcc --version
+zsh: command not found: nvcc
+➜  NVIDIA-DRIVER-CUDA-CUDNN vim ~/.zshrc 
+➜  NVIDIA-DRIVER-CUDA-CUDNN 
+➜  NVIDIA-DRIVER-CUDA-CUDNN 
+➜  NVIDIA-DRIVER-CUDA-CUDNN 
+➜  NVIDIA-DRIVER-CUDA-CUDNN source ~/.zshrc 
+➜  NVIDIA-DRIVER-CUDA-CUDNN nvcc --version 
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2022 NVIDIA Corporation
+Built on Wed_Sep_21_10:33:58_PDT_2022
+Cuda compilation tools, release 11.8, V11.8.89
+Build cuda_11.8.r11.8/compiler.31833905_0
+</code></pre>
+<p>注：可以参考<a href="https://qiyuan-z.github.io/2022/01/04/Ubuntu%E5%A4%9A%E7%89%88%E6%9C%ACcuda%E5%AE%89%E8%A3%85%E4%B8%8E%E5%88%87%E6%8D%A2/">这篇文章</a>来进行过个 cuda 版本的管理。</p>
+<h3 id="安装-cudnn">安装 CUDNN</h3>
+<p>目前我们安装的 cuda 是 11.8 版本，查看<a href="https://blog.csdn.net/ly869915532/article/details/124542362">这篇文章</a>可以看到对应需要的 cudnn 版本，我们这里 <a href="https://developer.nvidia.com/rdp/cudnn-archive">下载</a>并安装安装 8.1.1 版本</p>
+<pre><code>➜  NVIDIA-DRIVER-CUDA-CUDNN sudo dpkg -i libcudnn8_8.1.1.33-1+cuda11.2_amd64.deb
+Selecting previously unselected package libcudnn8.
+(Reading database ... 195106 files and directories currently installed.)
+Preparing to unpack libcudnn8_8.1.1.33-1+cuda11.2_amd64.deb ...
+Unpacking libcudnn8 (8.1.1.33-1+cuda11.2) ...
+Setting up libcudnn8 (8.1.1.33-1+cuda11.2) ...
+Processing triggers for libc-bin (2.31-0ubuntu9.9) ...
+➜  NVIDIA-DRIVER-CUDA-CUDNN sudo dpkg -i libcudnn8-dev_8.1.1.33-1+cuda11.2_amd64.deb
+Selecting previously unselected package libcudnn8-dev.
+(Reading database ... 195124 files and directories currently installed.)
+Preparing to unpack libcudnn8-dev_8.1.1.33-1+cuda11.2_amd64.deb ...
+Unpacking libcudnn8-dev (8.1.1.33-1+cuda11.2) ...
+Setting up libcudnn8-dev (8.1.1.33-1+cuda11.2) ...
+update-alternatives: using /usr/include/x86_64-linux-gnu/cudnn_v8.h to provide /usr/include/cudnn.h (libcudnn) in auto mode
+➜  NVIDIA-DRIVER-CUDA-CUDNN sudo dpkg -i libcudnn8-samples_8.1.1.33-1+cuda11.2_amd64.deb
+
+Selecting previously unselected package libcudnn8-samples.
+(Reading database ... 195138 files and directories currently installed.)
+Preparing to unpack libcudnn8-samples_8.1.1.33-1+cuda11.2_amd64.deb ...
+Unpacking libcudnn8-samples (8.1.1.33-1+cuda11.2) ...
+Setting up libcudnn8-samples (8.1.1.33-1+cuda11.2) ...
+➜  NVIDIA-DRIVER-CUDA-CUDNN cat /usr/include/cudnn_version.h | grep CUDNN_MAJOR -A 2
+#define CUDNN_MAJOR 8
+#define CUDNN_MINOR 1
+#define CUDNN_PATCHLEVEL 1
+--
+#define CUDNN_VERSION (CUDNN_MAJOR * 1000 + CUDNN_MINOR * 100 + CUDNN_PATCHLEVEL)
+
+#endif /* CUDNN_VERSION_H */
+</code></pre>
+<h3 id="安装-torch-和-tensorflow">安装 torch 和 tensorflow</h3>
+<p>安装 tenorflow 并确认是否可用</p>
+<pre><code>➜  ~ pip3 install tensorflow-gpu==2.10.0
+Collecting tensorflow-gpu==2.10.0
+...
+  ~ python3 -c &quot;import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))&quot;
+
+2024-05-10 21:55:04.044654: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-10 21:55:04.156741: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2024-05-10 21:55:04.661505: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: :/usr/local/cuda-11.2/lib64
+2024-05-10 21:55:04.661560: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: :/usr/local/cuda-11.2/lib64
+2024-05-10 21:55:04.661570: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+2024-05-10 21:55:05.084535: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:980] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2024-05-10 21:55:05.103192: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:980] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2024-05-10 21:55:05.103398: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:980] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+[PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+➜  ~ 
+
+</code></pre>
+<p>安装 torch 并验证是否可以正确加载 gpu</p>
+<pre><code>➜  NVIDIA-DRIVER-CUDA-CUDNN pip3 install torch==1.13.1+cu116 torchvision==0.14.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
+Looking in indexes: https://pypi.org/simple, https://download.pytorch.org/whl/cu116
+Collecting torch==1.13.1+cu116
+  Downloading https://download.pytorch.org/whl/cu116/torch-1.13.1%2Bcu116-cp38-cp38-linux_x86_64.whl (1977.9 MB)
+     |████████████████████████████████| 1977.9 MB 13 kB/s 
+Collecting torchvision==0.14.1+cu116
+  Downloading https://download.pytorch.org/whl/cu116/torchvision-0.14.1%2Bcu116-cp38-cp38-linux_x86_64.whl (24.2 MB)
+     |████████████████████████████████| 24.2 MB 11.7 MB/s 
+Requirement already satisfied: typing-extensions in /home/mintisan/.local/lib/python3.8/site-packages (from torch==1.13.1+cu116) (4.12.0)
+Requirement already satisfied: pillow!=8.3.*,&gt;=5.3.0 in /usr/lib/python3/dist-packages (from torchvision==0.14.1+cu116) (7.0.0)
+Requirement already satisfied: requests in /usr/lib/python3/dist-packages (from torchvision==0.14.1+cu116) (2.22.0)
+Requirement already satisfied: numpy in /home/mintisan/.local/lib/python3.8/site-packages (from torchvision==0.14.1+cu116) (1.24.4)
+Installing collected packages: torch, torchvision
+  WARNING: The scripts convert-caffe2-to-onnx, convert-onnx-to-caffe2 and torchrun are installed in '/home/mintisan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+Successfully installed torch-1.13.1+cu116 torchvision-0.14.1+cu116
+➜  NVIDIA-DRIVER-CUDA-CUDNN python3 -c 'import torch; print(torch.cuda.is_available())'
+True
+
+</code></pre>
+<p>这里我们下载一个简单的 mnist demo 来进行训练测试看下 gpu 被使用。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1716640124259.png" alt="" loading="lazy"></figure>
+<h3 id="安装-aimet">安装 AIMET</h3>
+<p>在这里终于可以回答为啥之前的 torch 用那个版本，以及需要对应的 cuda 版本。。。</p>
+<p>就是因为需要能用 AIMET，你可以在<a href="https://quic.github.io/aimet-pages/releases/latest/install/index.html">这里</a>找到对 torch 以及 cuda 的版本。</p>
+<pre><code>➜  UbuntuApps pip3 install ./aimet_torch-torch_gpu_1.31.0-cp38-cp38-linux_x86_64.whl
+
+Processing ./aimet_torch-torch_gpu_1.31.0-cp38-cp38-linux_x86_64.whl
+Collecting protobuf==3.20.2
+。。。
+ERROR: Could not find a version that satisfies the requirement torch==1.13.1+cu116 (from aimet-torch==torch-gpu-1.31.0) (from versions: 1.4.0, 1.5.0, 1.5.1, 1.6.0, 1.7.0, 1.7.1, 1.8.0, 1.8.1, 1.9.0, 1.9.1, 1.10.0, 1.10.1, 1.10.2, 1.11.0, 1.12.0, 1.12.1, 1.13.0, 1.13.1, 2.0.0, 2.0.1, 2.1.0, 2.1.1, 2.1.2, 2.2.0, 2.2.1, 2.2.2, 2.3.0)
+ERROR: No matching distribution found for torch==1.13.1+cu116 (from aimet-torch==torch-gpu-1.31.0)
+
+➜  UbuntuApps pip3 install torch==1.13.1+cu116 torchvision==0.14.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
+Looking in indexes: https://pypi.org/simple, https://download.pytorch.org/whl/cu116
+Collecting torch==1.13.1+cu116
+  Downloading https://download.pytorch.org/whl/cu116/torch-1.13.1%2Bcu116-cp38-cp38-linux_x86_64.whl (1977.9 MB)
+     |████████████████████████████████| 1977.9 MB 13 kB/s 
+Collecting torchvision==0.14.1+cu116
+  Downloading https://download.pytorch.org/whl/cu116/torchvision-0.14.1%2Bcu116-cp38-cp38-linux_x86_64.whl (24.2 MB)
+     |████████████████████████████████| 24.2 MB 5.5 MB/s 
+Requirement already satisfied: typing-extensions in /home/mintisan/.local/lib/python3.8/site-packages (from torch==1.13.1+cu116) (4.11.0)
+Requirement already satisfied: pillow!=8.3.*,&gt;=5.3.0 in /usr/lib/python3/dist-packages (from torchvision==0.14.1+cu116) (7.0.0)
+Requirement already satisfied: requests in /usr/lib/python3/dist-packages (from torchvision==0.14.1+cu116) (2.22.0)
+Requirement already satisfied: numpy in /home/mintisan/.local/lib/python3.8/site-packages (from torchvision==0.14.1+cu116) (1.24.4)
+ERROR: torchaudio 2.3.0 has requirement torch==2.3.0, but you'll have torch 1.13.1+cu116 which is incompatible.
+Installing collected packages: torch, torchvision
+  Attempting uninstall: torch
+    Found existing installation: torch 1.13.1
+    Uninstalling torch-1.13.1:
+      Successfully uninstalled torch-1.13.1
+  WARNING: The scripts convert-caffe2-to-onnx, convert-onnx-to-caffe2 and torchrun are installed in '/home/mintisan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  Attempting uninstall: torchvision
+    Found existing installation: torchvision 0.18.0
+    Uninstalling torchvision-0.18.0:
+      Successfully uninstalled torchvision-0.18.0
+Successfully installed torch-1.13.1+cu116 torchvision-0.14.1+cu116
+➜  UbuntuApps python3
+Python 3.8.10 (default, Nov 22 2023, 10:22:35) 
+[GCC 9.4.0] on linux
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt; 
+&gt;&gt;&gt; from aimet_torch.quantsim import QuantizationSimModel
+Traceback (most recent call last):
+  File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;/home/mintisan/.local/lib/python3.8/site-packages/aimet_torch/quantsim.py&quot;, line 53, in &lt;module&gt;
+    import aimet_common.libpymo as libpymo
+ImportError: liblapacke.so.3: cannot open shared object file: No such file or directory
+&gt;&gt;&gt; 
+
+</code></pre>
+<p>是因为少了一个库，参考<a href="https://github.com/quic/aimet/issues/433">这里</a>的说明按安装 <code>liblapacke-dev</code> 后再导入就没有问题了。</p>
+<pre><code>➜  UbuntuApps sudo apt-get install liblapacke-dev
+。。。
+Setting up liblapacke:amd64 (3.9.0-1build1) ...
+Setting up libtmglib-dev:amd64 (3.9.0-1build1) ...
+Setting up liblapacke-dev:amd64 (3.9.0-1build1) ...
+Processing triggers for libc-bin (2.31-0ubuntu9.9) ...
+➜  UbuntuApps python3                            
+Python 3.8.10 (default, Nov 22 2023, 10:22:35) 
+[GCC 9.4.0] on linux
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt; from aimet_torch.quantsim import QuantizationSimModel
+2024-05-25 20:52:34,923 - root - INFO - AIMET
+&gt;&gt;&gt; 
+</code></pre>
+<p>这里记录下 torch 和 tensorflow 的版本。</p>
+<pre><code>➜  UbuntuApps pip list | grep torch
+aimet-torch                  torch-gpu-1.31.0    
+torch                        1.13.1+cu116        
+torchvision                  0.14.1+cu116        
+➜  UbuntuApps pip list | grep tensorflow
+tensorflow-estimator         2.10.0              
+tensorflow-gpu               2.10.0              
+tensorflow-io-gcs-filesystem 0.34.0  
+</code></pre>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://blog.csdn.net/BLC0202/article/details/121564861">ubuntu 20.04 安装 cuda11.2 和cudnn8.2.1和pytorch1.10.0和tensorflow2.7.0（可能是最简单的安装方法，本人亲测成功）</a></li>
+<li><a href="https://qiyuan-z.github.io/2022/01/04/Ubuntu%E5%A4%9A%E7%89%88%E6%9C%ACcuda%E5%AE%89%E8%A3%85%E4%B8%8E%E5%88%87%E6%8D%A2/">Ubuntu多版本cuda安装与切换</a></li>
+<li><a href="https://linuxconfig.org/how-to-uninstall-the-nvidia-drivers-on-ubuntu-20-04-focal-fossa-linux">How to uninstall the NVIDIA drivers on Ubuntu 20.04 Focal Fossa Linux</a></li>
+<li><a href="https://www.cyberciti.biz/faq/ubuntu-linux-install-nvidia-driver-latest-proprietary-driver/">Ubuntu Linux Install Nvidia Driver (Latest Proprietary Driver)</a></li>
+<li><a href="https://blog.csdn.net/sunyuhua_keyboard/article/details/134553439">ubuntu 系统 怎么判断系统有没有GPU</a></li>
+<li>https://developer.nvidia.com/cuda-toolkit</li>
+<li>https://developer.nvidia.com/cuda-12-2-0-download-archive</li>
+<li><a href="https://blog.csdn.net/Flying_sfeng/article/details/103343813">解决nvcc --version显示command not found问题</a></li>
+<li>https://www.tensorflow.org/install/pip?hl=en</li>
+<li><a href="https://blog.csdn.net/ly869915532/article/details/124542362">Tensorflow与Python、CUDA、cuDNN的版本对应表</a></li>
+<li>https://developer.nvidia.com/rdp/cudnn-archive</li>
+<li>https://www.nvidia.com/en-us/drivers/unix/</li>
+<li>https://www.nvidia.com/en-us/drivers/unix/linux-amd64-display-archive/</li>
+<li><a href="https://gist.github.com/kmhofmann/cee7c0053da8cc09d62d74a6a4c1c5e4">Installing the NVIDIA driver, CUDA and cuDNN on Linux (Ubuntu 20.04)</a></li>
+<li><a href="https://solano-todeschini.medium.com/how-to-setup-cuda-and-tensorflow-on-ubuntu-20-04-2022-7d240cffdf1e">How to setup and optimize CUDA and TensorFlow on Ubuntu 20.04 — 2022</a></li>
+<li><a href="https://www.cnblogs.com/flying_bat/p/17562426.html">ubuntu 22.04离线安装cuda 11.7.1、cudnn 8.9.3.28、nccl 2.18.3、tensorrt 8.6.1</a></li>
+<li><a href="https://gist.github.com/kmhofmann/cee7c0053da8cc09d62d74a6a4c1c5e4">Installing the NVIDIA driver, CUDA and cuDNN on Linux (Ubuntu 20.04)</a></li>
+<li><a href="https://blog.csdn.net/qq_44630788/article/details/134535977">AImet在ubuntu18.04上的安装步骤</a></li>
+<li><a href="https://github.com/quic/aimet/issues/433">Issue with python install #433</a> : import libpymo ImportError: liblapacke.so.3: cannot open shared object file: No such file or directory</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[何凯明的从表征学习到深度学习发展进程视频学习笔记]]></title>
+        <id>https://mintisan.github.io/post/hekaiming-from-representation-learning2deep-learning/</id>
+        <link href="https://mintisan.github.io/post/hekaiming-from-representation-learning2deep-learning/">
+        </link>
+        <updated>2024-05-05T09:12:38.000Z</updated>
+        <summary type="html"><![CDATA[<p>之前囤积的很多 <code>Read it later</code> 里面有<a href="https://www.youtube.com/watch?v=D_jt-xO_RmI">何凯明</a> 入职 MIT 之前的 unpaid 课程介绍。一直挂在 Chrome 浏览器那里，想着啥时候看，今天不知咋的想着看看吧，不然就关掉了。幸亏看了，大佬讲的真是的行云流水，娓娓道来。</p>
+<p>从 LeNet 到 AlexNet 到 VGG Nets 到 GoogleNet 到 normalization/initialization module 到 ResNet 到 RNN/1-D CNN 到 Transformer 以及应用 GPT/AlphaFold/ViT ，这里记录下每一步关键节点的意义以及作用。可以很清晰的看到深度学习技术的一步一步发展过程出现的问题，以及对应的解决方案。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>之前囤积的很多 <code>Read it later</code> 里面有<a href="https://www.youtube.com/watch?v=D_jt-xO_RmI">何凯明</a> 入职 MIT 之前的 unpaid 课程介绍。一直挂在 Chrome 浏览器那里，想着啥时候看，今天不知咋的想着看看吧，不然就关掉了。幸亏看了，大佬讲的真是的行云流水，娓娓道来。</p>
+<p>从 LeNet 到 AlexNet 到 VGG Nets 到 GoogleNet 到 normalization/initialization module 到 ResNet 到 RNN/1-D CNN 到 Transformer 以及应用 GPT/AlphaFold/ViT ，这里记录下每一步关键节点的意义以及作用。可以很清晰的看到深度学习技术的一步一步发展过程出现的问题，以及对应的解决方案。</p>
+<!-- more -->
+<h2 id="关键节点">关键节点</h2>
+<h3 id="1989-lenet">1989-LeNet</h3>
+<p>具备了 DNN 的基本雏形：卷积(5x5)/下采样/全连接层/输出层，但是受限于算力和高质量数据的约束，这个技术就被雪藏了 20 年，，，</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1714901067804.png" alt="" loading="lazy"></figure>
+<h3 id="2012-alexnet">2012-AlexNet</h3>
+<p>引入了 ReLu 替换了原来的 Sigmoid 以及 Dropout 来让网络可以更深，以及 data augmentation 的作用</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1714901152096.png" alt="" loading="lazy"></figure>
+<p>注：后续的量化方法其实和 Dropout 作用上有些类似，也可以更好的让网络泛华，不至于过早过拟合；且在这之后，对网络的可视化让大家觉得这条路是对的。</p>
+<h3 id="2014-vgg-nets">2014-VGG Nets</h3>
+<p>证明网络越深越好，并且采用统一的 3x3 卷积，并且在用 stack 逐层添加的训练方法来训练更深的网络，也引出了后续对初始化方法的研究</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1714901203220.png" alt="" loading="lazy"></figure>
+<p>注：更深的网络，开启了预训练的时代，也就是迁移学习思想的落地，可以在无标注上进行大规模学习后，其特征表示可以签到其他类似原理的应用场景。</p>
+<h3 id="2014-googlenet">2014-GoogleNet</h3>
+<p>引入了 1x1 网络模块，相当于一个直连的捷径，也开发了同层不同方式的横向组合阶段，但是破坏了网络设计一致性的哲学，也给初始化方法带来了适配挑战。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1714901227590.png" alt="" loading="lazy"></figure>
+<p>注：这个捷径和后续 ResNet 的作用类似，不知道有没有受这个的启发。</p>
+<h3 id="normalizationinitialization-module-in-deep-learning">normalization/initialization module in deep learning</h3>
+<p>网络越深会进入梯度爆炸或者消失问题，需要一个比较好的初始化方法，因为一个简单通用的模块，在网络的每一层添加一个归一化可以让网络越快收敛但是又不会陷入局部最优解，也就是会有更好的结果。其中又以 batch 和 layer 归一化方法最为普遍和好用。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1714901305933.png" alt="" loading="lazy"></figure>
+<h3 id="2015-resnet">2015-ResNet</h3>
+<p>在网络超过 20 层后，发现再继续深层会导致连训练都开始下降，引入 F(x)=H(x)+x 这样一条线，让网络可以更深后不至于性能下降</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1714901328609.png" alt="" loading="lazy"></figure>
+<p>注：这个真的又简单有好用。</p>
+<h3 id="rnn-for-sequence-modeling">RNN for sequence modeling</h3>
+<p>RNN以及后续的 LSTM/GRU 相当于时间局连接【相比于 CNN 的空间局部连接】，只是和当前时间输入以及前一个输出连接，其在训练上非常不友好，因为需要依赖前一时刻的输出。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1714901349178.png" alt="" loading="lazy"></figure>
+<p>注：RNN 上迭代出来的 LSTM 则稍微优化了下 RNN 相乘导致的快速梯度消失或者爆炸问题，但是还是无法支撑较长的记忆；GRU 则优化了 LSTM 的计算复杂度，基本可以说是平替。</p>
+<h3 id="1-d-cnn-for-sequence-modeling">1-D CNN for sequence modeling</h3>
+<p>如果采用 1-D CNN 的来进行时间序列建模，则可以让训练并行，但是模型的当前节点需要不能依赖未来的输入，且 kernel 的长度决定了感受野的范围，如果通过多层增加范围又会让模型急剧扩张，且也无法感知长久的时间</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1714901372819.png" alt="" loading="lazy"></figure>
+<p>注：TNN 就是 1-D CNN 的演化结果。</p>
+<h3 id="rnn-vs-cnn-vs-attention">RNN vs. CNN vs. Attention</h3>
+<p>可以看到 RNN 只依赖当前时间输入以及前一模块的输出；CNN 则依赖历史状态以及当前时间输入；Attention 则是一个更加通用的 CNN，可以在当前节点直接感知历史更多作为输入。</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1714901393714.png" alt="" loading="lazy"></figure>
+<h3 id="2017-transformer">2017-Transformer</h3>
+<p>集大成者，开启了个时代！</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1714901414877.png" alt="" loading="lazy"></figure>
+<h4 id="2018-gpt">2018-GPT</h4>
+<p>Transformer 在语言领域的应用，被称为 GPT 时刻。<br>
+<img src="https://mintisan.github.io/post-images/1714901470154.png" alt="" loading="lazy"></p>
+<h4 id="2021-alphafold">2021-AlphaFold</h4>
+<p>在生物蛋白质序列也可以学习到蛋白质的表征。<br>
+<img src="https://mintisan.github.io/post-images/1714901475986.png" alt="" loading="lazy"></p>
+<h4 id="2021-vit">2021-ViT</h4>
+<p>并且在视觉领域也可以用 Transformer 进行表征学习的方法统一。</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1714901481439.png" alt="" loading="lazy"></figure>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=D_jt-xO_RmI">Deep Learning Bootcamp: Kaiming He</a></li>
+<li><a href="https://www.youtube.com/watch?v=Z5qJ9IxSuKo">麻省理工 电气工程与计算机科学系副教授何恺明（Kaiming He）在 3 月 7 日走上讲台上完成了自己【人生中教的第一堂课—卷积神经网络】</a></li>
+<li><a href="https://www.youtube.com/watch?v=qZ3ygC04Gg4">重塑人类未来的30篇论文精读！</a></li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Mojo ： AI 原生编程语言初体验]]></title>
+        <id>https://mintisan.github.io/post/mojo-just-simple-try/</id>
+        <link href="https://mintisan.github.io/post/mojo-just-simple-try/">
+        </link>
+        <updated>2024-03-30T05:37:40.000Z</updated>
+        <summary type="html"><![CDATA[<p>随着昨天 Mojo 开源到 <a href="https://github.com/modularml/mojo">GitHub</a> 后，想着刚好到周末，简单安装后跑跑看看语法啥，还挺有意思的。基本继承了 <code>Python</code> 的语法，但是也为了后续效率提供了一些<strong>编译时特性</strong>，比如既可以 REPL 直接动态运行，也可以编译成二进制可执行方式；设定两种函数定义方式，以及对应两种变量声明方式；函数入参有的编译时确定，有的运行时确定；动态内存也是折中的给用户一定规则去管理，而不是完全类似 C 的完全用户管理，或者对用户透明的 <code>Python</code> 放手。<br>
+另外除了语法，另一个我关注的对深度学习模型这块的原生支持【比如设计/调试/训练/压缩/部署等】因为平台还不支持，只能后续待看。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>随着昨天 Mojo 开源到 <a href="https://github.com/modularml/mojo">GitHub</a> 后，想着刚好到周末，简单安装后跑跑看看语法啥，还挺有意思的。基本继承了 <code>Python</code> 的语法，但是也为了后续效率提供了一些<strong>编译时特性</strong>，比如既可以 REPL 直接动态运行，也可以编译成二进制可执行方式；设定两种函数定义方式，以及对应两种变量声明方式；函数入参有的编译时确定，有的运行时确定；动态内存也是折中的给用户一定规则去管理，而不是完全类似 C 的完全用户管理，或者对用户透明的 <code>Python</code> 放手。<br>
+另外除了语法，另一个我关注的对深度学习模型这块的原生支持【比如设计/调试/训练/压缩/部署等】因为平台还不支持，只能后续待看。</p>
+<!-- more -->
+<h2 id="安装">安装</h2>
+<p>目前 <code>Mojo</code> 不支持 Windows，所以我就在我的 <code>macOS</code> 下安装【因为相比我的<code>Linux</code>有稍微好点的 <code>GPU</code>】，直接按照<a href="https://docs.modular.com/mojo/manual/get-started/">官方命令</a>就可以走完。安装成功后如下：</p>
+<pre><code>(base) ➜  ~ modular install max
+modular: error: A compatible package is unavailable for the current operating system and hardware. Please check https://modul.ar/systems for the list of currently supported platforms
+(base) ➜  ~ modular install mojo
+# Found release for https://packages.modular.com/mojo @ 24.2.0-c2427bc5-release
+# Downloading archive: packages/24.2.0-c2427bc5-release/mojo-arm64-apple-darwin22.6.0-24.2.0-c2427bc5-release-11-0.tar.gz
+Done         [ ███████████████████████████████████████████████████████████████████████████████████████████████████████████████ ] 100%     167MiB/167MiB @  30.6MiB/s 
+# Extracting downloaded archives. 
+# Extraction complete, setting configs...
+# Configs complete, running post-install hooks...
+
+🔥 Mojo installed! 🔥
+
+Mojo's Python virtual environment created at /Users/mintisan/.modular/pkg/packages.modular.com_mojo/venv
+
+If you are using ZSH (default on macOS), run the following commands:
+
+echo 'export MODULAR_HOME=&quot;/Users/mintisan/.modular&quot;' &gt;&gt; ~/.zshrc
+echo 'export PATH=&quot;/Users/mintisan/.modular/pkg/packages.modular.com_mojo/bin:$PATH&quot;' &gt;&gt; ~/.zshrc
+source ~/.zshrc
+
+If you are using bash, run the following commands:
+
+BASHRC=$( [ -f &quot;$HOME/.bash_profile&quot; ] &amp;&amp; echo &quot;$HOME/.bash_profile&quot; || echo &quot;$HOME/.bashrc&quot; )
+echo 'export MODULAR_HOME=&quot;/Users/mintisan/.modular&quot;' &gt;&gt; &quot;$BASHRC&quot;
+echo 'export PATH=&quot;/Users/mintisan/.modular/pkg/packages.modular.com_mojo/bin:$PATH&quot;' &gt;&gt; &quot;$BASHRC&quot;
+source &quot;$BASHRC&quot;
+
+Then enter 'mojo' to start the Mojo REPL.
+
+For tool help, enter 'mojo --help'.
+For more docs, see https://docs.modular.com/mojo.
+
+(base) ➜  ~ mojo --version
+mojo 24.2.0 (c2427bc5)
+(base) ➜  ~ brew upgrade modular
+==&gt; Downloading https://formulae.brew.sh/api/formula.jws.json
+##O=#     #
+==&gt; Downloading https://formulae.brew.sh/api/cask.jws.json
+##O=#     #
+Warning: modularml/packages/modular 0.6.0 already installed
+</code></pre>
+<p>注意：目前<code>2024-03-30</code>时候，<code>macOS</code> 无法直接通过 <code>modular</code> 安装 <code>max</code>，会提示如下错误：</p>
+<pre><code>(base) ➜  ~ modular install max
+modular: error: A compatible package is unavailable for the current operating system and hardware. Please check https://modul.ar/systems for the list of currently supported platforms
+</code></pre>
+<h2 id="hello-world">Hello World</h2>
+<p><code>REPL</code> 环境直接输入 <code>mojo</code> 即可启动</p>
+<pre><code>(base) ➜  ~ mojo
+Welcome to Mojo! 🔥
+
+Expressions are delimited by a blank line.
+Type `:quit` to exit the REPL and `:mojo help` for further assistance.
+
+  1&gt; print(&quot;Hello Wordl!&quot;)
+Hello Wordl!
+  2&gt; 
+</code></pre>
+<p>也可以直接运行 <code>mojo</code> 文件名</p>
+<pre><code>(base) ➜  mojo vim hello.mojo
+(base) ➜  mojo
+(base) ➜  mojo mojo hello.mojo 
+Hello World!
+(base) ➜  mojo cat hello.mojo 
+fn main():
+        print(&quot;Hello World!&quot;)
+(base) ➜  mojo
+</code></pre>
+<p>到这里为止，看 <code>mojo</code> 和 <code>Python</code> 类似都是动态解释语言，但是接下来我们可以像 C 一样去编译，，，</p>
+<pre><code>(base) ➜  mojo mojo build hello.mojo 
+(base) ➜  mojo ls
+hello      hello.mojo
+(base) ➜  mojo ./hello 
+Hello World!
+(base) ➜  mojo
+</code></pre>
+<p>哈哈，有点意思。</p>
+<p>也可以下载官方<a href="https://github.com/modularml/mojo/tree/main/examples">例程</a>跑跑看。</p>
+<h2 id="基本语法">基本语法</h2>
+<h3 id="变量">变量</h3>
+<p>在 <code>def</code> 函数内声明【也即定义】需要可以省略 <code>var</code> 描述，但是如果使用 <code>fn</code> 来定义的函数，则必须使用使用 <code>var</code> 放在变量的前面。</p>
+<p>Q : 为啥搞两种形式的方式来支持函数内的变量定义？</p>
+<h3 id="结构体">结构体</h3>
+<p>用 <code>struct</code> 名字好评啊，<code>C</code> 党大爱，而且其特性也更加偏向静态特性，其成员是在编译时就确定了，运行时无法修改。【不过有计划添加 Python-style 类的特性】</p>
+<h3 id="特征traits">特征(Traits)</h3>
+<p>没太看懂这个名字的表达，，，从过程来看，感觉看起来像是通过函数指针方式，传递这个功能【一个函数就是一个功能实现】给到函数或者结构体，也就是将功能赋予其他对象，那后续对象就可以通过内部对象【实现的时候应该就是指针】拥有了某些功能</p>
+<p>注：来自古老 C 魔法师的角度，，，</p>
+<p>Q ：但是这个好处是啥呢，除了抽象和模块化看起来有帮助。</p>
+<h3 id="入参">入参</h3>
+<p><code>parametric</code> 意味着说的编译时确定参数；<code>argument</code>意味着运行时生成。</p>
+<p>这里也有点意思，对函数输入的参数分成两类，一类是编译时确定，一类是运行时确定，这样可以为后续的效率提供一些优化空间。</p>
+<h3 id="块和语句">块和语句</h3>
+<p>基本语法和 <code>Python</code> 类型，采用空格进行缩进【<code>tab</code>和<code>4*空格</code>都可以】标记分块。</p>
+<h3 id="代码注释">代码注释</h3>
+<p>这块和 Python 的 <code>#</code>和<code> &quot;&quot;&quot; &quot;&quot;&quot;</code> 一样，不用再记一种额外的注释符号，来自 <code>C/Python/Matlab</code> 三种语言来回切换的怨念！！！</p>
+<h3 id="python-集成"><code>Python</code> 集成</h3>
+<p>作为 <code>Python</code> 的超级，直接使用 <code>numpy</code> 那是不在话下。</p>
+<h3 id="动态内存管理"><a href="https://docs.modular.com/mojo/manual/values/#memory-management-strategies">动态内存管理</a></h3>
+<p>有点意思，我不知道之前有没有大规模的编程语言用【一定的语法和规则】来让用户内存管理做到【完全由用户行管理，比如C】和【完全和用户无关，编程语言内置垃圾回收器，比如 Python】之间的一种方式。之前自己无聊的时候也想过，难道就没有一种中间态么，只能是这两个极端？表示后续很关注，，，</p>
+<h2 id="跑个模型">跑个模型</h2>
+<p>目前其对应的引擎 <code>max</code> 无法在 <code>macOS</code> 上安装，所以没办法跑起来。</p>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li>https://docs.modular.com/mojo/manual/get-started/</li>
+<li><a href="https://www.youtube.com/watch?v=5Sm9IVMet9c&amp;t=1s&amp;ab_channel=freeCodeCamp.org">Mojo Programming Language – Full Course for Beginners</a></li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Aliyun 通过 WebDav 映射到本地]]></title>
+        <id>https://mintisan.github.io/post/aliyun-webdav-local-disk/</id>
+        <link href="https://mintisan.github.io/post/aliyun-webdav-local-disk/">
+        </link>
+        <updated>2024-03-23T08:37:57.000Z</updated>
+        <summary type="html"><![CDATA[<p>想重温<a href="https://www.aliyundrive.com/s/UaraG332B8q">大剑</a>，然后 Aliyun 资源最容易找到，然后在线不好使会压缩，然后就找到了 Alist，然后Alist 可以很方便挂在各种网盘，比如阿里云盘，但是在实际的使用过程中遇到一个问题就是网页版本显示的内容更新不及时或者说显示不出来，但是通过将 Alist 作为 WebDav 网络协议映射到本地好像可以解决这个问题，这里就记录下用资源管理器[小文件/速度慢]， Clouddrive 2[只能加载一个，但是可以映射为本地磁盘形式] 和 RailDrive[有广告，从网盘到本地磁盘形式需要付钱] 的映射方法以及使用过程中的注意点。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>想重温<a href="https://www.aliyundrive.com/s/UaraG332B8q">大剑</a>，然后 Aliyun 资源最容易找到，然后在线不好使会压缩，然后就找到了 Alist，然后Alist 可以很方便挂在各种网盘，比如阿里云盘，但是在实际的使用过程中遇到一个问题就是网页版本显示的内容更新不及时或者说显示不出来，但是通过将 Alist 作为 WebDav 网络协议映射到本地好像可以解决这个问题，这里就记录下用资源管理器[小文件/速度慢]， Clouddrive 2[只能加载一个，但是可以映射为本地磁盘形式] 和 RailDrive[有广告，从网盘到本地磁盘形式需要付钱] 的映射方法以及使用过程中的注意点。</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1711197209300.png" alt="" loading="lazy"></figure>
+<h2 id="raildrive">RailDrive</h2>
+<p><a href="https://www.raidrive.com/download">下载</a>安装后，打开选择添加，设置输入如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1711195811553.png" alt="" loading="lazy"></figure>
+<p>注意红框中的 <code>/dav/</code> 最后需要添加 <code>/</code> 不然会提示如下 401 错误：</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1711195875380.png" alt="" loading="lazy"></figure>
+<p>注意需要选将 <code>地址</code> 的选择去掉，也就是使用 <code>http</code> 方式，不然会出现如下的 <code>ProtocalVersion</code> 错误【一般 Alist 默认是 <code>http</code> 方式】：</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1711195952267.png" alt="" loading="lazy"></figure>
+<p>如果不付费，则只能作为网络盘如下。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1711197267647.png" alt="" loading="lazy"></figure>
+<h2 id="clouddrive-2">Clouddrive 2</h2>
+<p>安装完后，会默认打开 http://localhost:19798/ 地址，添加 <code>阿里云盘 Open</code>，扫码或者在线获取权限。<br>
+<img src="https://mintisan.github.io/post-images/1711196848041.png" alt="" loading="lazy"></p>
+<p>添加完后，就可以在浏览器里面操作，接着将导入的阿里云盘挂载到本地：</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1711196901719.png" alt="" loading="lazy"></figure>
+<p>这样就可以直接映射为硬盘的形式如下：</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1711196603072.png" alt="" loading="lazy"></figure>
+<p>在使用时，比如直接用 PotPlayer 播放的时候，也可以在网页端看到当前使用的下载速度信息如下：</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1711196469820.png" alt="" loading="lazy"></figure>
+<h2 id="资源管理器">资源管理器</h2>
+<p>资源管理器就太多坑了，不建议使用，这里只是记录这些坑。。。</p>
+<pre><code>计算机\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\WebClient\Parameters
+</code></pre>
+<p><code>services.msc</code></p>
+<pre><code>
+</code></pre>
+<p>修改了以上两个参数后需要重新映射下。</p>
+<p>完成后，在本地显示为网络盘符如下。</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1711197961123.png" alt="" loading="lazy"></figure>
+<h2 id="cyberduck">Cyberduck</h2>
+<p>Cyberduck 无法映射到本地网盘，只能在他的软件内可以下载和查看，不是太好用，设置界面如下。</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1711196154886.png" alt="" loading="lazy"></figure>
+<h2 id="rclone">RClone</h2>
+<p>TBD</p>
+<h2 id="macos">macOS</h2>
+<p>如果是 macOS 可以考虑直接使用 Finder 中的 <a href="https://support.apple.com/zh-cn/guide/mac-help/mchlp1546/mac">连接到服务器</a>，然后输入 Alist 提供的 WebDav 地址信息即可。</p>
+<p>输入地址</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1711201171228.png" alt="" loading="lazy"></figure>
+<p>输入账号密码</p>
+<figure data-type="image" tabindex="12"><img src="https://mintisan.github.io/post-images/1711201186423.png" alt="" loading="lazy"></figure>
+<p>就可以看到 Alist 下挂载的内容</p>
+<figure data-type="image" tabindex="13"><img src="https://mintisan.github.io/post-images/1711201204844.png" alt="" loading="lazy"></figure>
+<p>当然推荐最近推出的比较好用的 VidHub</p>
+<p>可以方便直接导入各种网盘，并解析建库，非常友好和美观</p>
+<figure data-type="image" tabindex="14"><img src="https://mintisan.github.io/post-images/1711201231881.png" alt="" loading="lazy"></figure>
+<p>也可以到输入 Alist 的WebDav 信息</p>
+<figure data-type="image" tabindex="15"><img src="https://mintisan.github.io/post-images/1711201268314.png" alt="" loading="lazy"></figure>
+<p>就可以看到 VidHub 帮你整理的各剧和电影</p>
+<figure data-type="image" tabindex="16"><img src="https://mintisan.github.io/post-images/1711201443264.png" alt="" loading="lazy"></figure>
+<h2 id="android">Android</h2>
+<p>安卓下有两个方法，一个是直接用 <a href="http://m.2265.com/down/261625.html">nPlayer</a>。</p>
+<p>安装完选择新建 WebDav 项目<br>
+<img src="https://mintisan.github.io/post-images/1711244448078.jpg" alt="" width="400" loading="lazy"></p>
+<p>输入 WedDav 设置如下：<br>
+<img src="https://mintisan.github.io/post-images/1711244455258.jpg" alt="" width="400" loading="lazy"></p>
+<p>另一种是 cx 文件管理 + VLC 打开，设置如下。</p>
+<figure data-type="image" tabindex="17"><img src="https://mintisan.github.io/post-images/1711244573211.jpg" alt="" width="400" loading="lazy"></figure>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li>https://alist-doc.nn.ci/docs/webdav</li>
+<li>https://mountainduck.io/</li>
+<li>https://cyberduck.io/</li>
+<li>https://www.thewindowsclub.com/how-to-map-webdav-in-windows</li>
+<li><a href="https://docs.qnap.com/operating-system/qts/4.5.x/zh-cn/GUID-31D5B05F-F29E-4D61-9758-C8CF839C14FD.html">在 Windows 上使用 WebDAV 装载共享文件夹</a></li>
+<li><a href="https://blog.csdn.net/qq_38894585/article/details/128818512">windows10挂载webdav</a></li>
+<li><a href="https://github.com/messense/aliyundrive-webdav/issues/117">windows添加本地位置之后无法打开文件 #117</a></li>
+<li>https://support.microsoft.com/en-us/topic/folder-copy-error-message-when-downloading-a-file-that-is-larger-than-50000000-bytes-from-a-web-folder-815e2949-0f56-ec25-db7d-b6d860a31f77</li>
+<li>https://www.topsite.jp/docs/windows-webdav-limit</li>
+<li><a href="https://sspai.com/post/47830">把网盘变成 Windows 网络硬盘，免费的 WebDAV 客户端：RaiDrive | App+1</a></li>
+<li><a href="https://forums.unraid.net/topic/153061-%E6%9C%80%E5%AE%8C%E6%95%B4rclone%E6%8C%82%E8%BD%BD%E7%BD%91%E7%9B%98%E5%88%B0%E6%9C%AC%E5%9C%B0%EF%BC%88alist%E7%AF%87%EF%BC%89%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">最完整RCLONE挂载网盘到本地（ALIST篇）解决方案</a></li>
+<li><a href="https://www.expoli.tech/articles/2020/12/30/1609327097930">Windows 挂载 WebDAV</a></li>
+<li><a href="https://support.apple.com/zh-cn/guide/mac-help/mchlp1546/mac">在 Mac 上连接到 WebDAV 服务器或断开连接</a></li>
+<li><a href="https://okaapps.com/product/1659622164">VidHub - The Ultimate Video Player for iOS, Mac, and tvOS</a></li>
+</ul>
+<figure data-type="image" tabindex="18"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Ollama 和 Continue.dev 构建 VS Code 本地代码 Copilot]]></title>
+        <id>https://mintisan.github.io/post/ollama-continue-dev-as-vs-code-code-copilot/</id>
+        <link href="https://mintisan.github.io/post/ollama-continue-dev-as-vs-code-code-copilot/">
+        </link>
+        <updated>2024-03-17T06:41:20.000Z</updated>
+        <summary type="html"><![CDATA[<p><a href="https://continue.dev/">Continue.dev</a> 可以方便的【自动提示补全】,【选中代码再编辑】，【选中聊天】以及【错误信息自动提问】，是目前开源框架里面功能比较完善的。结合 <a href="https://ollama.com/">Ollama</a> 后端，再配合本地开源代码模型，比如<a href="https://evalplus.github.io/leaderboard.html">排名</a>比较靠前的 <a href="https://huggingface.co/deepseek-ai/deepseek-coder-33b-instruct">Deepseek</a>。真正做到了 <a href="https://github.com/features/copilot">GitHub Copilot</a> 的低配平替。另外可以通过 <code>@</code> 和 <code>/</code> 比较方便的自定义扩展功能。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p><a href="https://continue.dev/">Continue.dev</a> 可以方便的【自动提示补全】,【选中代码再编辑】，【选中聊天】以及【错误信息自动提问】，是目前开源框架里面功能比较完善的。结合 <a href="https://ollama.com/">Ollama</a> 后端，再配合本地开源代码模型，比如<a href="https://evalplus.github.io/leaderboard.html">排名</a>比较靠前的 <a href="https://huggingface.co/deepseek-ai/deepseek-coder-33b-instruct">Deepseek</a>。真正做到了 <a href="https://github.com/features/copilot">GitHub Copilot</a> 的低配平替。另外可以通过 <code>@</code> 和 <code>/</code> 比较方便的自定义扩展功能。</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1710680220793.png" alt="" loading="lazy"></figure>
+<h2 id="安装插件">安装插件</h2>
+<p>直接在 VS Code 的插件市场输入 <code>continue</code> 就可以看到，然后直接安装即可。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1710678352940.png" alt="" loading="lazy"></figure>
+<p>安装完后，可以在设置里面看到操作的一些快捷键。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1710678402200.png" alt="" loading="lazy"></figure>
+<h2 id="修改配置文件">修改配置文件</h2>
+<p><code>.config</code> Windows 下的目录如下：<code>C:\Users\mintisan\.continue\config.json</code>，macOS 应该是 <code>~/.continue/config.json</code>，最好备份一个然后再修改为如下：【注意我这里的apiBase！！！是部署在其他电脑上的，如果是本地就使用 <code>localhost</code> 即可。】</p>
+<pre><code>{
+  &quot;slashCommands&quot;:[
+    {
+      &quot;name&quot;: &quot;edit&quot;,
+      &quot;description&quot;: &quot;Edit highlighted code&quot;
+    },
+    {
+      &quot;name&quot;: &quot;comment&quot;,
+      &quot;description&quot;: &quot;Write comments for the highlighted code&quot;
+    },
+    {
+      &quot;name&quot;: &quot;share&quot;,
+      &quot;description&quot;: &quot;Download and share this session&quot;
+    },
+    {
+      &quot;name&quot;: &quot;cmd&quot;,
+      &quot;description&quot;: &quot;Generate a shell command&quot;
+    },
+    {
+      &quot;name&quot;: &quot;commit&quot;,
+      &quot;description&quot;: &quot;Generate a commit message for the current changes&quot;
+    },
+    {
+      &quot;name&quot;: &quot;so&quot;,
+      &quot;description&quot;: &quot;Reference StackOverflow to answer the question&quot;
+    }
+  ],
+  &quot;contextProviders&quot;:[
+    { &quot;name&quot;: &quot;code&quot; },
+    { &quot;name&quot;: &quot;open&quot;, &quot;params&quot;: { &quot;onlyPinned&quot;: false } },
+    {
+      &quot;name&quot;: &quot;codebase&quot;,
+      &quot;params&quot;: {
+        &quot;nRetrieve&quot;: 25,
+        &quot;nFinal&quot;: 5,
+        &quot;useReranking&quot;: true
+      }
+    },
+    { &quot;name&quot;: &quot;folder&quot; },
+    { &quot;name&quot;: &quot;search&quot; },
+    { &quot;name&quot;: &quot;tree&quot; },
+    { &quot;name&quot;: &quot;outline&quot; },
+    { &quot;name&quot;: &quot;highlights&quot; },
+    { &quot;name&quot;: &quot;docs&quot; },
+    { &quot;name&quot;: &quot;terminal&quot; },
+    { &quot;name&quot;: &quot;diff&quot; }
+  ],
+  &quot;systemMessage&quot;: &quot;你是一个嵌入式软件开发专家，供职于汇顶科技蓝牙部门，有丰富使用 ARM Cortex-M4 内核相关芯片的使用经验，也有着丰富的设计低功耗蓝牙 BLE 的经验，也擅长帮助客户解决使用 GR551x_SDK_V2.0.2 过程中出现的问题&quot;,
+  &quot;embeddingsProvider&quot;: {
+    &quot;provider&quot;: &quot;ollama&quot;,
+    &quot;model&quot;: &quot;nomic-embed-text&quot;,
+    &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+  },
+  &quot;models&quot;: [
+    {
+      &quot;title&quot;: &quot;DeepSeek-33b&quot;,
+      &quot;provider&quot;: &quot;ollama&quot;,
+      &quot;model&quot;: &quot;deepseek-coder:33b&quot;,
+      &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+    }
+  ],
+  &quot;tabAutocompleteModel&quot;: {
+    &quot;title&quot;: &quot;Tab Autocomplete Model&quot;,
+    &quot;provider&quot;: &quot;ollama&quot;,
+    &quot;model&quot;: &quot;deepseek-coder:33b-base-q4_K_S&quot;,
+    &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+  }
+}
+</code></pre>
+<p>注：一般的模型采用 chat 或者 instruct 模型；自动补全采用 base 模型，<a href="https://continue.dev/docs/walkthroughs/tab-autocomplete">官方文档</a>里面有提。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1710681099742.png" alt="" loading="lazy"></figure>
+<p>如果 Ollama 不是和 VS Code 在同一台电脑上，那么配置完后需要重启下，否则会出现如下错误。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1710678929337.png" alt="" loading="lazy"></figure>
+<h2 id="使用场景">使用场景</h2>
+<p>VS Code 的项目直接把文件夹 <a href="https://www.goodix.com/en/software_tool/gr551x_sdk">GR551x_SDK_V2.0.2</a> 拖进来尽可以了，但是如果需要过滤掉不需要 embedding 的文件，可以在根目录新建 <code>.continueignore</code>，添加如下：</p>
+<pre><code>*.out
+*.pdf
+*.chm
+*.a
+*.dll
+*.pyd
+*.lib
+*.exe
+*.zip
+*.hex
+*.data
+*.svg
+*.bin
+*.enc
+*.doxyfile
+*.function
+*.uvoptx
+*.sln
+*.o
+*.eps
+*.tcl
+</code></pre>
+<p>注意，<a href="https://github.com/continuedev/continue/issues/1026">不能使用 <code>*</code>，然后 <code>!*.c</code> 这种反套路</a>，会导致无法触发无法 embedding，，，</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1711463860863.png" alt="" loading="lazy"></figure>
+<h3 id="自动提示补全">【自动提示补全】</h3>
+<p>Continue 会在后台默认查询你所在编辑内容的上下文，比如当你写完 <code>## write quick_sort in python</code> 后，敲下回车，那么可能就会触发自动提示补全功能，如果你同意就可以按 <code>tab</code> 同意，相当于 Code Snippet 功能。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1710679133746.png" alt="" loading="lazy"></figure>
+<p>以上前台操作过程显示的后台 Prompt 如下。</p>
+<pre><code>==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b-base-q4_K_S
+maxTokens: 1024
+stop: &lt;｜fim▁begin｜&gt;,&lt;｜fim▁hole｜&gt;,&lt;｜fim▁end｜&gt;,//,
+
+,/src/,```,def,class
+temperature: 0
+
+############################################
+
+&lt;｜fim▁begin｜&gt;&quot;&quot;&quot;Step 4: Use keyboard shortcuts to
+accept [⌘ ⇧ ⏎] or reject [⌘ ⇧ ⌫] the edit&quot;&quot;&quot;
+
+# endregion
+
+# region ———————————————————————————— Part 3: Debug automatically [⌘ ⇧ R] ————————————————————————————
+
+
+&quot;&quot;&quot;Step 1: Run this Python file (it should error!)&quot;&quot;&quot;
+
+
+def print_sum(list_to_print):
+    total = 0
+    for num in list_to_print:
+        if isinstance(num, int):
+            total += num
+        else:
+            raise ValueError(&quot;All elements in the list must be integers.&quot;)
+    print(total)
+
+
+
+&quot;&quot;&quot;Step 2: Use the keyboard shortcut [⌘ ⇧ R]
+to automatically debug the error&quot;&quot;&quot;
+print_sum([&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])
+
+# endregion
+
+## write quick_sort in python
+def quick_sort(arr):
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    for i in range(1, len(arr)):
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    return quick_sort(left) + [pivot] + quick_sort(right)
+&lt;｜fim▁hole｜&gt;&lt;｜fim▁end｜&gt;==========================================================================
+==========================================================================
+Completion:
+
+
+print(quick_sort([3, 2, 1]))
+
+</code></pre>
+<h3 id="选中代码再编辑">【选中代码再编辑】</h3>
+<p>此时，当我们写了一些代码后，我们需要对现有代码进行修改，比如添加注释，编写测试用例，，，</p>
+<p>选中需要处理的代码片段，按压 <code>CTRL + I</code> 可以触发指令输入。</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1710679342700.png" alt="" loading="lazy"></figure>
+<p>等待一会会出现如下修改后的对比，等待确认。</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1710679347079.png" alt="" loading="lazy"></figure>
+<p>以上前台显示的后台 Prompt 如下。</p>
+<pre><code>==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b
+maxTokens: 1024
+
+############################################
+
+### System Prompt
+You are an AI programming assistant, utilizing the DeepSeek Coder model, developed by DeepSeek Company, and you only answer questions related to computer science. For politically sensitive questions, security and privacy issues, and other non-computer science questions, you will refuse to answer.
+### Instruction:
+Rewrite the code to satisfy this request: &quot;add comment&quot;
+
+```python
+## write quick_sort in python
+def quick_sort(arr):
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    for i in range(1, len(arr)):
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    return quick_sort(left) + [pivot] + quick_sort(right)
+
+```&lt;|EOT|&gt;
+### Response:
+Sure! Here's the code you requested:
+
+</code></pre>
+<h3 id="选中聊天">【选中聊天】</h3>
+<p>当我们选中需要了解的代码段后，快捷键 <code>CTRL+L</code> 按下后，代码会自动同步到左侧的聊天框中。</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1710679604156.png" alt="" loading="lazy"></figure>
+<p>此时就可以输入你想要了解的指令说明即可。这里会返回比较快。</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1710679609660.png" alt="" loading="lazy"></figure>
+<p>以上前台显示的后台 Prompt 如下。</p>
+<pre><code>
+
+==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b
+maxTokens: 1024
+
+############################################
+
+&lt;user&gt;
+continue_tutorial.py (96-115)
+## write quick_sort in python
+# This function performs a Quick Sort on an input array. 
+def quick_sort(arr):
+  # Base case: if array has less than or equal to one element, it is already sorted
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    # Split the array into two parts based on a pivot
+    for i in range(1, len(arr)):
+        # If element is less than pivot, append it to left part. Else, append it to right part.
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    
+    # Recursive calls for sorting the two parts and merging them with pivot.
+    return quick_sort(left) + [pivot] + quick_sort(right)
+
+
+这段代码有什么问题么
+
+==========================================================================
+==========================================================================
+Completion:
+
+这段代码的实现是正确的，它实现了Quick Sort算法。然而，它选择了数组的第一个元素作为枢轴，在处理已经排序或接近有序的大数据集时，这种方式可能会导致较差的性能。
+
+一个更优化的方法是使用“三者中值”来选择枢轴，即从数组的第一个、中间和最后一个元素中选取中位数作为枢轴。这样可以更好地平衡分区，从而避免最坏情况（例如已经排序或接近有序的数据集）对性能的影响。
+
+此外，这段代码并没有使用原地分区的方式来节省空间，如果输入数组非常大，可能会导致堆栈溢出或者内存问题。在Python中实现Quick Sort时，通常会选择原地分区的版本。
+
+</code></pre>
+<h3 id="错误信息自动提问">【错误信息自动提问】</h3>
+<p>Continue 除了以上 3 个主要的功能外，在应用上还做了一个比较好的功能，就是按压 <code>CTRL+Shift + R</code> 后，可以直接在工作流中抓取错误信息，向 LLM 提出问题，比较方便。</p>
+<figure data-type="image" tabindex="12"><img src="https://mintisan.github.io/post-images/1710680151236.png" alt="" loading="lazy"></figure>
+<p>注：以上的所有过程都可以在 如下的输出窗口中得到确认。</p>
+<figure data-type="image" tabindex="13"><img src="https://mintisan.github.io/post-images/1710678594128.png" alt="" loading="lazy"></figure>
+<h2 id="功能"><a href="https://continue.dev/docs/customization/context-providers">@功能</a></h2>
+<p><code>@Open Files</code> 相当于获取目前在 VS Code 中打印的文件对象内容，可以咨询打开的文件</p>
+<figure data-type="image" tabindex="14"><img src="https://mintisan.github.io/post-images/1711464327384.png" alt="" loading="lazy"></figure>
+<p><code>@ File Tree</code> 相当于得到了代码仓库的所有目录接口和文件名字，LLM 可以查询所有文件信息，以下就是通过目录名字得到 adc 例程的路径。</p>
+<figure data-type="image" tabindex="15"><img src="https://mintisan.github.io/post-images/1711464333397.png" alt="" width="400" loading="lazy"></figure>
+<p><code>@Codebase </code>  相当于代码仓库级别的 RAG，可以索所有代码，可以看到我们 <code>config.json</code> 查询到的片段还是基本都是相关的。</p>
+<figure data-type="image" tabindex="16"><img src="https://mintisan.github.io/post-images/1711464392470.png" alt="" loading="lazy"></figure>
+<h2 id="功能-2"><a href="https://continue.dev/docs/customization/slash-commands">/ 功能</a></h2>
+<p>其实就是 CTRL+I 的另一种形式，可以先通过 CTRL+L将我们关注的代码片段先挪到聊天框，然后后续进一步编辑。这里以  <code>/comment</code> 为例进行演示，其他也类似。</p>
+<figure data-type="image" tabindex="17"><img src="https://mintisan.github.io/post-images/1711465206274.png" alt="" loading="lazy"></figure>
+<h2 id="注意事项">注意事项</h2>
+<ol>
+<li>如果你切换了模型，那么第一次将会等待比较久的时间</li>
+<li>更换了配置文件需要重启 vs code</li>
+</ol>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://continue.dev/">Continue</a> : The easiest way to code with any LLM</li>
+<li>https://github.com/continuedev/continue</li>
+<li>https://www.ycombinator.com/companies/continue</li>
+<li>https://marketplace.visualstudio.com/items?itemName=Continue.continue</li>
+<li>https://continue.dev/docs/reference/Model%20Providers/ollama</li>
+<li>https://continue.dev/docs/walkthroughs/tab-autocomplete</li>
+<li>https://continue.dev/docs/reference/config</li>
+<li>https://github.com/ollama/ollama</li>
+<li><a href="https://www.andreagrandi.it/posts/self-hosting-copilot-replacement/">Self hosting a Copilot replacement: my personal experience</a></li>
+<li><a href="https://www.reddit.com/r/LocalLLaMA/comments/198aq2l/is_there_anything_that_can_complete_with_github/">Is there anything that can complete with GitHub Copilot right now I can run in VS Code?</a></li>
+<li><a href="https://crushingcode.nisrulz.com/en/posts/local-copilot-your-own-off-the-grid-and-local-code-assistant/">Local Copilot: Your own off the grid and local code assistant</a></li>
+<li><a href="https://news.ycombinator.com/item?id=39552826">	Show HN: Continue.dev releases local, open-source tab-autocomplete (continue.dev)</a></li>
+<li><a href="https://news.ycombinator.com/item?id=36882146">Show HN: Continue – Open-source coding autopilot (github.com/continuedev)</a></li>
+<li><a href="https://www.reddit.com/r/LocalLLaMA/comments/17h7j4h/what_coding_llm_is_the_best_today/">What coding llm is the best today?Discussion (self.LocalLLaMA)</a></li>
+</ul>
+<h3 id="问题链接">问题链接</h3>
+<ul>
+<li><a href="https://github.com/continuedev/continue/issues/946">Unresponsive chat when using remote self-hosted Ollama server #946</a></li>
+<li><a href="https://github.com/sourcegraph/cody/issues/3074">bug: cannot configure unstable-ollama provider, ignores model and Server Endpoint settings #3074</a></li>
+</ul>
+<h3 id="同类竞品">同类竞品</h3>
+<ul>
+<li><a href="https://github.com/TabbyML/tabby">Tabby</a> : Self-hosted AI coding assistant[docker + vs code + Jetbrains ][Tabby 需要启动自身 docker 服务器，无法和 Ollama 结合。]</li>
+<li><a href="https://github.com/fauxpilot/fauxpilot">FauxPilot</a> : an open-source alternative to GitHub Copilot server</li>
+<li><a href="https://github.com/sourcegraph/cody">Cody</a> : AI that knows your entire codebase[vs code+ollama+Jetbrains] [Cody 安装使用 Ollama 返回错误；]
+<ul>
+<li><a href="https://sourcegraph.com/blog/local-code-completion-with-ollama-and-cody">Local code completion with Ollama and Cody</a></li>
+<li><a href="https://generativeai.pub/100-local-llama-coding-assistant-bye-bye-gpt-4-cbd2b507b822">100% Open-Source Llama Coding Assistant: Bye, bye GPT-4!</a></li>
+</ul>
+</li>
+<li><a href="https://github.com/Exafunction/codeium.vim">Codeium</a> : Free, ultrafast Copilot alternative for Vim and Neovim[Codeium 也不支持和 Ollama 的结合。]</li>
+<li><a href="https://github.com/rjmacarthy/twinny">Twinny</a> : The most no-nonsense locally hosted (or API hosted) AI code completion plugin for Visual Studio Code, like GitHub Copilot but 100% free and 100% private.[vs code+ollama][可以用时 base 模型进行【行内下一句提示】，只能提示下一句，看起来笨笨的。]</li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ex3ndr.llama-coder">Llama Coder</a></li>
+<li><a href="https://github.com/srikanth235/privy">Privy</a> : An open-source alternative to GitHub copilot that runs locally.</li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=DanielSanMedium.dscodegpt">Code GPT: Chat &amp; AI Agents</a> : [Code GPT 不支持自定义服务器地址，也不支持开源。]</li>
+<li><a href="https://cursor.sh/">Cursor</a> : Build software faster in an editor designed for pair-programming with AI</li>
+<li><a href="https://raccoon.sensetime.com/code">商汤代码小浣熊</a></li>
+<li><a href="https://tongyi.aliyun.com/lingma">阿里通义灵码</a></li>
+<li><a href="https://comate.baidu.com/">百度 Comate</a></li>
+<li><a href="https://codegeex.cn/">智谱 CodeGeeX</a></li>
+<li><a href="https://cloud.tencent.com/product/acc">腾讯云 AI 代码助手</a></li>
+<li><a href="https://iflycode.xfyun.cn/">讯飞 iFlyCode</a></li>
+</ul>
+<figure data-type="image" tabindex="18"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[关于 ESP32 下着下着就不让下了这件事]]></title>
+        <id>https://mintisan.github.io/post/about-esp32-flash-download-md5-error/</id>
+        <link href="https://mintisan.github.io/post/about-esp32-flash-download-md5-error/">
+        </link>
+        <updated>2024-03-11T12:02:40.000Z</updated>
+        <summary type="html"><![CDATA[<p>下午在调试过程一直使用 <code>460800</code> 波特率进行下载，相安无事，但是突然不知咋的，就一直报 <code>A fatal error occurred: MD5 of file does not match data in flash!</code> 错误，期间退回程序，重启都没用，和软件代码无关，遂 <a href="https://www.esp32.com/viewtopic.php?t=4061">Google</a> 之，以及 <a href="https://shareg.pt/SGmolhN">GPT</a> 之。尝试降低下载波特率解决。XD</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>下午在调试过程一直使用 <code>460800</code> 波特率进行下载，相安无事，但是突然不知咋的，就一直报 <code>A fatal error occurred: MD5 of file does not match data in flash!</code> 错误，期间退回程序，重启都没用，和软件代码无关，遂 <a href="https://www.esp32.com/viewtopic.php?t=4061">Google</a> 之，以及 <a href="https://shareg.pt/SGmolhN">GPT</a> 之。尝试降低下载波特率解决。XD</p>
+<!-- more -->
+<p>如概述所述，这种好好用着用着就歇菜了的，，，也不知道是哪个环节在之前处于临界的状态，下次碰到不换波特率直接换个线再看下，，，</p>
+<p>GPT 给的建议顺序还是比较靠谱的，这里对我而言是通过第二条搞定，这里有一个注意点就是日志信息尽量多些信息，这样比较能触发 GPT 的一些具体相关，所给的答案也会和你的问题可能更加符合相关。</p>
+<p>比如这里具体的 <code>460800</code> 波特率信息。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1710159136094.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[关于 ESP32 的 IIC 初始化报错这件事]]></title>
+        <id>https://mintisan.github.io/post/about-esp32-arduino-iic-init-error/</id>
+        <link href="https://mintisan.github.io/post/about-esp32-arduino-iic-init-error/">
+        </link>
+        <updated>2024-03-05T11:45:16.000Z</updated>
+        <summary type="html"><![CDATA[<p>从来没有想过 IIC 主控芯片初始化也有可能出错，在 GPT 上聊了整个<a href="https://shareg.pt/xdH7K56">过程</a>，最后总结一句话就是：把电源/地接到了 IIC 上，会导致 Arduino 的库本身初始化的时候检查 IIC 时序是否可以拉起来，如果拉不起来则会在串口输出错误信息，所以 Arduino 的库背后估计也有人遇到类似的问题，才做的吧。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>从来没有想过 IIC 主控芯片初始化也有可能出错，在 GPT 上聊了整个<a href="https://shareg.pt/xdH7K56">过程</a>，最后总结一句话就是：把电源/地接到了 IIC 上，会导致 Arduino 的库本身初始化的时候检查 IIC 时序是否可以拉起来，如果拉不起来则会在串口输出错误信息，所以 Arduino 的库背后估计也有人遇到类似的问题，才做的吧。</p>
+<!-- more -->
+<h2 id="初始化代码">初始化代码</h2>
+<p>让 GPT 写了一个遍历总线上所有 IIC 从设备的简单代码，想看下连接性和对应的地址，代码如下：</p>
+<pre><code class="language-c">#include &lt;Arduino.h&gt;  // 如果使用 PlatformIO 框架，则需要显式添加 Arduino 头文件
+#include &lt;Wire.h&gt;
+
+void setup() {
+  Wire.begin(21, 22); // 初始化I2C总线，SDA为21号引脚，SCL为22号引脚
+  Serial.begin(115200); // 初始化串口通信，波特率为115200
+  while (!Serial); // 等待串口连接
+  Serial.println(&quot;\nI2C Scanner&quot;);
+}
+
+void loop() {
+  byte error, address;
+  int nDevices;
+
+  Serial.println(&quot;Scanning...&quot;);
+
+  nDevices = 0;
+  for(address = 1; address &lt; 127; address++ ) {
+    // The i2c_scanner uses the return value of
+    // the Write.endTransmisstion to see if
+    // a device did acknowledge to the address.
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+
+    if (error == 0) {
+      Serial.print(&quot;I2C device found at address 0x&quot;);
+      if (address &lt; 16)
+        Serial.print(&quot;0&quot;);
+      Serial.print(address, HEX);
+      Serial.println(&quot;  !&quot;);
+
+      nDevices++;
+    }
+    else if (error == 4) {
+      Serial.print(&quot;Unknown error at address 0x&quot;);
+      if (address &lt; 16)
+        Serial.print(&quot;0&quot;);
+      Serial.println(address, HEX);
+    }    
+  }
+  if (nDevices == 0)
+    Serial.println(&quot;No I2C devices found\n&quot;);
+  else
+    Serial.println(&quot;done\n&quot;);
+
+  delay(5000); // 等待5秒后再次扫描
+}
+
+</code></pre>
+<h2 id="错误日志">错误日志</h2>
+<p>烧录后运行，初始化运行后，串口打印如下错误日志如下：</p>
+<pre><code>[W][esp32-hal-i2c.c:1419] i2cCheckLineState(): invalid state sda(21)=1, scl(22)=0
+[D][esp32-hal-i2c.c:1427] i2cCheckLineState(): Recovered after 1 Cycles
+[E][esp32-hal-i2c.c:1434] i2cCheckL
+</code></pre>
+<p>都还没跑到遍历，在初始化就失败，后面检查发现尽然线接错了，，，</p>
+<p>在和 GPT 的聊天过程中，其实给的第一条就是方向，还可以。这里其实看到log信息应该要很快就想到那个硬件上的上拉约束不满足，不过也还好很快就怀疑到那里了。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1709639913701.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[关于 ESP32 开发板深度睡眠模式电流 11mA 这件事]]></title>
+        <id>https://mintisan.github.io/post/about-esp32-deepsleep-11ma-abnormal/</id>
+        <link href="https://mintisan.github.io/post/about-esp32-deepsleep-11ma-abnormal/">
+        </link>
+        <updated>2024-03-03T10:13:22.000Z</updated>
+        <summary type="html"><![CDATA[<p>在官方渠道购买的 ESP32-Pico-Kit V4.1 的板子，然后尝试了 ESPIDF 官方例程以及 GPT 帮忙生成的 Arduino 和 ESPIDF 的最小代码烧录测量，结果发现通过 USB 测量板子进入深度睡眠之后的电流均为 11mA 多点，和官方说的 10uA 以下有这天然之别，但是看过程也确实在重启，看内存也只有 RTC 内存会保留状态，也就是说模块符合预期，但是结果功耗不符合，哪里出了问题呢？查了一圈，看到<a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html">两篇相关</a> 的答案：CP2102转换芯片和线性稳压器芯片导致的。<br>
+【其实 <a href="https://shareg.pt/dfeWyyb">GPT</a> 告诉我答案了，但是我不是硬件工程师，没法办进一步定位，最后还是 Google 给了我认知范围内的答案！！！】</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>在官方渠道购买的 ESP32-Pico-Kit V4.1 的板子，然后尝试了 ESPIDF 官方例程以及 GPT 帮忙生成的 Arduino 和 ESPIDF 的最小代码烧录测量，结果发现通过 USB 测量板子进入深度睡眠之后的电流均为 11mA 多点，和官方说的 10uA 以下有这天然之别，但是看过程也确实在重启，看内存也只有 RTC 内存会保留状态，也就是说模块符合预期，但是结果功耗不符合，哪里出了问题呢？查了一圈，看到<a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html">两篇相关</a> 的答案：CP2102转换芯片和线性稳压器芯片导致的。<br>
+【其实 <a href="https://shareg.pt/dfeWyyb">GPT</a> 告诉我答案了，但是我不是硬件工程师，没法办进一步定位，最后还是 Google 给了我认知范围内的答案！！！】</p>
+<!-- more -->
+<h2 id="尝试各种姿势的例程">尝试各种姿势的例程</h2>
+<p>尝试了各种最小 deepsleep 的例程代码后，直接把板子接到 USB 测量器上，发现都是 11mA 最左右如下：</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1709464079695.jpg" alt="" loading="lazy"></figure>
+<p>但是各种现象和功能模块确实是符合预期的，有意思的是，这个过程 GPT 其实已经告诉我答案了，就在第一条，但是我还是没有办法在我能力范围内确定，也被我忽略了接着 Google 找来找去【如果是硬件工程师，可能一下子就知道啥原理以及定位到哪个芯片了】。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1709464421875.png" alt="" loading="lazy"></figure>
+<p>直到在 Google 中找到很<a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html">类似</a> 的，也给出了具体芯片，这时候就基本确定了。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1709464505567.png" alt="" loading="lazy"></figure>
+<p>有机会把下面那两个拆掉看下吧，，，【估计就搁置了XD】<br>
+<img src="https://mintisan.github.io/post-images/1709464989226.png" alt="" loading="lazy"></p>
+<h3 id="最简单的-arduino-例程">最简单的 Arduino 例程</h3>
+<pre><code class="language-c">#include &lt;Arduino.h&gt;
+#include &lt;esp_sleep.h&gt;
+
+void setup() {
+  Serial.begin(115200);
+
+  // 给串口足够的时间来初始化
+  delay(1000);
+  Serial.println(&quot;Entering deep sleep for 10 seconds&quot;);
+
+  // 设置ESP32在10秒后自动唤醒
+  esp_sleep_enable_timer_wakeup(10 * 1000000);
+
+  // 进入深度睡眠
+  esp_deep_sleep_start();
+
+  // 注意：ESP32进入深度睡眠后，不会执行下面的代码
+}
+
+void loop() {
+  // 这里的代码在深度睡眠后不会被执行
+}
+
+</code></pre>
+<h3 id="最简单的-espidf-例程">最简单的 ESPIDF 例程</h3>
+<pre><code class="language-c">#include &quot;esp_sleep.h&quot;
+#include &quot;freertos/FreeRTOS.h&quot;
+#include &quot;freertos/task.h&quot;
+#include &quot;esp_log.h&quot;
+
+void app_main() {
+    // 在进入深度睡眠之前打印一条日志
+    ESP_LOGI(&quot;Sleep&quot;, &quot;Entering deep sleep for 10 seconds&quot;);
+
+    // 设置唤醒设备的条件，这里设置为10秒后自动唤醒
+    esp_sleep_enable_timer_wakeup(10 * 1000000);
+
+    // 进入深度睡眠模式
+    esp_deep_sleep_start();
+
+    // 代码不会执行到这里
+}
+</code></pre>
+<h3 id="官方例程"><a href="https://github.com/espressif/esp-idf/tree/v5.2/examples/system/deep_sleep">官方例程</a></h3>
+<pre><code class="language-c">/*
+ * SPDX-FileCopyrightText: 2017-2023 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Unlicense OR CC0-1.0
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;time.h&gt;
+#include &lt;sys/time.h&gt;
+#include &quot;sdkconfig.h&quot;
+#include &quot;soc/soc_caps.h&quot;
+#include &quot;freertos/FreeRTOS.h&quot;
+#include &quot;freertos/task.h&quot;
+#include &quot;esp_sleep.h&quot;
+#include &quot;esp_log.h&quot;
+#include &quot;driver/rtc_io.h&quot;
+#include &quot;nvs_flash.h&quot;
+#include &quot;nvs.h&quot;
+//#include &quot;deep_sleep_example.h&quot;
+
+#if SOC_RTC_FAST_MEM_SUPPORTED
+static RTC_DATA_ATTR struct timeval sleep_enter_time;
+#else
+static struct timeval sleep_enter_time;
+#endif
+
+static void deep_sleep_task(void *args)
+{
+    /**
+     * Prefer to use RTC mem instead of NVS to save the deep sleep enter time, unless the chip
+     * does not support RTC mem(such as esp32c2). Because the time overhead of NVS will cause
+     * the recorded deep sleep enter time to be not very accurate.
+     */
+#if !SOC_RTC_FAST_MEM_SUPPORTED
+    // Initialize NVS
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        // NVS partition was truncated and needs to be erased
+        // Retry nvs_flash_init
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        err = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(err);
+
+    nvs_handle_t nvs_handle;
+    err = nvs_open(&quot;storage&quot;, NVS_READWRITE, &amp;nvs_handle);
+    if (err != ESP_OK) {
+        printf(&quot;Error (%s) opening NVS handle!\n&quot;, esp_err_to_name(err));
+    } else {
+        printf(&quot;Open NVS done\n&quot;);
+    }
+
+    // Get deep sleep enter time
+    nvs_get_i32(nvs_handle, &quot;slp_enter_sec&quot;, (int32_t *)&amp;sleep_enter_time.tv_sec);
+    nvs_get_i32(nvs_handle, &quot;slp_enter_usec&quot;, (int32_t *)&amp;sleep_enter_time.tv_usec);
+#endif
+
+    struct timeval now;
+    gettimeofday(&amp;now, NULL);
+    int sleep_time_ms = (now.tv_sec - sleep_enter_time.tv_sec) * 1000 + (now.tv_usec - sleep_enter_time.tv_usec) / 1000;
+
+    switch (esp_sleep_get_wakeup_cause()) {
+        case ESP_SLEEP_WAKEUP_TIMER: {
+            printf(&quot;Wake up from timer. Time spent in deep sleep: %dms\n&quot;, sleep_time_ms);
+            break;
+        }
+
+#if CONFIG_EXAMPLE_GPIO_WAKEUP
+        case ESP_SLEEP_WAKEUP_GPIO: {
+            uint64_t wakeup_pin_mask = esp_sleep_get_gpio_wakeup_status();
+            if (wakeup_pin_mask != 0) {
+                int pin = __builtin_ffsll(wakeup_pin_mask) - 1;
+                printf(&quot;Wake up from GPIO %d\n&quot;, pin);
+            } else {
+                printf(&quot;Wake up from GPIO\n&quot;);
+            }
+            break;
+        }
+#endif //CONFIG_EXAMPLE_GPIO_WAKEUP
+
+#if CONFIG_EXAMPLE_EXT0_WAKEUP
+        case ESP_SLEEP_WAKEUP_EXT0: {
+            printf(&quot;Wake up from ext0\n&quot;);
+            break;
+        }
+#endif // CONFIG_EXAMPLE_EXT0_WAKEUP
+
+#ifdef CONFIG_EXAMPLE_EXT1_WAKEUP
+        case ESP_SLEEP_WAKEUP_EXT1: {
+            uint64_t wakeup_pin_mask = esp_sleep_get_ext1_wakeup_status();
+            if (wakeup_pin_mask != 0) {
+                int pin = __builtin_ffsll(wakeup_pin_mask) - 1;
+                printf(&quot;Wake up from GPIO %d\n&quot;, pin);
+            } else {
+                printf(&quot;Wake up from GPIO\n&quot;);
+            }
+            break;
+        }
+#endif // CONFIG_EXAMPLE_EXT1_WAKEUP
+
+#ifdef CONFIG_EXAMPLE_TOUCH_WAKEUP
+        case ESP_SLEEP_WAKEUP_TOUCHPAD: {
+            printf(&quot;Wake up from touch on pad %d\n&quot;, esp_sleep_get_touchpad_wakeup_status());
+            break;
+        }
+#endif // CONFIG_EXAMPLE_TOUCH_WAKEUP
+
+        case ESP_SLEEP_WAKEUP_UNDEFINED:
+        default:
+            printf(&quot;Not a deep sleep reset\n&quot;);
+    }
+
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+#if CONFIG_IDF_TARGET_ESP32
+    // Isolate GPIO12 pin from external circuits. This is needed for modules
+    // which have an external pull-up resistor on GPIO12 (such as ESP32-WROVER)
+    // to minimize current consumption.
+    rtc_gpio_isolate(GPIO_NUM_12);
+#endif
+
+    printf(&quot;Entering deep sleep\n&quot;);
+
+    // get deep sleep enter time
+    gettimeofday(&amp;sleep_enter_time, NULL);
+
+#if !SOC_RTC_FAST_MEM_SUPPORTED
+    // record deep sleep enter time via nvs
+    ESP_ERROR_CHECK(nvs_set_i32(nvs_handle, &quot;slp_enter_sec&quot;, sleep_enter_time.tv_sec));
+    ESP_ERROR_CHECK(nvs_set_i32(nvs_handle, &quot;slp_enter_usec&quot;, sleep_enter_time.tv_usec));
+    ESP_ERROR_CHECK(nvs_commit(nvs_handle));
+    nvs_close(nvs_handle);
+#endif
+
+    // enter deep sleep
+    esp_deep_sleep_start();
+}
+
+static void example_deep_sleep_register_rtc_timer_wakeup(void)
+{
+    const int wakeup_time_sec = 20;
+    printf(&quot;Enabling timer wakeup, %ds\n&quot;, wakeup_time_sec);
+    ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(wakeup_time_sec * 1000000));
+}
+
+void app_main(void)
+{
+    /* Enable wakeup from deep sleep by rtc timer */
+    example_deep_sleep_register_rtc_timer_wakeup();
+
+#if CONFIG_EXAMPLE_GPIO_WAKEUP
+    /* Enable wakeup from deep sleep by gpio */
+    example_deep_sleep_register_gpio_wakeup();
+#endif
+
+#if CONFIG_EXAMPLE_EXT0_WAKEUP
+    /* Enable wakeup from deep sleep by ext0 */
+    example_deep_sleep_register_ext0_wakeup();
+#endif
+
+#if CONFIG_EXAMPLE_EXT1_WAKEUP
+    /* Enable wakeup from deep sleep by ext1 */
+    example_deep_sleep_register_ext1_wakeup();
+#endif
+
+#if CONFIG_EXAMPLE_TOUCH_WAKEUP
+    /* Enable wakeup from deep sleep by touch */
+    example_deep_sleep_register_touch_wakeup();
+#endif
+
+    xTaskCreate(deep_sleep_task, &quot;deep_sleep_task&quot;, 4096, NULL, 6, NULL);
+}
+</code></pre>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html"><strong>ESP32-DevKitC's DeepSleep is consuming quite a bit of current, so I investigated the cause.</strong></a> : 从 11.8mA 理清到 8.15mA 到 10uA【主要是电源转换芯片和USB转换芯片带来的】</li>
+<li><a href="https://www.yiboard.com/thread-1644-1-1.html">ESP32正常工作模式和深度睡眠模式的功耗对比</a></li>
+<li><a href="https://en.kohacraft.com/archives/esp32-reduced-current-consumption-during-deepsleep-by-putting-hx711-into-power-down-mode.html">ESP32 reduced current consumption during DeepSleep by putting HX711 into power down mode.</a></li>
+<li><a href="https://blog.csdn.net/chentuo2000/article/details/125033711">ESP32深度睡眠电流怎样低于10uA</a></li>
+<li><a href="https://shareg.pt/dfeWyyb">Implementing and Measuring Deep Sleep Power Consumption on ESP32 with ESP-IDF</a></li>
+<li><a href="https://github.com/espressif/esp-idf/tree/v5.2/examples/system/deep_sleep">Deep Sleep Example</a></li>
+<li><a href="https://www.instructables.com/ESP32-Deep-Sleep-Tutorial/">ESP32 Deep Sleep Tutorial</a></li>
+<li><a href="https://deepbluembedded.com/esp32-sleep-modes-power-consumption/">ESP32 Sleep Modes &amp; Power Consumption in Each Mode</a></li>
+<li><a href="https://docs.espressif.com/projects/esp-faq/en/latest/test-verification/power-consumption-verification.html">Power Consumption Verification</a></li>
+<li><a href="https://www.esp32.com/viewtopic.php?t=21766">Deep sleep Power consumption Problem.</a></li>
+<li><a href="https://learn.circuit.rocks/esp32-deep-sleep">FreeRTOS: ESP32 Deep Sleep</a></li>
+<li><a href="https://www.programmingelectronics.com/esp32-deep-sleep-mode/">A Practical Guide To ESP32 Deep Sleep Modes</a></li>
+<li><a href="https://lastminuteengineers.com/esp32-sleep-modes-power-consumption/">Insight Into ESP32 Sleep Modes &amp; Their Power Consumption</a></li>
+<li><a href="https://community.home-assistant.io/t/why-is-it-using-so-much-power-while-deep-sleeping/560884">Why is it using so much power while deep-sleeping?</a></li>
+<li><a href="https://forum.arduino.cc/t/deep-sleep-power-consumtion-esp32-devkit/1201123">Deep sleep power consumtion ESP32 devkit</a></li>
+<li><a href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+</ul>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+</feed>
