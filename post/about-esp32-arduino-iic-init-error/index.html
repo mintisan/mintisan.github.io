@@ -1,0 +1,279 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>关于 ESP32 的 IIC 初始化报错这件事 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="关于 ESP32 的 IIC 初始化报错这件事 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="从来没有想过 IIC 主控芯片初始化也有可能出错，在 GPT 上聊了整个过程，最后总结一句话就是：把电源/地接到了 IIC 上，会导致 Arduino 的库本身初始化的时候检查 IIC 时序是否可以拉起来，如果拉不起来则会在串口输出错误信息..." />
+    <meta name="keywords" content="Arduino,ESP32" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              关于 ESP32 的 IIC 初始化报错这件事
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-03-05
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/u2KgjnsY0/" class="post-tag">
+                  # Arduino
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/0kWuQOIob/" class="post-tag">
+                  # ESP32
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/about-esp32-arduino-iic-init-error.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>从来没有想过 IIC 主控芯片初始化也有可能出错，在 GPT 上聊了整个<a href="https://shareg.pt/xdH7K56">过程</a>，最后总结一句话就是：把电源/地接到了 IIC 上，会导致 Arduino 的库本身初始化的时候检查 IIC 时序是否可以拉起来，如果拉不起来则会在串口输出错误信息，所以 Arduino 的库背后估计也有人遇到类似的问题，才做的吧。</p>
+<!-- more -->
+<h2 id="初始化代码">初始化代码</h2>
+<p>让 GPT 写了一个遍历总线上所有 IIC 从设备的简单代码，想看下连接性和对应的地址，代码如下：</p>
+<pre><code class="language-c">#include &lt;Arduino.h&gt;  // 如果使用 PlatformIO 框架，则需要显式添加 Arduino 头文件
+#include &lt;Wire.h&gt;
+
+void setup() {
+  Wire.begin(21, 22); // 初始化I2C总线，SDA为21号引脚，SCL为22号引脚
+  Serial.begin(115200); // 初始化串口通信，波特率为115200
+  while (!Serial); // 等待串口连接
+  Serial.println(&quot;\nI2C Scanner&quot;);
+}
+
+void loop() {
+  byte error, address;
+  int nDevices;
+
+  Serial.println(&quot;Scanning...&quot;);
+
+  nDevices = 0;
+  for(address = 1; address &lt; 127; address++ ) {
+    // The i2c_scanner uses the return value of
+    // the Write.endTransmisstion to see if
+    // a device did acknowledge to the address.
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+
+    if (error == 0) {
+      Serial.print(&quot;I2C device found at address 0x&quot;);
+      if (address &lt; 16)
+        Serial.print(&quot;0&quot;);
+      Serial.print(address, HEX);
+      Serial.println(&quot;  !&quot;);
+
+      nDevices++;
+    }
+    else if (error == 4) {
+      Serial.print(&quot;Unknown error at address 0x&quot;);
+      if (address &lt; 16)
+        Serial.print(&quot;0&quot;);
+      Serial.println(address, HEX);
+    }    
+  }
+  if (nDevices == 0)
+    Serial.println(&quot;No I2C devices found\n&quot;);
+  else
+    Serial.println(&quot;done\n&quot;);
+
+  delay(5000); // 等待5秒后再次扫描
+}
+
+</code></pre>
+<h2 id="错误日志">错误日志</h2>
+<p>烧录后运行，初始化运行后，串口打印如下错误日志如下：</p>
+<pre><code>[W][esp32-hal-i2c.c:1419] i2cCheckLineState(): invalid state sda(21)=1, scl(22)=0
+[D][esp32-hal-i2c.c:1427] i2cCheckLineState(): Recovered after 1 Cycles
+[E][esp32-hal-i2c.c:1434] i2cCheckL
+</code></pre>
+<p>都还没跑到遍历，在初始化就失败，后面检查发现尽然线接错了，，，</p>
+<p>在和 GPT 的聊天过程中，其实给的第一条就是方向，还可以。这里其实看到log信息应该要很快就想到那个硬件上的上拉约束不满足，不过也还好很快就怀疑到那里了。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1709639913701.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BB%A3%E7%A0%81">初始化代码</a></li>
+<li><a href="#%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97">错误日志</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/about-esp32-deepsleep-11ma-abnormal/">
+              <h3 class="post-title">
+                关于 ESP32 开发板深度睡眠模式电流 11mA 这件事
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

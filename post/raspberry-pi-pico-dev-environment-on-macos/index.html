@@ -1,0 +1,418 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Raspberry Pi Pico 在 macOS 上的开发环境搭建 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Raspberry Pi Pico 在 macOS 上的开发环境搭建 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Raspberry Pi Pico 是树莓派基金推出的第一款 MCU 控制级别的开发版，基于 ARM Cortex-M0+ 内核，想把计算平台覆盖再往下沉一级。
+
+规格参数
+
+双核 Arm Cortex-M0 + @ 133MHz
+芯片内置..." />
+    <meta name="keywords" content="ARM Cortex-M0,树莓派,开源硬件" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Raspberry Pi Pico 在 macOS 上的开发环境搭建
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-12-27
+              </span>
+              <span>
+                11 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/36MYF_Ic3/" class="post-tag">
+                  # ARM Cortex-M0
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/cGDXa2bGxg/" class="post-tag">
+                  # 树莓派
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/yo-I00C_Rg/" class="post-tag">
+                  # 开源硬件
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/raspberry-pi-pico-dev-environment-on-macos.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>Raspberry Pi Pico 是树莓派基金推出的第一款 MCU 控制级别的开发版，基于 ARM Cortex-M0+ 内核，想把计算平台覆盖再往下沉一级。</p>
+<!-- more -->
+<h2 id="规格参数">规格参数</h2>
+<ul>
+<li>双核 Arm Cortex-M0 + @ 133MHz</li>
+<li>芯片内置 264KB SRAM 和 2MB 的板载闪存</li>
+<li>通过专用 QSPI 总线支持最高 16MB 的片外闪存</li>
+<li>DMA 控制器</li>
+<li>30 个 GPIO 引脚，其中 4 个可用作模拟输入</li>
+<li>2 个 UART、2 个 SPI 控制器和 2 个 I2C 控制器</li>
+<li>16 个 PWM 通道</li>
+<li>USB 1.1 主机和设备支持</li>
+<li>8 个树莓派可编程 I/O（PIO）状态机，用于自定义外围设备支持</li>
+<li>支持 UF2 的 USB 大容量存储启动模式，用于拖放式编程</li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1672116845787.svg" alt="" loading="lazy"></figure>
+<h2 id="hello-world">Hello World</h2>
+<p>下载安装 sdk 和 example</p>
+<pre><code>(base) ➜  pico 
+(base) ➜  pico git clone https://github.com/raspberrypi/pico-sdk
+(base) ➜  pico cd pico-sdk
+(base) ➜  pico git submodule update --init     ## 下载上级依赖
+(base) ➜  pico cd ..
+(base) ➜  pico git clone -b master https://github.com/raspberrypi/pico-examples.git   ## 实例代码
+(base) ➜  pico ls
+pico-examples pico-sdk       # 目录结构
+</code></pre>
+<p>然后进入 blink 例程目录，设置环境变量，以及尝试编译固件</p>
+<pre><code>(base) ➜  pico cd pico-examples/blink
+(base) ➜  blink git:(master) cmake ..
+Using PICO_SDK_PATH from environment ('../../pico-sdk')
+PICO_SDK_PATH is /Users/mintisan/Workplace/pico/pico-sdk
+Defaulting PICO_PLATFORM to rp2040 since not specified.
+Defaulting PICO platform compiler to pico_arm_gcc since not specified.
+-- Defaulting build type to 'Release' since not specified.
+PICO compiler is pico_arm_gcc
+CMake Error at /Users/mintisan/Workplace/pico/pico-sdk/cmake/preload/toolchains/find_compiler.cmake:28 (message):
+  Compiler 'arm-none-eabi-gcc' not found, you can specify search path with
+  &quot;PICO_TOOLCHAIN_PATH&quot;.
+Call Stack (most recent call first):
+  /Users/mintisan/Workplace/pico/pico-sdk/cmake/preload/toolchains/pico_arm_gcc.cmake:20 (pico_find_compiler)
+  /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeDetermineSystem.cmake:124 (include)
+  CMakeLists.txt:6 (project)
+
+
+CMake Error: CMake was unable to find a build program corresponding to &quot;Unix Makefiles&quot;.  CMAKE_MAKE_PROGRAM is not set.  You probably need to select a different build tool.
+CMake Error: CMAKE_C_COMPILER not set, after EnableLanguage
+CMake Error: CMAKE_CXX_COMPILER not set, after EnableLanguage
+CMake Error: CMAKE_ASM_COMPILER not set, after EnableLanguage
+-- Configuring incomplete, errors occurred!
+</code></pre>
+<p>如果提示以上错误，则需要安装工具链</p>
+<pre><code>brew install cmake
+brew tap ArmMbed/homebrew-formulae
+brew install arm-none-eabi-gcc
+</code></pre>
+<p>待安装结束，查看版本号，以及重新cmake</p>
+<pre><code>(base) ➜  blink git:(master) ✗ arm-none-eabi-gcc -v
+Using built-in specs.
+COLLECT_GCC=arm-none-eabi-gcc
+COLLECT_LTO_WRAPPER=/opt/homebrew/Cellar/arm-none-eabi-gcc/10.3-2021.07/gcc/bin/../lib/gcc/arm-none-eabi/10.3.1/lto-wrapper
+Target: arm-none-eabi
+Configured with: /tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/src/gcc/configure --target=arm-none-eabi --prefix=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/install-native --libexecdir=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/install-native/lib --infodir=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/install-native/share/doc/gcc-arm-none-eabi/info --mandir=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/install-native/share/doc/gcc-arm-none-eabi/man --htmldir=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/install-native/share/doc/gcc-arm-none-eabi/html --pdfdir=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/install-native/share/doc/gcc-arm-none-eabi/pdf --enable-languages=c,c++ --enable-plugins --disable-decimal-float --disable-libffi --disable-libgomp --disable-libmudflap --disable-libquadmath --disable-libssp --disable-libstdcxx-pch --disable-nls --disable-shared --disable-threads --disable-tls --with-gnu-as --with-gnu-ld --with-newlib --with-headers=yes --with-python-dir=share/gcc-arm-none-eabi --with-sysroot=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/install-native/arm-none-eabi --build=x86_64-apple-darwin10 --host=x86_64-apple-darwin10 --with-gmp=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/build-native/host-libs/usr --with-mpfr=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/build-native/host-libs/usr --with-mpc=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/build-native/host-libs/usr --with-isl=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/build-native/host-libs/usr --with-libelf=/tmp/jenkins-GCC-10-pipeline-259_20210727_1627345004/build-native/host-libs/usr --with-host-libstdcxx='-static-libgcc -Wl,-lstdc++ -lm' --with-pkgversion='GNU Arm Embedded Toolchain 10.3-2021.07' --with-multilib-list=rmprofile,aprofile
+Thread model: single
+Supported LTO compression algorithms: zlib
+gcc version 10.3.1 20210621 (release) (GNU Arm Embedded Toolchain 10.3-2021.07)
+(base) ➜  blink git:(master) ✗ cmake ..
+PICO_SDK_PATH is /Users/mintisan/Workplace/pico/pico-sdk
+PICO platform is rp2040.
+-- The C compiler identification is GNU 10.3.1
+-- The CXX compiler identification is GNU 10.3.1
+-- The ASM compiler identification is GNU
+-- Found assembler: /opt/homebrew/bin/arm-none-eabi-gcc
+Build type is Release
+Defaulting PICO target board to pico since not specified.
+Using board configuration from /Users/mintisan/Workplace/pico/pico-sdk/src/boards/include/boards/pico.h
+-- Found Python3: /opt/homebrew/Frameworks/Python.framework/Versions/3.11/bin/python3.11 (found version &quot;3.11.0&quot;) found components: Interpreter
+TinyUSB available at /Users/mintisan/Workplace/pico/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040; enabling build support for USB.
+cyw43-driver available at /Users/mintisan/Workplace/pico/pico-sdk/lib/cyw43-driver
+lwIP available at /Users/mintisan/Workplace/pico/pico-sdk/lib/lwip
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/mintisan/Workplace/pico/pico-examples/blink
+</code></pre>
+<p>进入cmake生成的blink目录，再进行make生成二进制固件</p>
+<pre><code>(base) ➜  blink git:(master) ✗ ls
+CMakeCache.txt      blink               divider             gpio                pico-sdk            pwm                 timer
+CMakeFiles          blink.c             dma                 hello_world         pico_w              reset               uart
+CMakeLists.txt      clocks              elf2uf2             i2c                 picoboard           rtc                 usb
+Makefile            cmake               flash               interp              pio                 spi                 watchdog
+adc                 cmake_install.cmake generated           multicore           pioasm              system
+(base) ➜  blink git:(master) ✗ cd blink
+(base) ➜  blink git:(master) ✗ ls
+CMakeFiles          Makefile            cmake_install.cmake elf2uf2
+(base) ➜  blink git:(master) ✗ make -j8
+...
+[100%] Building C object blink/CMakeFiles/blink.dir/Users/mintisan/Workplace/pico/pico-sdk/src/rp2_common/pico_stdio/stdio.c.obj
+[100%] Building C object blink/CMakeFiles/blink.dir/Users/mintisan/Workplace/pico/pico-sdk/src/rp2_common/pico_stdio_uart/stdio_uart.c.obj
+[100%] Linking CXX executable blink.elf
+[100%] Built target blink
+(base) ➜  blink git:(master) ✗ ls -la
+total 1032
+drwxr-xr-x  12 mintisan  staff     384 Dec 27 12:13 .
+drwxr-xr-x  36 mintisan  staff    1152 Dec 27 12:11 ..
+drwxr-xr-x   7 mintisan  staff     224 Dec 27 12:13 CMakeFiles
+-rw-r--r--   1 mintisan  staff   93875 Dec 27 12:11 Makefile
+-rwxr-xr-x   1 mintisan  staff    8288 Dec 27 12:13 blink.bin
+-rw-r--r--   1 mintisan  staff  149550 Dec 27 12:13 blink.dis
+-rwxr-xr-x   1 mintisan  staff   30412 Dec 27 12:13 blink.elf
+-rw-r--r--   1 mintisan  staff  187629 Dec 27 12:13 blink.elf.map
+-rw-r--r--   1 mintisan  staff   23374 Dec 27 12:13 blink.hex
+-rw-r--r--   1 mintisan  staff   16896 Dec 27 12:13 blink.uf2
+-rw-r--r--   1 mintisan  staff    1154 Dec 27 12:11 cmake_install.cmake
+drwxr-xr-x   4 mintisan  staff     128 Dec 27 12:11 elf2uf2
+</code></pre>
+<p>得到固件后，可以将 pico 用 usb 连接到电脑，可以看到 RPI-RP2 的一个 U 盘提示，将 blink.uf2 拖入即可【自动弹出-重启-LED闪烁】</p>
+<pre><code>(base) ➜  blink git:(master) ✗ lsusb
+...
+Bus 000 Device 012: ID 2e8a:0003 2e8a RP2 Boot  Serial: E0C912D24340          ####### pico
+...
+</code></pre>
+<h2 id="用-swd-调试固件">用 SWD 调试固件</h2>
+<h3 id="编译生成-openocd-bin-文件">编译生成 openocd bin 文件</h3>
+<p>安装依赖-添加环境变量-配置选项-编译-安装</p>
+<pre><code>(base) ➜  pico ls
+pico-examples pico-sdk
+(base) ➜  pico brew install libtool automake texinfo wget gcc pkg-config libusb
+(base) ➜  pico export PATH=&quot;/usr/local/opt/texinfo/bin:$PATH&quot;
+(base) ➜  pico git clone https://github.com/raspberrypi/openocd.git \
+  --branch picoprobe --depth=1
+(base) ➜  pico ls
+openocd       pico-examples pico-sdk
+(base) ➜  pico
+(base) ➜  pico cd openocd
+(base) ➜  openocd ./bootstrap
+(base) ➜  openocd ./configure  --enable-cmsis-dap --enable-cmsis-dap-v2 --enable-picoprobe --disable-werror --enable-stlink --enable-jlink
+(base) ➜  openocd make -j4
+(base) ➜  openocd make install
+(base) ➜  openocd cd ~/git (optional)
+(base) ➜  openocd rm -rf openocd (optional)
+</code></pre>
+<p>如果遇到缺少库，brew 安装即可</p>
+<pre><code>brew install libusb   ## 不知道为啥一串命令唯独这个没有成功，再来一次即可
+brew install hidapi   ## --enable-cmsis-dap 需要
+</code></pre>
+<p>如果遇到 make install 不成功，则加 sudo 即可</p>
+<pre><code>(base) ➜  openocd git:(picoprobe) make install
+/Library/Developer/CommandLineTools/usr/bin/make  install-recursive
+Making install in jimtcl
+make[2]: Nothing to be done for `install'.
+Making install in src/jtag/drivers/libjaylink
+Making install in libjaylink
+make[4]: Nothing to be done for `install-exec-am'.
+ ././install-sh -c -d '/usr/local/bin'
+  /bin/sh ./libtool   --mode=install /usr/bin/install -c src/openocd '/usr/local/bin'
+libtool: install: /usr/bin/install -c src/openocd /usr/local/bin/openocd
+install: /usr/local/bin/openocd: Permission denied
+make[3]: *** [install-binPROGRAMS] Error 71
+make[2]: *** [install-am] Error 2
+make[1]: *** [install-recursive] Error 1
+make: *** [install] Error 2
+</code></pre>
+<p>安装完成可以在任何目录看下版本号</p>
+<pre><code>(base) ➜  pico openocd -v
+Open On-Chip Debugger 0.11.0-g4f2ae61 (2022-12-27-15:33)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+</code></pre>
+<h3 id="在-vs-code-中单步调试">在 vs code 中单步调试</h3>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://www.raspberrypi.com/products/raspberry-pi-pico/">Raspberry Pi Pico</a></li>
+<li><a href="https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf">Getting started with Raspberry Pi Pico</a></li>
+<li><a href="https://github.com/raspberrypi/pico-sdk">Raspberry Pi Pico SDK</a></li>
+<li><a href="https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf">Raspberry Pi Pico C/C++ SDK</a></li>
+<li><a href="https://pico.org.cn/">树莓派 Pico</a></li>
+<li><a href="https://shumeipai.nxez.com/tag/pico">树莓派实验室 Pico 教程</a></li>
+<li><a href="https://cnx-software.cn/2021/06/07/raspberry-pi-pico-micropython-and-c/">树莓派Pico快速上手教程之MicroPython和C的使用说明</a></li>
+<li><a href="https://blog.smittytone.net/2021/02/02/program-raspberry-pi-pico-c-mac/">How to program the Raspberry Pi Pico in C on a Mac</a></li>
+<li><a href="https://github.com/raspberrypi/openocd">raspberrypi/openocd</a></li>
+<li><a href="https://blog.smittytone.net/2021/02/05/how-to-debug-a-raspberry-pi-pico-with-a-mac-swd/">How to debug a Raspberry Pi Pico with a Mac, SWD and… another Pico</a></li>
+<li><a href="https://blog.csdn.net/tianizimark/article/details/123020396">Raspberry-Pi-PICO系列--第八篇 高级篇使用SWD接口下载和调试（第二章）</a></li>
+<li><a href="https://docs.zephyrproject.org/3.1.0/boards/arm/rpi_pico/doc/index.html">Raspberry Pi Pico with Zephyr OS</a></li>
+</ul>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E8%A7%84%E6%A0%BC%E5%8F%82%E6%95%B0">规格参数</a></li>
+<li><a href="#hello-world">Hello World</a></li>
+<li><a href="#%E7%94%A8-swd-%E8%B0%83%E8%AF%95%E5%9B%BA%E4%BB%B6">用 SWD 调试固件</a>
+<ul>
+<li><a href="#%E7%BC%96%E8%AF%91%E7%94%9F%E6%88%90-openocd-bin-%E6%96%87%E4%BB%B6">编译生成 openocd bin 文件</a></li>
+<li><a href="#%E5%9C%A8-vs-code-%E4%B8%AD%E5%8D%95%E6%AD%A5%E8%B0%83%E8%AF%95">在 vs code 中单步调试</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/r2s-nano-pi-pang-lu-you-she-zhi/">
+              <h3 class="post-title">
+                R2S Nano Pi 旁路由设置流程
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

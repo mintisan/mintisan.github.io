@@ -1,0 +1,326 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Raspberry Pi 4B  环境搭建 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Raspberry Pi 4B  环境搭建 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="不知不觉 Raspberry Pi 4B 已经出来 3 年多了，现在官方主推一些低价的来进军 MCU 市场，其自身的 SBC 市场开始被一些高性能的虎视眈眈，也不知道官方啥时候推出 5 代，拿出来再开个机，擦下灰，然后再吃灰。。。😓其实，..." />
+    <meta name="keywords" content="自建服务,树莓派,开源硬件" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Raspberry Pi 4B  环境搭建
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-02-07
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/AxHqWYja8/" class="post-tag">
+                  # 自建服务
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/cGDXa2bGxg/" class="post-tag">
+                  # 树莓派
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/yo-I00C_Rg/" class="post-tag">
+                  # 开源硬件
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/raspberry-pi-4b-setup.jpg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>不知不觉 Raspberry Pi 4B 已经出来 3 年多了，现在官方主推一些低价的来进军 MCU 市场，其自身的 SBC 市场开始被一些高性能的虎视眈眈，也不知道官方啥时候推出 5 代，拿出来再开个机，擦下灰，然后再吃灰。。。😓其实，树莓派生态还是比较丰富的，比如<strong>丰富的专用领域的操作系统/家庭环境的自建服务/基于其开源而来的 OS 和 ARM 汇编架构学习/以及那似是而非的物联网拓展</strong>，，，</p>
+<!-- more -->
+<h2 id="上电安装">上电安装</h2>
+<p>注意！！！注意！！！4B 1代不支持 PD 供电，表现为所有 LED 不会亮，用 5V-2A 这种就可以了。Rev1.2 修复了这个问题，不幸的我是Rev1.1。。。<br>
+<img src="https://mintisan.github.io/post-images/1675776125076.png" alt="" width="500" loading="lazy"></p>
+<p>如果选择<a href="https://www.raspberrypi.com/software/operating-systems/">官方</a>的进行安装，选择完后，用 <a href="https://www.balena.io/etcher">balena</a> 烧录到 TF 卡，插入后接上 HDMI 和鼠标键盘后，接通电源即可看到大大的树莓派开机画面。</p>
+<h2 id="远程访问">远程访问</h2>
+<p>打开<code>Preferences -&gt; Raspberry Pi Configuration</code>设置界面，切换到 <code>Interfaces</code>标签栏，打开<code>SSH</code>和<code>VNC</code>开关就可以在主机上通过 IP 地址访问【ssh 或者 vnc viewer】。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1675774135940.png" alt="" width="300" loading="lazy"></figure>
+<p>设置完 SSH 和 VNC 后，就可以不用显示器了，哦，对了需要打开上电，当然也可以关闭 GUI。。。<br>
+<img src="https://mintisan.github.io/post-images/1675777239444.png" alt="" width="300" loading="lazy"></p>
+<h2 id="环境配置">环境配置</h2>
+<h3 id="常用工具">常用工具</h3>
+<p>参考 <a href="https://github.com/mintisan/oh-my-dotfile/blob/master/ubuntu.sh">ubuntu.sh</a> 即可，主要是命令行相关的工具，后续的用于机器学习的 Python 和 C 代码环境再安装即可。</p>
+<pre><code>pi@pi:~ sudo apt-get update
+pi@pi:~ sudo apt-get install zsh autojump git vim htop tmux python3 -y
+</code></pre>
+<p>有一些常用命令可以获取树莓派状态：</p>
+<pre><code>pi@pi:~ $ cat /sys/class/thermal/thermal_zone0/temp   # 除以 1000 后即为 ℃ 单位![](https://mintisan.github.io/post-images/1675778219668.jpg)
+36998
+</code></pre>
+<h3 id="分辨率设置">分辨率设置</h3>
+<p>默认连接的显示器为 4k，导致远程后鼠标巨小，进入<code>Preferences -&gt; Screen Configuration</code>，设置为1080P</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1675773582226.png" alt="" width="500" loading="lazy"></figure>
+<h3 id="内网旁路由">内网旁路由</h3>
+<p>这里不得不说，旁路由对于这种把玩多主机的情况是真友好，只需要修改为静态 IP 地址，并设置旁路由为路由即可实现全局翻墙。</p>
+<p>这里无线网络为例，在连接到无线 WiFI 后，看下自己的网卡名称如下，一般无线为<code>wlan0</code>，有线为<code>eth0</code></p>
+<pre><code>pi@pi:~ ip r | grep default
+default via 192.168.31.3 dev wlan0 src 192.168.31.123 metric 303
+</code></pre>
+<p>然后用 vi 或者 nano 打开 <code>/etc/dhcpcd.conf</code> 文件，将如下添加到文件最后，再重启，对，一定要重启机子，重启网络我这里没有生效。</p>
+<pre><code>...
+# fallback to static profile on eth0
+#interface eth0
+#fallback static_eth0
+
+interface wlan0   # 网卡名称
+static ip_address=192.168.31.123/24    # WiFi 网段以及静态地址，注意不要和其他冲突
+static routers=192.168.31.3     # 旁路由地址
+static domain_name_servers=192.168.31.1   # 主路由地址
+</code></pre>
+<p>这时候重启后，注意 <code>IP</code> 地址已经换了，这里用 VNC 重新连接后，打开浏览器进行 SpeedTest 速度如下，下降到原来到 1/10 以下，可能和金属外壳有一定关系。</p>
+<pre><code>pi@pi:~ ip addr show wlan0
+3: wlan0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether dc:a6:32:0e:95:3f brd ff:ff:ff:ff:ff:ff
+    inet 192.168.31.123/24 brd 192.168.31.255 scope global noprefixroute wlan0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a8fa:6ab4:1788:b859/64 scope link
+       valid_lft forever preferred_lft forever
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1675773381476.png" alt="" width="500" loading="lazy"></figure>
+<h2 id="把玩项目">把玩项目</h2>
+<h3 id="专用系统">专用系统</h3>
+<ol start="0">
+<li><a href="https://github.com/RPi-Distro/pi-gen">RPi-Distro/pi-gen</a></li>
+<li><a href="https://github.com/hypriot/image-builder-rpi">hypriot/image-builder-rpi</a> : SD card image for Raspberry Pi with Docker: HypriotOS</li>
+<li><a href="https://dietpi.com/">DietPi</a></li>
+<li><a href="https://retropie.org.uk/">RetroPie</a></li>
+<li><a href="https://github.com/SuLingGG/OpenWrt-Rpi">OpenWrt-Rpi</a></li>
+<li><a href="https://www.hifiberry.com/hifiberryos">HiFiBerryOS</a> : HiFiBerryOS is is our version of a minimal Linux distribution optimised for audio playback</li>
+<li><a href="https://github.com/geerlingguy/pi-cluster">Raspberry Pi Cluster</a> : Raspberry Pi Cluster automation</li>
+<li><a href="https://github.com/FydeOS/chromium_os-raspberry_pi">FydeOS/chromium_os-raspberry_pi</a> : Build your Chromium OS for Raspberry Pi 3B/3B+/4B and Pi400</li>
+</ol>
+<h3 id="自建服务">自建服务</h3>
+<ol>
+<li><a href="https://pivpn.io/">PiVPN</a> : The simplest way to setup and manage a VPN, designed for Raspberry Pi™.</li>
+<li><a href="https://github.com/haiwen/seafile-rpi">haiwen/seafile-rpi</a> : Seafile server package for Raspberry Pi.</li>
+</ol>
+<h3 id="学习编程">学习编程</h3>
+<ol>
+<li><a href="https://github.com/s-matyukevich/raspberry-pi-os">Learning operating system development using Linux kernel and Raspberry Pi</a></li>
+<li><a href="https://github.com/isometimes/rpi4-osdev">Tutorial: Writing a &quot;bare metal&quot; operating system for Raspberry Pi 4</a></li>
+<li><a href="https://github.com/raspberrypi/userland">raspberrypi/userland</a> : Source code for ARM side libraries for interfacing to Raspberry Pi GPU.</li>
+<li><a href="https://www.cl.cam.ac.uk/projects/raspberrypi/tutorials/os/">Baking Pi – Operating Systems Development</a></li>
+<li><a href="https://github.com/PeterLemon/RaspberryPi">PeterLemon/RaspberryPi</a> : Raspberry Pi Bare Metal Assembly Programming</li>
+<li><a href="https://github.com/Apress/Raspberry-Pi-Assembly-Language-Programming">Apress/Raspberry-Pi-Assembly-Language-Programming</a> : Source Code for 'Raspberry Pi Assembly Language Programming: ARM Processor Coding' by Stephen Smith</li>
+</ol>
+<h3 id="玩具折腾">玩具折腾</h3>
+<ol>
+<li><a href="https://github.com/EdjeElectronics/TensorFlow-Object-Detection-on-the-Raspberry-Pi">EdjeElectronics/TensorFlow-Object-Detection-on-the-Raspberry-Pi</a></li>
+</ol>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://www.raspberrypi.com/">Raspberry Pi Homepage</a></li>
+<li><a href="https://pimylifeup.com/raspberry-pi-static-ip-address/">How to Setup a Raspberry Pi Static IP Address</a></li>
+<li><a href="https://github.com/nxez/pi-dashboard">Pi Dashboard</a></li>
+<li><a href="https://github.com/nymea/berrylan">nymea/berrylan</a></li>
+<li><a href="https://www.youtube.com/watch?v=8_GsEBgcOO8&amp;t=1s&amp;ab_channel=%E5%8F%B8%E6%B3%A2%E5%9B%BE">【到底玩什么03】“派”到底玩个啥？——树莓派4B入门点灯教程。</a></li>
+<li><a href="https://raspberrytips.com/best-os-for-raspberry-pi/">15 Best Operating Systems for Raspberry Pi (with pictures)</a></li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%B8%8A%E7%94%B5%E5%AE%89%E8%A3%85">上电安装</a></li>
+<li><a href="#%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE">远程访问</a></li>
+<li><a href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE">环境配置</a>
+<ul>
+<li><a href="#%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7">常用工具</a></li>
+<li><a href="#%E5%88%86%E8%BE%A8%E7%8E%87%E8%AE%BE%E7%BD%AE">分辨率设置</a></li>
+<li><a href="#%E5%86%85%E7%BD%91%E6%97%81%E8%B7%AF%E7%94%B1">内网旁路由</a></li>
+</ul>
+</li>
+<li><a href="#%E6%8A%8A%E7%8E%A9%E9%A1%B9%E7%9B%AE">把玩项目</a>
+<ul>
+<li><a href="#%E4%B8%93%E7%94%A8%E7%B3%BB%E7%BB%9F">专用系统</a></li>
+<li><a href="#%E8%87%AA%E5%BB%BA%E6%9C%8D%E5%8A%A1">自建服务</a></li>
+<li><a href="#%E5%AD%A6%E4%B9%A0%E7%BC%96%E7%A8%8B">学习编程</a></li>
+<li><a href="#%E7%8E%A9%E5%85%B7%E6%8A%98%E8%85%BE">玩具折腾</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/istoreos-for-go-out/">
+              <h3 class="post-title">
+                iStoreOS - 可能是目前使用软(旁)路由的最简单姿势
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,259 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fnOS 飞牛系统上用 Cloudflare Tunnel 实现内网服务外网访问 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="fnOS 飞牛系统上用 Cloudflare Tunnel 实现内网服务外网访问 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="互联网活菩萨 Cloudflare 的免费服务，可以将内网的服务映射到公网，对于没有公网 IP 以及不想折腾 IPv6 的人来说是真是好东西，又免费又快，冲冲冲。
+
+设置 DNS 托管
+如果在没有公网IP的情况下需要映射到公网，那么域名就是..." />
+    <meta name="keywords" content="自建服务" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              fnOS 飞牛系统上用 Cloudflare Tunnel 实现内网服务外网访问
+            </h2>
+            <div class="post-info">
+              <span>
+                2025-01-03
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/AxHqWYja8/" class="post-tag">
+                  # 自建服务
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/fnos-clareflare-tunnel-mapping.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>互联网活菩萨 Cloudflare 的免费服务，可以将内网的服务映射到公网，对于没有公网 IP 以及不想折腾 IPv6 的人来说是真是好东西，又免费又快，冲冲冲。</p>
+<!-- more -->
+<h2 id="设置-dns-托管">设置 DNS 托管</h2>
+<p>如果在没有公网IP的情况下需要映射到公网，那么域名就是必要的。所以，需要先在 https://dash.cloudflare.com/ 中接管一个域名【需要自己先去注册购买一个】，打开<code>网站</code>，直接 <code>添加域</code> 然后一步一步按着步骤走就行了。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1735913913697.png" alt="" loading="lazy"></figure>
+<p>然后，将生成 <code>DNS</code> 地址复制到购买厂商的那里的修改如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1735914145954.png" alt="" loading="lazy"></figure>
+<p>然后等待邮箱收到如下成功的邮件。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1735914168803.png" alt="" loading="lazy"></figure>
+<h2 id="生成-clareflare-tunnel-token">生成 Clareflare Tunnel Token</h2>
+<p>进入 Tunnel 如下：</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1735914371953.png" alt="" loading="lazy"></figure>
+<p>点击 <code>创建隧道</code> ，然后选择 <code>Cloudflared</code> ，完成隧道名字的输入，比如 <code>fnOS</code>。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1735914512613.png" alt="" loading="lazy"></figure>
+<p>选择 <code>Docker</code> 方式，然后将其中的 Token 复制出来。</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1735914637264.png" alt="" loading="lazy"></figure>
+<h2 id="fnos-上用-docker-安装客户端">fnOS 上用 Docker 安装客户端</h2>
+<p>打开 fnOS 的 Docker，采用 Compose 的方式进行安装。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1735914821947.png" alt="" loading="lazy"></figure>
+<p>其中的代码如下：</p>
+<pre><code>version: '3'
+
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --token xxxxxxx
+    restart: always # 加上一条开机自启动
+</code></pre>
+<p>启动后，会在 Cloudflare 下面出现上面安装的客户端。</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1735915626890.png" alt="" loading="lazy"></figure>
+<h2 id="映射内网服务">映射内网服务</h2>
+<p>添加公共主机名：</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1735915063866.png" alt="" loading="lazy"></figure>
+<p>然后填入内网的服务地址：端口和前面接管 DNS 的二级域名名称。</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1735915133802.png" alt="" loading="lazy"></figure>
+<p>然后，直接打开二级域名就可以访问了。</p>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://club.fnnas.com/forum.php?mod=viewthread&amp;tid=2854">在飞牛系统下安装Cloudflare Zero Trust 下的 Networks Tunnels（网络隧道）</a></li>
+<li><a href="https://blog.ydxian.xyz/archives/cf-tunnel">无需公网IP，利用Cloudflare Tunnel 实现内网设备访问</a></li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E8%AE%BE%E7%BD%AE-dns-%E6%89%98%E7%AE%A1">设置 DNS 托管</a></li>
+<li><a href="#%E7%94%9F%E6%88%90-clareflare-tunnel-token">生成 Clareflare Tunnel Token</a></li>
+<li><a href="#fnos-%E4%B8%8A%E7%94%A8-docker-%E5%AE%89%E8%A3%85%E5%AE%A2%E6%88%B7%E7%AB%AF">fnOS 上用 Docker 安装客户端</a></li>
+<li><a href="#%E6%98%A0%E5%B0%84%E5%86%85%E7%BD%91%E6%9C%8D%E5%8A%A1">映射内网服务</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/channel-sounding-tech-overview-translation-cn/">
+              <h3 class="post-title">
+                Bluetooth® Channel Sounding 技术概览
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

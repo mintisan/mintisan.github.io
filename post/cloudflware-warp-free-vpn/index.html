@@ -1,0 +1,270 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WARP - Cloudflare 家的全平台免费 VPN | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="WARP - Cloudflare 家的全平台免费 VPN | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Cloudflare 家的免费 VPN，可以作为备份不时之需，这里记录下 WARP 如何获取 Key 来升级为 WARP+，以及申请更好用的团队 Zero Trust 版本。
+【不过感觉这个羊毛很快会被国人薅成翻墙工具，然后 GFW 又将其..." />
+    <meta name="keywords" content="工具使用" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              WARP - Cloudflare 家的全平台免费 VPN
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-04-15
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/OmJcmlrTwY/" class="post-tag">
+                  # 工具使用
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/cloudflware-warp-free-vpn.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>Cloudflare 家的免费 VPN，可以作为备份不时之需，这里记录下 WARP 如何获取 Key 来升级为 WARP+，以及申请更好用的团队 Zero Trust 版本。</p>
+<p>【不过感觉这个羊毛很快会被国人薅成翻墙工具，然后 GFW 又将其卡之，，，】</p>
+<!-- more -->
+<h2 id="提前准备">提前准备</h2>
+<ul>
+<li>注册 Cloudflare 账号</li>
+<li>下载 Telegram</li>
+<li>下载 WARP 客户端</li>
+</ul>
+<h2 id="warp-warp">WARP -&gt; WARP+</h2>
+<p>下载安装完 WARP 后，打开直接连接：<br>
+<img src="https://mintisan.github.io/post-images/1681572988733.png" alt="" width="400" loading="lazy"></p>
+<p>我这边是无法使用的，网上有人反馈可以连接成功，有人反馈不行，一直停留在如下的 <code>Connecting</code>界面。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1681573013827.png" alt="" width="400" loading="lazy"></figure>
+<p>添加Telegram机器人@generatewarpplusbot，发送 <code>/generate</code> ，并计算结果即可<br>
+<img src="https://mintisan.github.io/post-images/1681571983142.jpeg" alt="" width="400" loading="lazy"></p>
+<p>然后，回到 WARP ，进行 Key 的添加，一个 Key 只能被5台设备同时添加，如果不行就换一个：<br>
+<img src="https://mintisan.github.io/post-images/1681573093049.png" alt="" width="600" loading="lazy"></p>
+<p>等待添加成功后如下所示：<br>
+<img src="https://mintisan.github.io/post-images/1681573151997.png" alt="" width="600" loading="lazy"></p>
+<p>完成后，再次打开 WARP 自动转变为 WARP+，如下：<br>
+<img src="https://mintisan.github.io/post-images/1681573209143.png" alt="" width="400" loading="lazy"></p>
+<p>点击连接，等待成功即可。<br>
+<img src="https://mintisan.github.io/post-images/1681573243609.png" alt="" width="400" loading="lazy"></p>
+<p>而后可以在终端可以 Ping 通 Google，打开 SpeedTest 进行测试下，速度还可以。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1681573301128.png" alt="" width="600" loading="lazy"></figure>
+<p>但是这个需要自己去找 Key，如果后面 Key 少了，咋办呢，开个团队版本吧，，，</p>
+<h2 id="warp-zero-trust-team">WARP+ -&gt; Zero Trust Team</h2>
+<p>打开 Cloudflare 官网，点击左侧 Zero Trust 注册一个免费团队，过程中需要绑定一个信用卡或者 PyalPal，参考<a href="https://www.wangwangit.com/WARP/">网站</a>。<br>
+<img src="https://mintisan.github.io/post-images/1681573980618.png" alt="" width="200" loading="lazy"></p>
+<p>然后再切换到设置界面【Zero Trust-WARP Client-Device enrollment permissions manager】，设置进入 Team 所支持的邮箱后缀【注意这里不是邮箱】。<br>
+<img src="https://mintisan.github.io/post-images/1681573840597.png" alt="" loading="lazy"></p>
+<p>当然如果你想修改团队名称【Zero Trust-General Settings】，也是可以的。<br>
+<img src="https://mintisan.github.io/post-images/1681573881740.png" alt="" loading="lazy"></p>
+<p>打开 WARP 的设置界面，打开 Login to Cloudflare Zero Trust 自动弹出网页，按照网页的提示输入团队名字，然后再输入预设的后缀邮箱来进行接收授权。<br>
+<img src="https://mintisan.github.io/post-images/1681627523957.png" alt="" width="400" loading="lazy"></p>
+<p>等待授权成功再回来 WARP 界面自动修改为 Zero Trust 界面如下：</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1681573627367.png" alt="" width="400" loading="lazy"></figure>
+<p>再打开 SpeedTest 进行测试下，速度比 WARP+ 还更快些，也用的更加的放心。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1681573702793.png" alt="" width="600" loading="lazy"></figure>
+<h2 id="不足之处">不足之处</h2>
+<ul>
+<li>IP 是会暴露的，很多人无法使用这个来进行 OpenAI 的访问</li>
+</ul>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://1.1.1.1/">1.1.1.1 : The free app that makes your Internet safer.</a></li>
+<li><a href="https://dash.cloudflare.com/">Cloudflare</a></li>
+<li><a href="https://www.youtube.com/watch?v=Se5kI07k9eA&amp;ab_channel=%E7%94%AC%E5%93%A5%E4%BE%83%E4%BE%83%E4%BE%83">WARP系列第1期（账户篇）：最强免费VPN？详解warp、warp+、zero trust三账户在warp官方客户端与CFwarp脚本（wgcf）上的设置教程，注册warp teams账户详细步骤</a></li>
+<li><a href="https://blog.misaka.rest/2023/02/08/cf-warp/">CloudFlare WARP 官方客户端详细使用教程 （持续更新）</a></li>
+<li><a href="https://www.wangwangit.com/WARP/">WARP使用教程</a></li>
+<li><a href="https://guoyk.xyz/posts/2023-04-12-cloudflare-zero-trust">使用免费的 Cloudflare Zero Trust 服务访问全球互联网</a></li>
+</ul>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E6%8F%90%E5%89%8D%E5%87%86%E5%A4%87">提前准备</a></li>
+<li><a href="#warp-warp">WARP -&gt; WARP+</a></li>
+<li><a href="#warp-zero-trust-team">WARP+ -&gt; Zero Trust Team</a></li>
+<li><a href="#%E4%B8%8D%E8%B6%B3%E4%B9%8B%E5%A4%84">不足之处</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/software-tools-what-i-used/">
+              <h3 class="post-title">
+                开发以及效率好用软件
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

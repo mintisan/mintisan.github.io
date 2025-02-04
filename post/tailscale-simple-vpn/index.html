@@ -1,0 +1,360 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tailscale - 简单好用的 VPN 组网工具 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Tailscale - 简单好用的 VPN 组网工具 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+Tailscale connects your team's devices and development environments for easy access to remote resources.
+
+官方介绍如上，其实就是虚拟..." />
+    <meta name="keywords" content="开源软件,工具使用" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Tailscale - 简单好用的 VPN 组网工具
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-06-17
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/GUWiETLu7/" class="post-tag">
+                  # 开源软件
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/OmJcmlrTwY/" class="post-tag">
+                  # 工具使用
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/tailscale-simple-vpn.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <blockquote>
+<p>Tailscale connects your team's devices and development environments for easy access to remote resources.</p>
+</blockquote>
+<p>官方介绍如上，其实就是虚拟局域网组网，而且底层是基于 <a href="https://www.wireguard.com/">Wireguard</a> 分布式的，相比于 <a href="https://www.zerotier.com/">Zerotier</a> 使用起来更加简单，参考网友的说法，【如果 Zerotier 是手动挡的话，那么 Tailscale 就是自动挡】。自测联通宽带可以到达 50MB/s 还不错，移动运营商 0.5MB/s 左右，，，</p>
+<!-- more -->
+<h2 id="套餐">套餐</h2>
+<p>虽然不是开源的，但是<a href="https://login.tailscale.com/admin/settings/billing/plans">免费模式</a>很良心，足够使用了。</p>
+<figure data-type="image" tabindex="1"><img src="https://user-images.githubusercontent.com/9136049/246599354-6f0778d9-ee33-4512-ae93-88a72dc55548.png" alt="image" loading="lazy"></figure>
+<h2 id="windowsmacosiosandroidnas">Windows/macOS/iOS/Android/NAS</h2>
+<p>客户端非常齐全，各种你想得到的平台都可以<a href="https://tailscale.com/download/">下载</a>。不过对于 macOS 需要<a href="https://pkgs.tailscale.com/stable/">手动下载</a>，并在设置用允许打开。<br>
+【还不是国内区域不提供 AppStore 不提供下载，😓】</p>
+<img width="477" alt="image" src="https://user-images.githubusercontent.com/9136049/246601297-99ce8b83-7a2e-4712-8467-03fcfa27504f.png">
+<h2 id="mt-3000">MT-3000</h2>
+<p>在用 R4S 的 OpenWRT 折腾时【见 iStore OS】，无法安装，突然想到 MT-3000 也是基于 OpenWRT 系统开发的，可能也可以整。</p>
+<p>没想到还有惊喜，主页面都已经帮你弄好了，非常方便，虽然不是最新版本，但也可以使用，Happy～～～</p>
+<figure data-type="image" tabindex="2"><img src="https://user-images.githubusercontent.com/9136049/246599147-3dc366ea-e9e4-47f4-a1fd-46c965ec78de.png" alt="image" loading="lazy"></figure>
+<h2 id="istore-os">iStore OS</h2>
+<p>执行 <code>tailscale up</code> 时遇到如下错误，感觉像是服务器端没有给到正确的文件名，后面再看吧，现在有 MT-3000 先顶着可以用。。。</p>
+<pre><code>
+root@iStoreOS:~# tailscale up --accept-dns=false --advertise-routes=192.168.31.0/24
+--2023-06-17 16:20:57--  https://pkgs.tailscale.com/stable/
+Resolving pkgs.tailscale.com... 199.38.181.239
+Connecting to pkgs.tailscale.com|199.38.181.239|:443... connected.
+Unable to establish SSL connection.
+Downloading Tailscale _arm64 ..
+--2023-06-17 16:20:58--  https://pkgs.tailscale.com/stable/tailscale__arm64.tgz
+Resolving pkgs.tailscale.com... 199.38.181.239
+Connecting to pkgs.tailscale.com|199.38.181.239|:443... connected.
+Unable to establish SSL connection.
+gzip: invalid magic
+tar: Child returned status 1
+tar: Error is not recoverable: exiting now
+root@iStoreOS:~# gzip
+gzip: compressed data not read from terminal, use -f to force it
+root@iStoreOS:~# 
+</code></pre>
+<h2 id="高级功能">高级功能</h2>
+<ul>
+<li>Subnet routes : 就是 MT-3000 中 <code>允许远程访问 LAN</code>，就是将其设置为局域网的 Tailscale 的路由器</li>
+<li>Exit node ： 提供跳转功能，可以拿来翻墙用，，，具体参考<a href="https://blog.csdn.net/sillydanny/article/details/120653504">这篇</a></li>
+<li><a href="https://github.com/juanfont/headscale">headscale</a> ：开源服务器实现</li>
+<li><code>Expiry disabled</code>：设置授权一次，不会过期，默认6个月需要重新设置一次</li>
+<li><a href="https://tailscale.com/kb/1223/tailscale-funnel/">tailscale Funnel</a> : 可以将内网映射到公网</li>
+<li>修改设备名称啥的如下</li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://user-images.githubusercontent.com/9136049/246598275-34efab38-31b2-4525-b6f6-2d15fbcfe483.png" alt="image" loading="lazy"></figure>
+<ul>
+<li>共享网络</li>
+</ul>
+<p>可以通过邀请用户加到你的网络</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1686998913618.png" alt="" loading="lazy"></figure>
+<h3 id="iperf3-测速">iperf3 测速</h3>
+<p>中国移动与深圳宽带联通，移动 4G 的速率还是差一些，大概 <code>4.86 Mbits/sec</code></p>
+<p>服务端</p>
+<pre><code>C:\Users\admin\Downloads\iperf-3.1.3-win64&gt;iperf3 -s -i 2 -p 5201
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from 100.102.191.33, port 45016
+[  5] local 100.127.221.18 port 5201 connected to 100.102.191.33 port 45024
+[ ID] Interval           Transfer     Bandwidth
+[  5]   0.00-2.01   sec  1.01 MBytes  4.23 Mbits/sec
+[  5]   2.01-4.01   sec   594 KBytes  2.43 Mbits/sec
+[  5]   4.01-6.00   sec  1.26 MBytes  5.30 Mbits/sec
+[  5]   6.00-8.00   sec  1.43 MBytes  5.98 Mbits/sec
+[  5]   8.00-10.01  sec  1.50 MBytes  6.27 Mbits/sec
+[  5]  10.01-10.29  sec   199 KBytes  5.77 Mbits/sec
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  5]   0.00-10.29  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  5]   0.00-10.29  sec  5.97 MBytes  4.86 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+</code></pre>
+<p>客户端</p>
+<pre><code>./iperf3 -c 10.0.10.15 -p 5201 -i 2 -t 10 --get-server-output
+
+</code></pre>
+<p>如何时服务端和客户端都在联通宽带，大概 <code>50.5 Mbits/sec</code> 的速率，还行吧</p>
+<pre><code>Server listening on 5201
+-----------------------------------------------------------
+Accepted connection from 100.102.191.33, port 38660
+[  5] local 100.127.221.18 port 5201 connected to 100.102.191.33 port 38664
+[ ID] Interval           Transfer     Bandwidth
+[  5]   0.00-2.01   sec  11.8 MBytes  49.6 Mbits/sec
+[  5]   2.01-4.01   sec  11.7 MBytes  48.9 Mbits/sec
+[  5]   4.01-6.00   sec  11.9 MBytes  50.1 Mbits/sec
+[  5]   6.00-8.00   sec  12.6 MBytes  53.0 Mbits/sec
+[  5]   8.00-10.00  sec  12.1 MBytes  50.7 Mbits/sec
+[  5]  10.00-10.03  sec   253 KBytes  76.7 Mbits/sec
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth
+[  5]   0.00-10.03  sec  0.00 Bytes  0.00 bits/sec                  sender
+[  5]   0.00-10.03  sec  60.4 MBytes  50.5 Mbits/sec                  receiver
+-----------------------------------------------------------
+Server listening on 5201
+-----------------------------------------------------------
+</code></pre>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li>https://tailscale.com/</li>
+<li>https://pkgs.tailscale.com/stable/</li>
+<li><a href="http://iqotom.com/?p=1873">OpenWrt安装配置Tailscale实现内网穿透，异地组网</a></li>
+<li>https://github.com/adyanth/openwrt-tailscale-enabler</li>
+<li>https://github.com/adyanth/openwrt-tailscale-enabler</li>
+<li><a href="https://www.youtube.com/watch?v=pQi4DJ-9CGQ&amp;ab_channel=%E5%90%91%E5%8C%97">Tailscale 免费组建个人VPN，轻松外网访问所有设备，速度快、超简单。OpenWrt也可安装Tailscale，内网穿透如此简单。</a></li>
+<li>https://www.wundertech.net/how-to-set-up-tailscale-on-openwrt/</li>
+<li><a href="https://einverne.github.io/post/2023/03/tailscale-exit-nodes.html">Tailscale 出口节点功能配置流量出口</a></li>
+<li><a href="https://blog.csdn.net/sillydanny/article/details/120653504">TailScale 实现「出口节点」Exit Node（导向所有流量经这出口节点）</a></li>
+<li><a href="https://blog.laisky.com/p/tailscale/">近期折腾 tailscale 的一些心得</a></li>
+<li><a href="https://www.youtube.com/watch?v=W-ZhtlEdS-M&amp;ab_channel=%E5%BC%A0%E5%A4%A7%E4%B8%83">不需要独立ip的公网访问（tailscale Funnel）|Tailscale高级功能篇</a></li>
+</ul>
+<h3 id="同类">同类</h3>
+<ul>
+<li><a href="https://github.com/fatedier/frp">frp</a> :A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.</li>
+<li><a href="https://www.cpolar.com/">cpolar</a> : 公开一个本地Web站点至公网</li>
+<li><a href="https://www.zerotier.com/">zerotier</a> :ZeroTier lets you build modern, secure multi-point virtualized networks of almost any type. From robust peer-to-peer networking to multi-cloud mesh infrastructure, we enable global connectivity with the simplicity of a local network.</li>
+<li><a href="https://github.com/slackhq/nebula">Nebula</a> : A scalable overlay networking tool with a focus on performance, simplicity and security</li>
+<li><a href="https://github.com/gravitl/netmaker">Netmaker</a> :Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.</li>
+<li><a href="https://github.com/tonarino/innernet">innernet</a> : A private network system that uses WireGuard under the hood.</li>
+</ul>
+<h3 id="iperf3">iperf3</h3>
+<ul>
+<li>https://iperf.fr/iperf-download.php</li>
+<li><a href="https://zhuanlan.zhihu.com/p/546330081">Iperf3测速教程</a></li>
+</ul>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%A5%97%E9%A4%90">套餐</a></li>
+<li><a href="#windowsmacosiosandroidnas">Windows/macOS/iOS/Android/NAS</a></li>
+<li><a href="#mt-3000">MT-3000</a></li>
+<li><a href="#istore-os">iStore OS</a></li>
+<li><a href="#%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BD">高级功能</a>
+<ul>
+<li><a href="#iperf3-%E6%B5%8B%E9%80%9F">iperf3 测速</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a>
+<ul>
+<li><a href="#%E5%90%8C%E7%B1%BB">同类</a></li>
+<li><a href="#iperf3">iperf3</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/mt3000-with-openclash/">
+              <h3 class="post-title">
+                MT3000 科学上网-安装OpenClash中继一个科学节点
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

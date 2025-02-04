@@ -1,0 +1,379 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OpenVPN 服务器自建和使用 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="OpenVPN 服务器自建和使用 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="OpenVPN 这个技术是很老的技术，常用于企业或者学校比较多。之前买了 VPS 后想过用这个来科学上网，但是服务器端搭建安装还是挺麻烦的，最近看到 openvpn-install 项目可以一键安装，就试试看喽。对比 tailscale 下..." />
+    <meta name="keywords" content="开发环境,自建服务" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              OpenVPN 服务器自建和使用
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-06-28
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/UpWR_7OW2/" class="post-tag">
+                  # 开发环境
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/AxHqWYja8/" class="post-tag">
+                  # 自建服务
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/openvpn-server-selfhost.jpg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>OpenVPN 这个技术是很老的技术，常用于企业或者学校比较多。之前买了 VPS 后想过用这个来科学上网，但是服务器端搭建安装还是挺麻烦的，最近看到 <a href="https://github.com/angristan/openvpn-install">openvpn-install</a> 项目可以一键安装，就试试看喽。对比 <code>tailscale</code> 下载速率相差不大，上传速率没有其优秀。</p>
+<!-- more -->
+<h2 id="安装-openvpn-服务器">安装 OpenVPN 服务器</h2>
+<p>用<a href="https://github.com/angristan/openvpn-install">仓库</a>的三步走即可启动安装【VPS 需要在海外，你懂得】。</p>
+<pre><code>root@warm-bump-2:~# curl -O https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 40923  100 40923    0     0  92004      0 --:--:-- --:--:-- --:--:-- 92168
+root@warm-bump-2:~# ls
+openvpn-install.sh  virt-sysprep-firstboot.log
+root@warm-bump-2:~# chmod +x openvpn-install.sh
+root@warm-bump-2:~# ./openvpn-install.sh
+Welcome to the OpenVPN installer!
+...
+</code></pre>
+<p>一路下一步使用默认配置即可。</p>
+<pre><code>root@warm-bump-2:~# ./openvpn-install.sh
+Welcome to the OpenVPN installer!
+The git repository is available at: https://github.com/angristan/openvpn-install
+
+I need to ask you a few questions before starting the setup.
+You can leave the default options and just press enter if you are ok with them.
+
+I need to know the IPv4 address of the network interface you want OpenVPN listening to.
+Unless your server is behind NAT, it should be your public IPv4 address.
+IP address: 28.xxx.xxx.xxx
+
+Checking for IPv6 connectivity...
+
+Your host does not appear to have IPv6 connectivity.
+
+Do you want to enable IPv6 support (NAT)? [y/n]: n
+
+What port do you want OpenVPN to listen to?
+   1) Default: 1194
+   2) Custom
+   3) Random [49152-65535]
+Port choice [1-3]: 1
+
+What protocol do you want OpenVPN to use?
+UDP is faster. Unless it is not available, you shouldn't use TCP.
+   1) UDP
+   2) TCP
+Protocol [1-2]: 1
+
+What DNS resolvers do you want to use with the VPN?
+   1) Current system resolvers (from /etc/resolv.conf)
+   2) Self-hosted DNS Resolver (Unbound)
+   3) Cloudflare (Anycast: worldwide)
+   4) Quad9 (Anycast: worldwide)
+   5) Quad9 uncensored (Anycast: worldwide)
+   6) FDN (France)
+   7) DNS.WATCH (Germany)
+   8) OpenDNS (Anycast: worldwide)
+   9) Google (Anycast: worldwide)
+   10) Yandex Basic (Russia)
+   11) AdGuard DNS (Anycast: worldwide)
+   12) NextDNS (Anycast: worldwide)
+   13) Custom
+DNS [1-12]: 11
+
+Do you want to use compression? It is not recommended since the VORACLE attack makes use of it.
+Enable compression? [y/n]: n
+
+Do you want to customize encryption settings?
+Unless you know what you're doing, you should stick with the default parameters provided by the script.
+Note that whatever you choose, all the choices presented in the script are safe. (Unlike OpenVPN's defaults)
+See https://github.com/angristan/openvpn-install#security-and-encryption to learn more.
+
+Customize encryption settings? [y/n]: n
+
+Okay, that was all I needed. We are ready to setup your OpenVPN server now.
+You will be able to generate a client at the end of the installation.
+Press any key to continue...
+Hit:1 http://archive.ubuntu.com/ubuntu jammy InRelease
+...
+</code></pre>
+<p>等待安装结束，输入文件名并回车即可。</p>
+<pre><code>...
+Created symlink /etc/systemd/system/multi-user.target.wants/iptables-openvpn.service → /etc/systemd/system/iptables-openvpn.service.
+
+Tell me a name for the client.
+The name must consist of alphanumeric character. It may also include an underscore or a dash.
+Client name: mintisan
+
+Do you want to protect the configuration file with a password?
+(e.g. encrypt the private key with a password)
+   1) Add a passwordless client
+   2) Use a password for the client
+Select an option [1-2]: 1
+
+* Using SSL: openssl OpenSSL 3.0.2 15 Mar 2022 (Library: OpenSSL 3.0.2 15 Mar 2022)
+
+* Using Easy-RSA configuration: /etc/openvpn/easy-rsa/vars
+
+* The preferred location for 'vars' is within the PKI folder.
+  To silence this message move your 'vars' file to your PKI
+  or declare your 'vars' file with option: --vars=&lt;FILE&gt;
+-----
+
+Notice
+------
+Keypair and certificate request completed. Your files are:
+req: /etc/openvpn/easy-rsa/pki/reqs/mintisan.req
+key: /etc/openvpn/easy-rsa/pki/private/mintisan.key
+Using configuration from /etc/openvpn/easy-rsa/pki/eb0610d5/temp.a1d0189c
+Check that the request matches the signature
+Signature ok
+The Subject's Distinguished Name is as follows
+commonName            :ASN.1 12:'mintisan'
+Certificate is to be certified until Jul 26 09:57:14 2034 GMT (3650 days)
+
+Write out database with 1 new entries
+Data Base Updated
+
+Notice
+------
+Certificate created at:
+* /etc/openvpn/easy-rsa/pki/issued/mintisan.crt
+
+Notice
+------
+Inline file created:
+* /etc/openvpn/easy-rsa/pki/inline/mintisan.inline
+Client mintisan added.
+
+The configuration file has been written to /root/mintisan.ovpn.
+Download the .ovpn file and import it in your OpenVPN client.
+root@warm-bump-2:~# ls
+mintisan.ovpn  openvpn-install.sh  virt-sysprep-firstboot.log
+root@warm-bump-2:~# 
+
+</code></pre>
+<p>下载生成 <code>ovpn</code> 配置文件到本地</p>
+<pre><code>scp -P [端口号] [用户名]@[远程主机地址]:[远程文件路径] .
+</code></pre>
+<p>附加几个常用命令：</p>
+<pre><code># 查看状态
+sudo systemctl status openvpn-server@server.service
+# 重启服务
+sudo systemctl restart openvpn-server@server.service
+# 停止服务
+sudo systemctl stop openvpn-server@server.service
+# 启动服务
+sudo systemctl start openvpn-server@server.service
+</code></pre>
+<h2 id="下载并配置客户端">下载并配置客户端</h2>
+<p>直接从 <a href="https://openvpn.net/">OpenVPN 官网</a> 下载对应的客户端，并导入即可。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1722162269406.png" alt="" width="400" loading="lazy"></figure>
+<h2 id="tailscale-速度对比">tailscale 速度对比</h2>
+<p>采用同一个节点，对比先后对比测试，可以看到如果是同一个 IP 地址，以及供应商，两者的下载速率相差不大，上传速率 tailscale 优秀不少。</p>
+<p>OpenVPN 速度如下：<br>
+<img src="https://mintisan.github.io/post-images/1722162274089.png" alt="" loading="lazy"></p>
+<p>Tailscale 速率如下：<br>
+<img src="https://mintisan.github.io/post-images/1722162278024.png" alt="" loading="lazy"></p>
+<p>但是如果更换供应商，则速率有不少差异。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1722162282538.png" alt="" loading="lazy"></figure>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://omts.me/blog/openvpn-install/">OpenVPN 快速安装与使用</a></li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85-openvpn-%E6%9C%8D%E5%8A%A1%E5%99%A8">安装 OpenVPN 服务器</a></li>
+<li><a href="#%E4%B8%8B%E8%BD%BD%E5%B9%B6%E9%85%8D%E7%BD%AE%E5%AE%A2%E6%88%B7%E7%AB%AF">下载并配置客户端</a></li>
+<li><a href="#tailscale-%E9%80%9F%E5%BA%A6%E5%AF%B9%E6%AF%94">tailscale 速度对比</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/ubuntu-2004-egpu-cuda-dev-environment/">
+              <h3 class="post-title">
+                Ubuntu 20.04 eGPU CUDA 开发环境搭建
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

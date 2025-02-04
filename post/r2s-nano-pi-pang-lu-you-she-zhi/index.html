@@ -1,0 +1,317 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>R2S Nano Pi 旁路由设置流程 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="R2S Nano Pi 旁路由设置流程 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+周末无意中又突然刷到 R2S 的视频，突然想到自己好久之前买过一个，所以又拿出来折腾，上次好像没有弄成功，不过忘了卡在哪一步了，随着年纪变大，想着自己记忆力下降的厉害，所以还是随手记录下吧。
+这次把 R2S 设置成了一个旁路由，优势就是可..." />
+    <meta name="keywords" content="软路由,开源硬件" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              R2S Nano Pi 旁路由设置流程
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-12-18
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/ZPwwA7N6j/" class="post-tag">
+                  # 软路由
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/yo-I00C_Rg/" class="post-tag">
+                  # 开源硬件
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/r2s-nano-pi-pang-lu-you-she-zhi.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <blockquote>
+<p>周末无意中又突然刷到 R2S 的视频，突然想到自己好久之前买过一个，所以又拿出来折腾，上次好像没有弄成功，不过忘了卡在哪一步了，随着年纪变大，想着自己记忆力下降的厉害，所以还是随手记录下吧。<br>
+这次把 R2S 设置成了一个<strong>旁路由</strong>，优势就是可以设备修改下网关就可以全设备走代理的流程，适合在家里使用【或者后续看是否可以做成一个移动的翻墙工具XD】</p>
+</blockquote>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1671340343251.jpg" alt="" width="300" loading="lazy"></figure>
+<h2 id="主页">主页</h2>
+<ul>
+<li><a href="https://openwrt.org/toh/friendlyarm/nanopi_r2s">FriendlyARM NanoPi R2S</a></li>
+<li><a href="https://wiki.friendlyelec.com/wiki/index.php/NanoPi_R2S">NanoPi R2S</a></li>
+</ul>
+<h2 id="原理">原理</h2>
+<p>旁路由的原理就像其名字一样，作为一个附加路由的功能，在原来路由器的基础上在叠一层路由器罗汉，所有的设备数据请求先给旁路由，然后旁路由做了一些我们想让他做的事情后，再给主路由。就像软件领域中的名言，没有什么事情是通过添加一层抽象层搞不定的。XD<br>
+<img src="https://mintisan.github.io/post-images/1671345344558.png" alt="" loading="lazy"></p>
+<blockquote>
+<p>建议观看<a href="https://www.youtube.com/watch?v=w7rwNF2Q3lM&amp;ab_channel=%E6%B4%8B%E8%91%B1">此链接</a></p>
+</blockquote>
+<h2 id="安装步骤">安装步骤</h2>
+<h3 id="1-下载安装固件">1. 下载安装固件</h3>
+<p>目前我使用的是 <a href="https://github.com/stupidloud/nanopi-openwrt">stupidloud/nanopi-openwrt</a>家的 <a href="https://github.com/stupidloud/nanopi-openwrt/releases/tag/2022-12-17">2022-12-18 自动发布</a> 版本，好像之前老版本是自带常用插件的，目前最新的这个版本是不带插件的<a href="https://github.com/stupidloud/nanopi-openwrt/releases/download/2022-12-17/r1p-lts-slim.img.gz">slim瘦身版本</a>。</p>
+<p>下载完后，用 <a href="https://www.balena.io/etcher/">Etcher</a> 下载到 <strong>SD</strong> 中即可，注意不要选错盘符了！！！！<br>
+<img src="https://mintisan.github.io/post-images/1671341893223.png" alt="" width="500" loading="lazy"></p>
+<h3 id="2-修改固件配置">2. 修改固件配置</h3>
+<p>由于固件的默认 IP 地址配置为<code>192.168.2.1</code>，而我目前的网络拓扑结构为华为的光猫路由一体机，外接一个小米的AX6000，所有设备均连接到小米的<code>192.168.31.1</code>网段中，所以在将 R2S 的 LAN 口连接到小米的任一 LAN 口，需要把连接到小米网段内网内的电脑 IP 设置成 R2S 网段，将其改成小米路由网段，总共分为两部，第一步修改本地网络的地址：<br>
+<img src="https://mintisan.github.io/post-images/1671342540136.png" alt="" width="400" loading="lazy"></p>
+<p>打开<code>192.168.2.1</code>地址，默认账号为 root ，密码为 password，输入进入后进入到【网络】-【接口】-修改LAN。<br>
+<img src="https://mintisan.github.io/post-images/1671342703969.png" alt="" width="500" loading="lazy"></p>
+<p>然后，进一步的修改下R2S的地址如下：【如果你不是小米路由器的31段，更换为对应的即可】<br>
+<img src="https://mintisan.github.io/post-images/1671342853144.png" alt="" width="600" loading="lazy"></p>
+<p>完后将自己的电脑切换会 DHCP 即可。</p>
+<p>此时，R2S 的 IP 配置完毕，在电脑端输入<code>192.168.31.2</code>即可访问其控制管理页面如下：<br>
+<img src="https://mintisan.github.io/post-images/1671343060813.png" alt="" width="500" loading="lazy"></p>
+<p>回来接口页面，需要修改如下配置：<br>
+<img src="https://mintisan.github.io/post-images/1671344785088.png" alt="" width="500" loading="lazy"><br>
+<img src="https://mintisan.github.io/post-images/1671344868537.png" alt="" width="500" loading="lazy"></p>
+<p>再进入到防火墙界面，启动 IP 动态伪装【我也不知道作用，但是其他博主说会稳定些，，】<br>
+<img src="https://mintisan.github.io/post-images/1671344937344.png" alt="" width="700" loading="lazy"></p>
+<p>到此，R2S 的网络配置全部完成。</p>
+<h3 id="3-下载安装插件并配置">3. 下载安装插件并配置</h3>
+<p>此时，你可以通过ssh连接到R2S，并输入<code>opkg print-architecture</code>命令，可以看到 R2S 的架构信息为 <code>aarch64_generic</code>：</p>
+<pre><code>root@OpenWrt:~# opkg print-architecture
+arch all 1
+arch noarch 1
+arch aarch64_generic 10
+root@OpenWrt:~# opkg install shadowsocks-libev-server
+</code></pre>
+<p>在命令行中<strong>下载插件</strong>，并<strong>安装</strong>：</p>
+<pre><code>root@OpenWrt:~# wget https://op.dllkids.xyz/packages/aarch64_generic/luci-app-passwall2_git-22.345.44732-cd2da70_all.ipk
+--2022-12-17 18:15:39--  https://op.dllkids.xyz/packages/aarch64_generic/luci-app-passwall2_git-22.345.44732-cd2da70_all.ipk
+Resolving op.dllkids.xyz... 93.179.127.22
+Connecting to op.dllkids.xyz|93.179.127.22|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 193945 (189K) [application/octet-stream]
+Saving to: 'luci-app-passwall2_git-22.345.44732-cd2da70_all.ipk'
+
+luci-app-passwall2_git-22.345.44732-cd2da7 100%[========================================================================================&gt;] 189.40K  --.-KB/s    in 0.08s
+
+2022-12-17 18:15:40 (2.38 MB/s) - 'luci-app-passwall2_git-22.345.44732-cd2da70_all.ipk' saved [193945/193945]
+
+root@OpenWrt:~# opkg install luci-app-passwall2_git-22.345.44732-cd2da70_all.ipk
+Installing luci-app-passwall2 (git-22.345.44732-cd2da70) to root...
+Installing coreutils-base64 (9.1-1) to root...
+Downloading file:///local_feed/coreutils-base64_9.1-1_aarch64_generic.ipk
+。。。// 忽略 log
+Configuring luci-app-passwall2.
+</code></pre>
+<p>然后，在网也端再刷新 R2S 的管理页面，就可以看到多出一个服务-Passwall ：<br>
+<img src="https://mintisan.github.io/post-images/1671344230415.png" alt="" width="300" loading="lazy"></p>
+<p>再需要再 Passwall 中添加你所拥有的节点信息：<br>
+<img src="https://mintisan.github.io/post-images/1671344460250.png" alt="" width="700" loading="lazy"></p>
+<p>再切换到基本设置中，设置你需要节点，通过点击 Google 来看是否设置成功：<br>
+<img src="https://mintisan.github.io/post-images/1671344575126.png" alt="" width="700" loading="lazy"></p>
+<h3 id="客户端设置">客户端设置</h3>
+<p>此时，你的旁路由已经完成了所有设置，等待客户端的流量到来，R2S 就会将所有的到来的流量通过你设置的代理走出去，，，<br>
+<img src="https://mintisan.github.io/post-images/1671344681372.png" alt="" width="500" loading="lazy"><br>
+<img src="https://mintisan.github.io/post-images/1671344692905.png" alt="" width="500" loading="lazy"></p>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://www.yuque.com/friendlyelec/r2s">软路由</a></li>
+<li><a href="https://michael728.github.io/2021/04/24/digital-products-r4s/">R4S 使用笔记</a></li>
+<li>[Openwrt Passwall 科学上网插件，快速使用指南] ( https://www.jamesdailylife.com/openwrt-passwall)</li>
+<li><a href="https://op.dllkids.xyz/packages/aarch64_generic/">OpenWrt固件插件</a></li>
+<li><a href="https://www.youtube.com/watch?v=w7rwNF2Q3lM&amp;ab_channel=%E6%B4%8B%E8%91%B1">软路由做旁路由三步搞定！openwrt软路由 R2S R4S openwrt软路由科学上网设置</a></li>
+<li><a href="https://www.youtube.com/watch?v=H83J0JPD1-k&amp;ab_channel=BIGDONGDONG">「275」 小白必看！OpenWrt下科学插件PassWall&amp;SSRP家教级入门和进阶使用</a></li>
+</ul>
+<h3 id="github-固件">GitHub 固件</h3>
+<ul>
+<li><a href="https://github.com/stupidloud/nanopi-openwrt">Openwrt for Nanopi R1S R2S R4S R5S 香橙派 R1 Plus 固件编译 纯净版与大杂烩</a></li>
+<li><a href="https://github.com/songchenwen/nanopi-r2s">Openwrt for Nanopi R2S 固件编译</a></li>
+<li><a href="https://github.com/songchenwen/nanopi-r2s">NanoPi R2s 的 OpenWrt 固件</a></li>
+<li><a href="https://github.com/DHDAXCW/NanoPi-R2S-rk3328">基于 Lean&amp;Lienol 源码的 NanoPi R2S 的 OpenWrt 固件</a></li>
+<li><a href="https://github.com/SuLingGG/OpenWrt-Rpi">Raspberry Pi &amp; NanoPi R2S/R4S &amp; G-Dock &amp; x86 OpenWrt Compile Project. (Based on Github Action / Daily Update)</a></li>
+<li><a href="https://github.com/QiuSimons/YAOF">OpenWrt for Nanopi R2C/R2S/R4S/X86</a></li>
+</ul>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%B8%BB%E9%A1%B5">主页</a></li>
+<li><a href="#%E5%8E%9F%E7%90%86">原理</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4">安装步骤</a>
+<ul>
+<li><a href="#1-%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E5%9B%BA%E4%BB%B6">1. 下载安装固件</a></li>
+<li><a href="#2-%E4%BF%AE%E6%94%B9%E5%9B%BA%E4%BB%B6%E9%85%8D%E7%BD%AE">2. 修改固件配置</a></li>
+<li><a href="#3-%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6%E5%B9%B6%E9%85%8D%E7%BD%AE">3. 下载安装插件并配置</a></li>
+<li><a href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AE%BE%E7%BD%AE">客户端设置</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a>
+<ul>
+<li><a href="#github-%E5%9B%BA%E4%BB%B6">GitHub 固件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

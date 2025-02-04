@@ -1,0 +1,167 @@
+<html>
+  <head>
+  <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>开发板 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="开发板 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  <meta name="description" content="On the way to be a practical idealism" />
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="current-tag-container">
+            <h2 class="title">
+                标签：# 开发板
+            </h2> 
+        </div>
+        <div class="post-container">
+  
+    <article class="post">
+      <a href="https://mintisan.github.io/post/about-esp32-deepsleep-11ma-abnormal/">
+        <h2 class="post-title">关于 ESP32 开发板深度睡眠模式电流 11mA 这件事</h2>
+      </a>
+      <div class="post-info">
+        <span>
+          2024-03-03
+        </span>
+        <span>
+          7 min read
+        </span>
+        
+          <a href="https://mintisan.github.io/tag/0kWuQOIob/" class="post-tag">
+            # ESP32
+          </a>
+        
+          <a href="https://mintisan.github.io/tag/4y1Yr8gVV/" class="post-tag">
+            # 开发板
+          </a>
+        
+      </div>
+      
+        <a href="https://mintisan.github.io/post/about-esp32-deepsleep-11ma-abnormal/" class="post-feature-image" style="background-image: url('https://deepbluembedded.com/wp-content/uploads/2023/03/ESP32-Power-Modes-And-Their-Power-Consumption.jpg?ezimgfmt=ng%3Awebp%2Fngcb6%2Frs%3Adevice%2Frscb6-1')">
+        </a>
+      
+      <div class="post-abstract">
+        <p>在官方渠道购买的 ESP32-Pico-Kit V4.1 的板子，然后尝试了 ESPIDF 官方例程以及 GPT 帮忙生成的 Arduino 和 ESPIDF 的最小代码烧录测量，结果发现通过 USB 测量板子进入深度睡眠之后的电流均为 11mA 多点，和官方说的 10uA 以下有这天然之别，但是看过程也确实在重启，看内存也只有 RTC 内存会保留状态，也就是说模块符合预期，但是结果功耗不符合，哪里出了问题呢？查了一圈，看到<a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html">两篇相关</a> 的答案：CP2102转换芯片和线性稳压器芯片导致的。<br>
+【其实 <a href="https://shareg.pt/dfeWyyb">GPT</a> 告诉我答案了，但是我不是硬件工程师，没法办进一步定位，最后还是 Google 给了我认知范围内的答案！！！】</p>
+
+      </div>
+    </article>
+  
+    <article class="post">
+      <a href="https://mintisan.github.io/post/esp32-c6-throughput-compare-esp32-pico/">
+        <h2 class="post-title">ESP32-C6 接收速率测试对比 ESP32-Pico</h2>
+      </a>
+      <div class="post-info">
+        <span>
+          2024-02-28
+        </span>
+        <span>
+          7 min read
+        </span>
+        
+          <a href="https://mintisan.github.io/tag/0kWuQOIob/" class="post-tag">
+            # ESP32
+          </a>
+        
+          <a href="https://mintisan.github.io/tag/4y1Yr8gVV/" class="post-tag">
+            # 开发板
+          </a>
+        
+      </div>
+      
+        <a href="https://mintisan.github.io/post/esp32-c6-throughput-compare-esp32-pico/" class="post-feature-image" style="background-image: url('https://mintisan.github.io/post-images/esp32-c6-throughput-compare-esp32-pico.jpg')">
+        </a>
+      
+      <div class="post-abstract">
+        <p>在 <a href="https://mintisan.github.io/post/esp32-platformio-arduino-devops/">基于 PlatformIO 的 ESP32 开发环境</a> 中用小米手机13做热点，测试了下从 PC 端上传单个大文件到 ESP32-Pico 上的速率大概是 140KB/s，这里对比同样的硬件环境。对比 ESP32-C6 的速率大概为 250KB/s，有不小的提升，但是距离我认为的起码上 M 还是有点差距。。。<br>
+【当然应该把软件也全部弄成一样才更加严谨，不过有时间再弄吧 XD】</p>
+
+      </div>
+    </article>
+  
+</div>
+
+        <div class="pagination-container">
+  
+  
+</div>
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+  </body>
+</html>

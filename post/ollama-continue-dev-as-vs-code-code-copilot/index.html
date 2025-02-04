@@ -1,0 +1,564 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ollama 和 Continue.dev 构建 VS Code 本地代码 Copilot | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Ollama 和 Continue.dev 构建 VS Code 本地代码 Copilot | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Continue.dev 可以方便的【自动提示补全】,【选中代码再编辑】，【选中聊天】以及【错误信息自动提问】，是目前开源框架里面功能比较完善的。结合 Ollama 后端，再配合本地开源代码模型，比如排名比较靠前的 Deepseek。真正做..." />
+    <meta name="keywords" content="LLM" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Ollama 和 Continue.dev 构建 VS Code 本地代码 Copilot
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-03-17
+              </span>
+              <span>
+                12 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/zV5HtBLsM/" class="post-tag">
+                  # LLM
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/ollama-continue-dev-as-vs-code-code-copilot.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p><a href="https://continue.dev/">Continue.dev</a> 可以方便的【自动提示补全】,【选中代码再编辑】，【选中聊天】以及【错误信息自动提问】，是目前开源框架里面功能比较完善的。结合 <a href="https://ollama.com/">Ollama</a> 后端，再配合本地开源代码模型，比如<a href="https://evalplus.github.io/leaderboard.html">排名</a>比较靠前的 <a href="https://huggingface.co/deepseek-ai/deepseek-coder-33b-instruct">Deepseek</a>。真正做到了 <a href="https://github.com/features/copilot">GitHub Copilot</a> 的低配平替。另外可以通过 <code>@</code> 和 <code>/</code> 比较方便的自定义扩展功能。</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1710680220793.png" alt="" loading="lazy"></figure>
+<h2 id="安装插件">安装插件</h2>
+<p>直接在 VS Code 的插件市场输入 <code>continue</code> 就可以看到，然后直接安装即可。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1710678352940.png" alt="" loading="lazy"></figure>
+<p>安装完后，可以在设置里面看到操作的一些快捷键。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1710678402200.png" alt="" loading="lazy"></figure>
+<h2 id="修改配置文件">修改配置文件</h2>
+<p><code>.config</code> Windows 下的目录如下：<code>C:\Users\mintisan\.continue\config.json</code>，macOS 应该是 <code>~/.continue/config.json</code>，最好备份一个然后再修改为如下：【注意我这里的apiBase！！！是部署在其他电脑上的，如果是本地就使用 <code>localhost</code> 即可。】</p>
+<pre><code>{
+  &quot;slashCommands&quot;:[
+    {
+      &quot;name&quot;: &quot;edit&quot;,
+      &quot;description&quot;: &quot;Edit highlighted code&quot;
+    },
+    {
+      &quot;name&quot;: &quot;comment&quot;,
+      &quot;description&quot;: &quot;Write comments for the highlighted code&quot;
+    },
+    {
+      &quot;name&quot;: &quot;share&quot;,
+      &quot;description&quot;: &quot;Download and share this session&quot;
+    },
+    {
+      &quot;name&quot;: &quot;cmd&quot;,
+      &quot;description&quot;: &quot;Generate a shell command&quot;
+    },
+    {
+      &quot;name&quot;: &quot;commit&quot;,
+      &quot;description&quot;: &quot;Generate a commit message for the current changes&quot;
+    },
+    {
+      &quot;name&quot;: &quot;so&quot;,
+      &quot;description&quot;: &quot;Reference StackOverflow to answer the question&quot;
+    }
+  ],
+  &quot;contextProviders&quot;:[
+    { &quot;name&quot;: &quot;code&quot; },
+    { &quot;name&quot;: &quot;open&quot;, &quot;params&quot;: { &quot;onlyPinned&quot;: false } },
+    {
+      &quot;name&quot;: &quot;codebase&quot;,
+      &quot;params&quot;: {
+        &quot;nRetrieve&quot;: 25,
+        &quot;nFinal&quot;: 5,
+        &quot;useReranking&quot;: true
+      }
+    },
+    { &quot;name&quot;: &quot;folder&quot; },
+    { &quot;name&quot;: &quot;search&quot; },
+    { &quot;name&quot;: &quot;tree&quot; },
+    { &quot;name&quot;: &quot;outline&quot; },
+    { &quot;name&quot;: &quot;highlights&quot; },
+    { &quot;name&quot;: &quot;docs&quot; },
+    { &quot;name&quot;: &quot;terminal&quot; },
+    { &quot;name&quot;: &quot;diff&quot; }
+  ],
+  &quot;systemMessage&quot;: &quot;你是一个嵌入式软件开发专家，供职于汇顶科技蓝牙部门，有丰富使用 ARM Cortex-M4 内核相关芯片的使用经验，也有着丰富的设计低功耗蓝牙 BLE 的经验，也擅长帮助客户解决使用 GR551x_SDK_V2.0.2 过程中出现的问题&quot;,
+  &quot;embeddingsProvider&quot;: {
+    &quot;provider&quot;: &quot;ollama&quot;,
+    &quot;model&quot;: &quot;nomic-embed-text&quot;,
+    &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+  },
+  &quot;models&quot;: [
+    {
+      &quot;title&quot;: &quot;DeepSeek-33b&quot;,
+      &quot;provider&quot;: &quot;ollama&quot;,
+      &quot;model&quot;: &quot;deepseek-coder:33b&quot;,
+      &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+    }
+  ],
+  &quot;tabAutocompleteModel&quot;: {
+    &quot;title&quot;: &quot;Tab Autocomplete Model&quot;,
+    &quot;provider&quot;: &quot;ollama&quot;,
+    &quot;model&quot;: &quot;deepseek-coder:33b-base-q4_K_S&quot;,
+    &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+  }
+}
+</code></pre>
+<p>注：一般的模型采用 chat 或者 instruct 模型；自动补全采用 base 模型，<a href="https://continue.dev/docs/walkthroughs/tab-autocomplete">官方文档</a>里面有提。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1710681099742.png" alt="" loading="lazy"></figure>
+<p>如果 Ollama 不是和 VS Code 在同一台电脑上，那么配置完后需要重启下，否则会出现如下错误。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1710678929337.png" alt="" loading="lazy"></figure>
+<h2 id="使用场景">使用场景</h2>
+<p>VS Code 的项目直接把文件夹 <a href="https://www.goodix.com/en/software_tool/gr551x_sdk">GR551x_SDK_V2.0.2</a> 拖进来尽可以了，但是如果需要过滤掉不需要 embedding 的文件，可以在根目录新建 <code>.continueignore</code>，添加如下：</p>
+<pre><code>*.out
+*.pdf
+*.chm
+*.a
+*.dll
+*.pyd
+*.lib
+*.exe
+*.zip
+*.hex
+*.data
+*.svg
+*.bin
+*.enc
+*.doxyfile
+*.function
+*.uvoptx
+*.sln
+*.o
+*.eps
+*.tcl
+</code></pre>
+<p>注意，<a href="https://github.com/continuedev/continue/issues/1026">不能使用 <code>*</code>，然后 <code>!*.c</code> 这种反套路</a>，会导致无法触发无法 embedding，，，</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1711463860863.png" alt="" loading="lazy"></figure>
+<h3 id="自动提示补全">【自动提示补全】</h3>
+<p>Continue 会在后台默认查询你所在编辑内容的上下文，比如当你写完 <code>## write quick_sort in python</code> 后，敲下回车，那么可能就会触发自动提示补全功能，如果你同意就可以按 <code>tab</code> 同意，相当于 Code Snippet 功能。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1710679133746.png" alt="" loading="lazy"></figure>
+<p>以上前台操作过程显示的后台 Prompt 如下。</p>
+<pre><code>==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b-base-q4_K_S
+maxTokens: 1024
+stop: &lt;｜fim▁begin｜&gt;,&lt;｜fim▁hole｜&gt;,&lt;｜fim▁end｜&gt;,//,
+
+,/src/,```,def,class
+temperature: 0
+
+############################################
+
+&lt;｜fim▁begin｜&gt;&quot;&quot;&quot;Step 4: Use keyboard shortcuts to
+accept [⌘ ⇧ ⏎] or reject [⌘ ⇧ ⌫] the edit&quot;&quot;&quot;
+
+# endregion
+
+# region ———————————————————————————— Part 3: Debug automatically [⌘ ⇧ R] ————————————————————————————
+
+
+&quot;&quot;&quot;Step 1: Run this Python file (it should error!)&quot;&quot;&quot;
+
+
+def print_sum(list_to_print):
+    total = 0
+    for num in list_to_print:
+        if isinstance(num, int):
+            total += num
+        else:
+            raise ValueError(&quot;All elements in the list must be integers.&quot;)
+    print(total)
+
+
+
+&quot;&quot;&quot;Step 2: Use the keyboard shortcut [⌘ ⇧ R]
+to automatically debug the error&quot;&quot;&quot;
+print_sum([&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])
+
+# endregion
+
+## write quick_sort in python
+def quick_sort(arr):
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    for i in range(1, len(arr)):
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    return quick_sort(left) + [pivot] + quick_sort(right)
+&lt;｜fim▁hole｜&gt;&lt;｜fim▁end｜&gt;==========================================================================
+==========================================================================
+Completion:
+
+
+print(quick_sort([3, 2, 1]))
+
+</code></pre>
+<h3 id="选中代码再编辑">【选中代码再编辑】</h3>
+<p>此时，当我们写了一些代码后，我们需要对现有代码进行修改，比如添加注释，编写测试用例，，，</p>
+<p>选中需要处理的代码片段，按压 <code>CTRL + I</code> 可以触发指令输入。</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1710679342700.png" alt="" loading="lazy"></figure>
+<p>等待一会会出现如下修改后的对比，等待确认。</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1710679347079.png" alt="" loading="lazy"></figure>
+<p>以上前台显示的后台 Prompt 如下。</p>
+<pre><code>==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b
+maxTokens: 1024
+
+############################################
+
+### System Prompt
+You are an AI programming assistant, utilizing the DeepSeek Coder model, developed by DeepSeek Company, and you only answer questions related to computer science. For politically sensitive questions, security and privacy issues, and other non-computer science questions, you will refuse to answer.
+### Instruction:
+Rewrite the code to satisfy this request: &quot;add comment&quot;
+
+```python
+## write quick_sort in python
+def quick_sort(arr):
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    for i in range(1, len(arr)):
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    return quick_sort(left) + [pivot] + quick_sort(right)
+
+```&lt;|EOT|&gt;
+### Response:
+Sure! Here's the code you requested:
+
+</code></pre>
+<h3 id="选中聊天">【选中聊天】</h3>
+<p>当我们选中需要了解的代码段后，快捷键 <code>CTRL+L</code> 按下后，代码会自动同步到左侧的聊天框中。</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1710679604156.png" alt="" loading="lazy"></figure>
+<p>此时就可以输入你想要了解的指令说明即可。这里会返回比较快。</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1710679609660.png" alt="" loading="lazy"></figure>
+<p>以上前台显示的后台 Prompt 如下。</p>
+<pre><code>
+
+==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b
+maxTokens: 1024
+
+############################################
+
+&lt;user&gt;
+continue_tutorial.py (96-115)
+## write quick_sort in python
+# This function performs a Quick Sort on an input array. 
+def quick_sort(arr):
+  # Base case: if array has less than or equal to one element, it is already sorted
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    # Split the array into two parts based on a pivot
+    for i in range(1, len(arr)):
+        # If element is less than pivot, append it to left part. Else, append it to right part.
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    
+    # Recursive calls for sorting the two parts and merging them with pivot.
+    return quick_sort(left) + [pivot] + quick_sort(right)
+
+
+这段代码有什么问题么
+
+==========================================================================
+==========================================================================
+Completion:
+
+这段代码的实现是正确的，它实现了Quick Sort算法。然而，它选择了数组的第一个元素作为枢轴，在处理已经排序或接近有序的大数据集时，这种方式可能会导致较差的性能。
+
+一个更优化的方法是使用“三者中值”来选择枢轴，即从数组的第一个、中间和最后一个元素中选取中位数作为枢轴。这样可以更好地平衡分区，从而避免最坏情况（例如已经排序或接近有序的数据集）对性能的影响。
+
+此外，这段代码并没有使用原地分区的方式来节省空间，如果输入数组非常大，可能会导致堆栈溢出或者内存问题。在Python中实现Quick Sort时，通常会选择原地分区的版本。
+
+</code></pre>
+<h3 id="错误信息自动提问">【错误信息自动提问】</h3>
+<p>Continue 除了以上 3 个主要的功能外，在应用上还做了一个比较好的功能，就是按压 <code>CTRL+Shift + R</code> 后，可以直接在工作流中抓取错误信息，向 LLM 提出问题，比较方便。</p>
+<figure data-type="image" tabindex="12"><img src="https://mintisan.github.io/post-images/1710680151236.png" alt="" loading="lazy"></figure>
+<p>注：以上的所有过程都可以在 如下的输出窗口中得到确认。</p>
+<figure data-type="image" tabindex="13"><img src="https://mintisan.github.io/post-images/1710678594128.png" alt="" loading="lazy"></figure>
+<h2 id="功能"><a href="https://continue.dev/docs/customization/context-providers">@功能</a></h2>
+<p><code>@Open Files</code> 相当于获取目前在 VS Code 中打印的文件对象内容，可以咨询打开的文件</p>
+<figure data-type="image" tabindex="14"><img src="https://mintisan.github.io/post-images/1711464327384.png" alt="" loading="lazy"></figure>
+<p><code>@ File Tree</code> 相当于得到了代码仓库的所有目录接口和文件名字，LLM 可以查询所有文件信息，以下就是通过目录名字得到 adc 例程的路径。</p>
+<figure data-type="image" tabindex="15"><img src="https://mintisan.github.io/post-images/1711464333397.png" alt="" width="400" loading="lazy"></figure>
+<p><code>@Codebase </code>  相当于代码仓库级别的 RAG，可以索所有代码，可以看到我们 <code>config.json</code> 查询到的片段还是基本都是相关的。</p>
+<figure data-type="image" tabindex="16"><img src="https://mintisan.github.io/post-images/1711464392470.png" alt="" loading="lazy"></figure>
+<h2 id="功能-2"><a href="https://continue.dev/docs/customization/slash-commands">/ 功能</a></h2>
+<p>其实就是 CTRL+I 的另一种形式，可以先通过 CTRL+L将我们关注的代码片段先挪到聊天框，然后后续进一步编辑。这里以  <code>/comment</code> 为例进行演示，其他也类似。</p>
+<figure data-type="image" tabindex="17"><img src="https://mintisan.github.io/post-images/1711465206274.png" alt="" loading="lazy"></figure>
+<h2 id="注意事项">注意事项</h2>
+<ol>
+<li>如果你切换了模型，那么第一次将会等待比较久的时间</li>
+<li>更换了配置文件需要重启 vs code</li>
+</ol>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://continue.dev/">Continue</a> : The easiest way to code with any LLM</li>
+<li>https://github.com/continuedev/continue</li>
+<li>https://www.ycombinator.com/companies/continue</li>
+<li>https://marketplace.visualstudio.com/items?itemName=Continue.continue</li>
+<li>https://continue.dev/docs/reference/Model%20Providers/ollama</li>
+<li>https://continue.dev/docs/walkthroughs/tab-autocomplete</li>
+<li>https://continue.dev/docs/reference/config</li>
+<li>https://github.com/ollama/ollama</li>
+<li><a href="https://www.andreagrandi.it/posts/self-hosting-copilot-replacement/">Self hosting a Copilot replacement: my personal experience</a></li>
+<li><a href="https://www.reddit.com/r/LocalLLaMA/comments/198aq2l/is_there_anything_that_can_complete_with_github/">Is there anything that can complete with GitHub Copilot right now I can run in VS Code?</a></li>
+<li><a href="https://crushingcode.nisrulz.com/en/posts/local-copilot-your-own-off-the-grid-and-local-code-assistant/">Local Copilot: Your own off the grid and local code assistant</a></li>
+<li><a href="https://news.ycombinator.com/item?id=39552826">	Show HN: Continue.dev releases local, open-source tab-autocomplete (continue.dev)</a></li>
+<li><a href="https://news.ycombinator.com/item?id=36882146">Show HN: Continue – Open-source coding autopilot (github.com/continuedev)</a></li>
+<li><a href="https://www.reddit.com/r/LocalLLaMA/comments/17h7j4h/what_coding_llm_is_the_best_today/">What coding llm is the best today?Discussion (self.LocalLLaMA)</a></li>
+</ul>
+<h3 id="问题链接">问题链接</h3>
+<ul>
+<li><a href="https://github.com/continuedev/continue/issues/946">Unresponsive chat when using remote self-hosted Ollama server #946</a></li>
+<li><a href="https://github.com/sourcegraph/cody/issues/3074">bug: cannot configure unstable-ollama provider, ignores model and Server Endpoint settings #3074</a></li>
+</ul>
+<h3 id="同类竞品">同类竞品</h3>
+<ul>
+<li><a href="https://github.com/TabbyML/tabby">Tabby</a> : Self-hosted AI coding assistant[docker + vs code + Jetbrains ][Tabby 需要启动自身 docker 服务器，无法和 Ollama 结合。]</li>
+<li><a href="https://github.com/fauxpilot/fauxpilot">FauxPilot</a> : an open-source alternative to GitHub Copilot server</li>
+<li><a href="https://github.com/sourcegraph/cody">Cody</a> : AI that knows your entire codebase[vs code+ollama+Jetbrains] [Cody 安装使用 Ollama 返回错误；]
+<ul>
+<li><a href="https://sourcegraph.com/blog/local-code-completion-with-ollama-and-cody">Local code completion with Ollama and Cody</a></li>
+<li><a href="https://generativeai.pub/100-local-llama-coding-assistant-bye-bye-gpt-4-cbd2b507b822">100% Open-Source Llama Coding Assistant: Bye, bye GPT-4!</a></li>
+</ul>
+</li>
+<li><a href="https://github.com/Exafunction/codeium.vim">Codeium</a> : Free, ultrafast Copilot alternative for Vim and Neovim[Codeium 也不支持和 Ollama 的结合。]</li>
+<li><a href="https://github.com/rjmacarthy/twinny">Twinny</a> : The most no-nonsense locally hosted (or API hosted) AI code completion plugin for Visual Studio Code, like GitHub Copilot but 100% free and 100% private.[vs code+ollama][可以用时 base 模型进行【行内下一句提示】，只能提示下一句，看起来笨笨的。]</li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ex3ndr.llama-coder">Llama Coder</a></li>
+<li><a href="https://github.com/srikanth235/privy">Privy</a> : An open-source alternative to GitHub copilot that runs locally.</li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=DanielSanMedium.dscodegpt">Code GPT: Chat &amp; AI Agents</a> : [Code GPT 不支持自定义服务器地址，也不支持开源。]</li>
+<li><a href="https://cursor.sh/">Cursor</a> : Build software faster in an editor designed for pair-programming with AI</li>
+<li><a href="https://raccoon.sensetime.com/code">商汤代码小浣熊</a></li>
+<li><a href="https://tongyi.aliyun.com/lingma">阿里通义灵码</a></li>
+<li><a href="https://comate.baidu.com/">百度 Comate</a></li>
+<li><a href="https://codegeex.cn/">智谱 CodeGeeX</a></li>
+<li><a href="https://cloud.tencent.com/product/acc">腾讯云 AI 代码助手</a></li>
+<li><a href="https://iflycode.xfyun.cn/">讯飞 iFlyCode</a></li>
+</ul>
+<figure data-type="image" tabindex="18"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6">安装插件</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">修改配置文件</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">使用场景</a>
+<ul>
+<li><a href="#%E8%87%AA%E5%8A%A8%E6%8F%90%E7%A4%BA%E8%A1%A5%E5%85%A8">【自动提示补全】</a></li>
+<li><a href="#%E9%80%89%E4%B8%AD%E4%BB%A3%E7%A0%81%E5%86%8D%E7%BC%96%E8%BE%91">【选中代码再编辑】</a></li>
+<li><a href="#%E9%80%89%E4%B8%AD%E8%81%8A%E5%A4%A9">【选中聊天】</a></li>
+<li><a href="#%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E8%87%AA%E5%8A%A8%E6%8F%90%E9%97%AE">【错误信息自动提问】</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8A%9F%E8%83%BD">@功能</a></li>
+<li><a href="#%E5%8A%9F%E8%83%BD-2">/ 功能</a></li>
+<li><a href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9">注意事项</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a>
+<ul>
+<li><a href="#%E9%97%AE%E9%A2%98%E9%93%BE%E6%8E%A5">问题链接</a></li>
+<li><a href="#%E5%90%8C%E7%B1%BB%E7%AB%9E%E5%93%81">同类竞品</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/about-esp32-flash-download-md5-error/">
+              <h3 class="post-title">
+                关于 ESP32 下着下着就不让下了这件事
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

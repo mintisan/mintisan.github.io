@@ -1,0 +1,416 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Seafile 服务端安装 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Seafile 服务端安装 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Seafile 作为个人开源网盘服务有一个自动备份历史修改的功能，已经基本足够了。而且几乎所有客户端也都有，分享和权限管理也做的刚好足够。但是其安装方式从原来的 GitHub 脚本一键安装，到后续的各种老的 Docker 安装，以及目前官网..." />
+    <meta name="keywords" content="自建服务" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Seafile 服务端安装
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-07-15
+              </span>
+              <span>
+                10 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/AxHqWYja8/" class="post-tag">
+                  # 自建服务
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/seafile-server-setup-docker.jpg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p><a href="https://www.seafile.com/home/">Seafile</a> 作为个人开源网盘服务有一个自动备份历史修改的功能，已经基本足够了。而且几乎所有客户端也都有，分享和权限管理也做的刚好足够。但是其安装方式从原来的 GitHub 脚本<a href="https://github.com/haiwen/seafile-docker">一键安装</a>，到后续的各种老的 Docker 安装，以及目前<a href="https://cloud.seafile.com/published/seafile-manual-cn/docker/%E7%94%A8Docker%E9%83%A8%E7%BD%B2Seafile.md">官网主页最新的 Docker 安装方式</a>，变化较大，这里记录实际安装的环境版本以及安装好后与 Nginx 冲突的问题。</p>
+<!-- more -->
+<h2 id="系统版本选择">系统版本选择</h2>
+<p>我这里选择的是 Ubuntu 20.04 版本.</p>
+<h2 id="docker-安装">Docker 安装</h2>
+<p>不能用 snap 安装，都否会出现类似如下没有权限新建文件夹的错误：</p>
+<pre><code>ERROR: for worker-1 Cannot start service worker-1: error while creating mount source path '/var/www/html/lensin/html': mkdir /var/www: read-only file system
+</code></pre>
+<p>用官方的 apt-get 安装：</p>
+<pre><code>sudo apt-get update
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg
+sudo mkdir -m 0755 -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo \
+  &quot;deb [arch=&quot;$(dpkg --print-architecture)&quot; signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  &quot;$(. /etc/os-release &amp;&amp; echo &quot;$VERSION_CODENAME&quot;)&quot; stable&quot; | \
+  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+</code></pre>
+<p>常用命令</p>
+<pre><code>查看 Docker 版本和详细信息
+docker info
+查看正在运行的容器
+docker ps
+列出所有容器，包括已停止的容器：
+docker ps -a
+删除引用该镜像的容器:
+docker rm &lt;CONTAINER ID&gt;
+列出所有安装的镜像
+docker images
+强制删除镜像
+docker rmi -f &lt;IMAGE ID&gt;
+
+</code></pre>
+<h2 id="seafile-安装">Seafile 安装</h2>
+<p>下载 <a href="https://cloud.seafile.com/d/f4e8883db63845d29350/"><code>docker-compose.yml</code> 文件</a>，我这里选择的是 11.0 CE 社区版本，并修改管理员账号(SEAFILE_ADMIN_EMAIL)，密码(SEAFILE_ADMIN_PASSWORD)以及服务器地址(SEAFILE_SERVER_HOSTNAME)。</p>
+<pre><code>services:
+  db:
+    image: mariadb:10.11
+    container_name: seafile-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=db_dev  # Requested, set the root's password of MySQL service.
+      - MYSQL_LOG_CONSOLE=true
+      - MARIADB_AUTO_UPGRADE=1
+    volumes:
+      - /opt/seafile-mysql/db:/var/lib/mysql  # Requested, specifies the path to MySQL data persistent store.
+    networks:
+      - seafile-net
+
+  memcached:
+    image: memcached:1.6.18
+    container_name: seafile-memcached
+    entrypoint: memcached -m 256
+    networks:
+      - seafile-net
+          
+  seafile:
+    image: seafileltd/seafile-mc:11.0-latest
+    container_name: seafile
+    ports:
+      - &quot;80:80&quot;
+#      - &quot;443:443&quot;  # If https is enabled, cancel the comment.
+    volumes:
+      - /opt/seafile-data:/shared   # Requested, specifies the path to Seafile data persistent store.
+    environment:
+      - DB_HOST=db
+      - DB_ROOT_PASSWD=db_dev  # Requested, the value shuold be root's password of MySQL service.
+      - TIME_ZONE=Asia/Shanghai # Optional, default is UTC. Should be uncomment and set to your local time zone.
+      - SEAFILE_ADMIN_EMAIL=xxx@163.com # Specifies Seafile admin user, default is 'me@example.com'.
+      - SEAFILE_ADMIN_PASSWORD=xxx     # Specifies Seafile admin password, default is 'asecret'.
+      - SEAFILE_SERVER_LETSENCRYPT=false   # Whether use letsencrypt to generate cert.
+      - SEAFILE_SERVER_HOSTNAME=161.xx.xxx.xx # Specifies your host name.
+    depends_on:
+      - db
+      - memcached
+    networks:
+      - seafile-net
+
+networks:
+  seafile-net:
+</code></pre>
+<p>然后，执行 <code>docker compose up -d</code> 命令即可。进入 Seafile 页面用 <code>docker-compose.yml</code> 设置的管理员账号密码登陆即可。</p>
+<p>注：如果有碰到 <code>80</code> 端口倍 Nginx 占用，表现为打开服务器地址显示 Nginx 页面，则通过 <code>sudo systemctl stop nginx</code> 将这个服务停止，然后再执行 docker 运行命令即可。完整过程如下所示：</p>
+<pre><code>root@MicroFB:~# docker compose up -d
+[+] Running 0/3
+[+] Running 33/33                                                                                                                                            0.3s 
+ ✔ db Pulled                                                                                                                                                27.7s 
+   ✔ 3713021b0277 Pull complete                                                                                                                             10.5s 
+   ✔ b7ed4502c671 Pull complete                                                                                                                             10.6s 
+   ✔ ccee233ae035 Pull complete                                                                                                                             12.5s 
+   ✔ 0c8d32e87829 Pull complete                                                                                                                             12.6s 
+   ✔ 257a4184da5c Pull complete                                                                                                                             12.7s 
+   ✔ 079eb852aa15 Pull complete                                                                                                                             26.3s 
+   ✔ c6b6414a516a Pull complete                                                                                                                             26.4s 
+   ✔ 96faa6efb673 Pull complete                                                                                                                             26.4s 
+ ✔ memcached Pulled                                                                                                                                         18.2s 
+   ✔ 3f9582a2cbe7 Pull complete                                                                                                                             16.0s 
+   ✔ 2b4a13da561f Pull complete                                                                                                                             16.2s 
+   ✔ 98ecfc959437 Pull complete                                                                                                                             16.4s 
+   ✔ 03ca80a0778b Pull complete                                                                                                                             16.8s 
+   ✔ 143814477eae Pull complete                                                                                                                             16.8s 
+   ✔ 3c2bc07c763e Pull complete                                                                                                                             16.8s 
+ ✔ seafile Pulled                                                                                                                                           56.5s 
+   ✔ 3dd181f9be59 Pull complete                                                                                                                             12.6s 
+   ✔ d700e64e05a2 Pull complete                                                                                                                             12.7s 
+   ✔ c378ae4eca3c Pull complete                                                                                                                             22.7s 
+   ✔ ebd7cb07e8d9 Pull complete                                                                                                                             22.8s 
+   ✔ 673ebd0b2c79 Pull complete                                                                                                                             27.3s 
+   ✔ 8f3a871686f0 Pull complete                                                                                                                             30.1s 
+   ✔ 491259946e61 Pull complete                                                                                                                             32.3s 
+   ✔ e6b2a7810eae Pull complete                                                                                                                             38.3s 
+   ✔ b733a29f4802 Pull complete                                                                                                                             49.2s 
+   ✔ 4260865b66b4 Pull complete                                                                                                                             49.3s 
+   ✔ 74053ed00b75 Pull complete                                                                                                                             49.3s 
+   ✔ 643b124b9da1 Pull complete                                                                                                                             49.3s 
+   ✔ eca46377af8e Pull complete                                                                                                                             49.5s 
+   ✔ 47c599991f4c Pull complete                                                                                                                             49.5s 
+   ✔ 1ae61a16c5a1 Pull complete                                                                                                                             49.5s 
+   ✔ 8fa7edb38442 Pull complete                                                                                                                             55.2s 
+[+] Running 3/4
+ ✔ Network root_seafile-net     Created                                                                                                                      0.1s 
+ ✔ Container seafile-memcached  Started                                                                                                                      1.5s 
+ ✔ Container seafile-mysql      Started                                                                                                                      1.5s 
+ ⠴ Container seafile            Starting                                                                                                                     1.5s 
+Error response from daemon: driver failed programming external connectivity on endpoint seafile (cb5121ad6d6fc6b826f87d668f8b3f960d15a017e8788637b6ecea6c050320f0): failed to bind port 0.0.0.0:80/tcp: Error starting userland proxy: listen tcp4 0.0.0.0:80: bind: address already in use
+root@MicroFB:~# 
+root@MicroFB:~# docker images
+REPOSITORY              TAG           IMAGE ID       CREATED         SIZE
+seafileltd/seafile-mc   11.0-latest   f513b59a77cd   2 hours ago     1.39GB
+mariadb                 10.11         fccf0a9f80df   8 weeks ago     404MB
+memcached               1.6.18        0730201b15c1   17 months ago   89.3MB
+root@MicroFB:~# sudo lsof -i :80
+COMMAND   PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+nginx   20048     root    6u  IPv4  79714      0t0  TCP *:http (LISTEN)
+nginx   20048     root    7u  IPv6  79715      0t0  TCP *:http (LISTEN)
+nginx   20049 www-data    3u  IPv4  79992      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60852 (ESTABLISHED)
+nginx   20049 www-data    6u  IPv4  79714      0t0  TCP *:http (LISTEN)
+nginx   20049 www-data    7u  IPv6  79715      0t0  TCP *:http (LISTEN)
+nginx   20049 www-data   11u  IPv4  80202      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:15291 (ESTABLISHED)
+nginx   20049 www-data   12u  IPv4  80203      0t0  TCP MicroFB:http-&gt;178.157.57.117.16clouds.com:51641 (ESTABLISHED)
+nginx   20049 www-data   13u  IPv4  80252      0t0  TCP MicroFB:http-&gt;175.152.79.16:10373 (ESTABLISHED)
+nginx   20049 www-data   14u  IPv4  81189      0t0  TCP MicroFB:http-&gt;178.157.57.117.16clouds.com:51642 (ESTABLISHED)
+nginx   20049 www-data   15u  IPv4  82164      0t0  TCP MicroFB:http-&gt;175.152.79.16:10374 (ESTABLISHED)
+nginx   20049 www-data   16u  IPv4  91290      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:61131 (ESTABLISHED)
+nginx   20049 www-data   17u  IPv4  84293      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:15317 (ESTABLISHED)
+nginx   20049 www-data   18u  IPv4  84993      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60872 (ESTABLISHED)
+nginx   20049 www-data   19u  IPv4  84994      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60870 (ESTABLISHED)
+nginx   20049 www-data   20u  IPv4  84995      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60871 (ESTABLISHED)
+nginx   20049 www-data   21u  IPv4  84997      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60873 (ESTABLISHED)
+nginx   20049 www-data   22u  IPv4  95716      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:15956 (ESTABLISHED)
+root@MicroFB:~# sudo systemctl stop nginx
+root@MicroFB:~# sudo netstat -tuln | grep :80
+sudo: netstat: command not found
+root@MicroFB:~# apt-get install netstat
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+E: Unable to locate package netstat
+root@MicroFB:~# docker images
+REPOSITORY              TAG           IMAGE ID       CREATED         SIZE
+seafileltd/seafile-mc   11.0-latest   f513b59a77cd   2 hours ago     1.39GB
+mariadb                 10.11         fccf0a9f80df   8 weeks ago     404MB
+memcached               1.6.18        0730201b15c1   17 months ago   89.3MB
+root@MicroFB:~# docker ps
+CONTAINER ID   IMAGE              COMMAND                  CREATED         STATUS         PORTS       NAMES
+503a0522b070   memcached:1.6.18   &quot;memcached -m 256&quot;       2 minutes ago   Up 2 minutes   11211/tcp   seafile-memcached
+e86086fd9f89   mariadb:10.11      &quot;docker-entrypoint.s…&quot;   2 minutes ago   Up 2 minutes   3306/tcp    seafile-mysql
+root@MicroFB:~# docker-compose up -d
+
+Command 'docker-compose' not found, but can be installed with:
+
+snap install docker          # version 24.0.5, or
+apt  install docker-compose  # version 1.25.0-1
+
+See 'snap info docker' for additional versions.
+
+root@MicroFB:~# docker compose up -d
+[+] Running 3/3
+ ✔ Container seafile-memcached  Running                                                                                                                      0.0s 
+ ✔ Container seafile-mysql      Running                                                                                                                      0.0s 
+ ✔ Container seafile            Started                                                                                                                      0.7s 
+root@MicroFB:~# 
+root@MicroFB:~# 
+root@MicroFB:~# docker ps
+CONTAINER ID   IMAGE                               COMMAND                  CREATED         STATUS          PORTS                               NAMES
+de29eaa96e6d   seafileltd/seafile-mc:11.0-latest   &quot;/sbin/my_init -- /s…&quot;   3 minutes ago   Up 13 seconds   0.0.0.0:80-&gt;80/tcp, :::80-&gt;80/tcp   seafile
+503a0522b070   memcached:1.6.18                    &quot;memcached -m 256&quot;       3 minutes ago   Up 3 minutes    11211/tcp                           seafile-memcached
+e86086fd9f89   mariadb:10.11                       &quot;docker-entrypoint.s…&quot;   3 minutes ago   Up 3 minutes    3306/tcp                            seafile-mysql
+root@MicroFB:~# docker ps
+CONTAINER ID   IMAGE                               COMMAND                  CREATED         STATUS          PORTS                               NAMES
+de29eaa96e6d   seafileltd/seafile-mc:11.0-latest   &quot;/sbin/my_init -- /s…&quot;   3 minutes ago   Up 21 seconds   0.0.0.0:80-&gt;80/tcp, :::80-&gt;80/tcp   seafile
+503a0522b070   memcached:1.6.18                    &quot;memcached -m 256&quot;       3 minutes ago   Up 3 minutes    11211/tcp                           seafile-memcached
+e86086fd9f89   mariadb:10.11                       &quot;docker-entrypoint.s…&quot;   3 minutes ago   Up 3 minutes    3306/tcp                            seafile-mysql
+</code></pre>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li>https://cloud.seafile.com/published/seafile-manual-cn/docker/%E7%94%A8Docker%E9%83%A8%E7%BD%B2Seafile.md</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC%E9%80%89%E6%8B%A9">系统版本选择</a></li>
+<li><a href="#docker-%E5%AE%89%E8%A3%85">Docker 安装</a></li>
+<li><a href="#seafile-%E5%AE%89%E8%A3%85">Seafile 安装</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/openvpn-server-selfhost/">
+              <h3 class="post-title">
+                OpenVPN 服务器自建和使用
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

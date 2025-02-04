@@ -1,0 +1,273 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Alist-目前使用网盘的最佳姿势 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Alist-目前使用网盘的最佳姿势 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="iStoreOS(OpenWRT) 有 Alist 的插件，可以在内网搭建 Alist 的服务器，并且可以映射为 WebDav 映射到本地，这样内网就可以像访问自己的 NAS 一样访问第三方的网盘。不用非得下载到本地才能看电影和文档，可以说..." />
+    <meta name="keywords" content="自建服务,软路由" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Alist-目前使用网盘的最佳姿势
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-01-07
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/AxHqWYja8/" class="post-tag">
+                  # 自建服务
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/ZPwwA7N6j/" class="post-tag">
+                  # 软路由
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/alist-best-way-to-use-network-disk.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>iStoreOS(OpenWRT) 有 Alist 的插件，可以在内网搭建 Alist 的服务器，并且可以映射为 WebDav 映射到本地，这样内网就可以像访问自己的 NAS 一样访问第三方的网盘。不用非得下载到本地才能看电影和文档，可以说一定程度上解放了硬盘的压力，但是对网络提出了更高的要求。</p>
+<!-- more -->
+<h2 id="修改密码">修改密码</h2>
+<p>一般安装完会有个随机的密码在命令行显示，如果使用 iStoreOS，则可以在如下界面直接点击按钮显示查看<br>
+<img src="https://mintisan.github.io/post-images/1673096785886.png" alt="" loading="lazy"></p>
+<p>然后进入主页后，点击主页下方的【管理】<br>
+<img src="https://mintisan.github.io/post-images/1673096601140.png" alt="" width="300" loading="lazy"></p>
+<p>修改密码<br>
+<img src="https://mintisan.github.io/post-images/1673096686230.png" alt="" loading="lazy"></p>
+<h2 id="修改配置">修改配置</h2>
+<p>Alist 官方网站有详细的添加方法，但是有些厂商会有所改变，但是大差不差，比如 Quark 的网站文档显示需要 Token 和 Cookies，但是我在这会只需要 Cookies 就可以了。</p>
+<h3 id="baidunetwork">BaiduNetwork</h3>
+<p>百度网盘只需要 Token，其他会自动填充，Token 获取地址：https://alist-doc.nn.ci/docs/driver/baidu/<br>
+<img src="https://mintisan.github.io/post-images/1673096501864.png" alt="" loading="lazy"></p>
+<h3 id="aliyun">Aliyun</h3>
+<p>阿里云盘也只需要 Token，Token 获取地址：https://easy-token.cooluc.com/<br>
+<img src="https://mintisan.github.io/post-images/1673096509938.png" alt="" loading="lazy"></p>
+<h3 id="quark">Quark</h3>
+<p>夸克需要 Cookie，Cookies 获取方法为登陆主页后，按 F12 调出调试界面，找到如下：<br>
+<img src="https://mintisan.github.io/post-images/1673095842635.png" alt="" loading="lazy"></p>
+<p>复制 Cookie 填入即可<br>
+<img src="https://mintisan.github.io/post-images/1673096521399.png" alt="" loading="lazy"></p>
+<p>注：在获取以上这些东西前，最好先在网页端登陆账号。</p>
+<p>成功后，会显示 work ，就表示添加成功。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1673096531306.png" alt="" loading="lazy"></figure>
+<p>然后就可以进到主页看到三个网盘静静的躺在那里了。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1673096492788.png" alt="" loading="lazy"></figure>
+<h2 id="在线播放">在线播放</h2>
+<p>在配置好所有网盘后，就可以打开任何你想看的内容，这里以打开视频为例，网页端会显示支持的本地播放器，可以选择对应平台的打开即可：【安卓和苹果只要安装对应的播放器就可以和 PC 端类似操作】</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1673097291122.png" alt="" loading="lazy"></figure>
+<p>确认提示打开<br>
+<img src="https://mintisan.github.io/post-images/1673097364036.png" alt="" width="300" loading="lazy"></p>
+<p>打开后，会有下载的提示进度<br>
+<img src="https://mintisan.github.io/post-images/1673097376605.png" alt="" width="300" loading="lazy"></p>
+<p>注：网页端还是有一些 Bug，比如打开视频只有声音，没有画面，或者只有画面没有声音，但是目前使用本地打开尚无出现任何问题。</p>
+<h2 id="本地映射">本地映射</h2>
+<p>macOS 在 Finder 中选择 Go -&gt; Connect to Server，输入地址，以及后续提示的 Alist 账号和密码即可。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1673097655874.png" alt="" width="300" loading="lazy"></figure>
+<p>添加后，就可以在 Finder 中打开 WebDav 地址，就可以像操作本地文件一样操作网盘的内容</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1673097745140.png" alt="" loading="lazy"></figure>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li>官方 GitHub：https://github.com/alist-org/alist/</li>
+<li>AList官方文档：https://alist.nn.ci/</li>
+<li><a href="https://www.youtube.com/watch?v=12QoxeljMoY&amp;t=423s&amp;ab_channel=%E9%9B%B6%E5%BA%A6%E8%A7%A3%E8%AF%B4">AList安装教程 – 聚合阿里云盘、百度网盘、谷歌云盘、WebDav 等 18 款网盘：本地直接播放视频，硬盘扩容添加开机自启动更好用 | 零度解说</a></li>
+<li><a href="https://juejin.cn/post/7155242872441143327">基于AList实现网盘挂载和WebDAV本地挂载网盘</a></li>
+</ul>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81">修改密码</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE">修改配置</a>
+<ul>
+<li><a href="#baidunetwork">BaiduNetwork</a></li>
+<li><a href="#aliyun">Aliyun</a></li>
+<li><a href="#quark">Quark</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9C%A8%E7%BA%BF%E6%92%AD%E6%94%BE">在线播放</a></li>
+<li><a href="#%E6%9C%AC%E5%9C%B0%E6%98%A0%E5%B0%84">本地映射</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/raspberry-pi-pico-dev-environment-on-macos/">
+              <h3 class="post-title">
+                Raspberry Pi Pico 在 macOS 上的开发环境搭建
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

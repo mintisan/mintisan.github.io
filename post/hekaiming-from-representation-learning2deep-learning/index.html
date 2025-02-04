@@ -1,0 +1,291 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>何凯明的从表征学习到深度学习发展进程视频学习笔记 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="何凯明的从表征学习到深度学习发展进程视频学习笔记 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="之前囤积的很多 Read it later 里面有何凯明 入职 MIT 之前的 unpaid 课程介绍。一直挂在 Chrome 浏览器那里，想着啥时候看，今天不知咋的想着看看吧，不然就关掉了。幸亏看了，大佬讲的真是的行云流水，娓娓道来。
+从..." />
+    <meta name="keywords" content="学习笔记,深度学习" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              何凯明的从表征学习到深度学习发展进程视频学习笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-05-05
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/Nl8kPX-mb/" class="post-tag">
+                  # 学习笔记
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/3G8L2-n2rM/" class="post-tag">
+                  # 深度学习
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/hekaiming-from-representation-learning2deep-learning.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>之前囤积的很多 <code>Read it later</code> 里面有<a href="https://www.youtube.com/watch?v=D_jt-xO_RmI">何凯明</a> 入职 MIT 之前的 unpaid 课程介绍。一直挂在 Chrome 浏览器那里，想着啥时候看，今天不知咋的想着看看吧，不然就关掉了。幸亏看了，大佬讲的真是的行云流水，娓娓道来。</p>
+<p>从 LeNet 到 AlexNet 到 VGG Nets 到 GoogleNet 到 normalization/initialization module 到 ResNet 到 RNN/1-D CNN 到 Transformer 以及应用 GPT/AlphaFold/ViT ，这里记录下每一步关键节点的意义以及作用。可以很清晰的看到深度学习技术的一步一步发展过程出现的问题，以及对应的解决方案。</p>
+<!-- more -->
+<h2 id="关键节点">关键节点</h2>
+<h3 id="1989-lenet">1989-LeNet</h3>
+<p>具备了 DNN 的基本雏形：卷积(5x5)/下采样/全连接层/输出层，但是受限于算力和高质量数据的约束，这个技术就被雪藏了 20 年，，，</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1714901067804.png" alt="" loading="lazy"></figure>
+<h3 id="2012-alexnet">2012-AlexNet</h3>
+<p>引入了 ReLu 替换了原来的 Sigmoid 以及 Dropout 来让网络可以更深，以及 data augmentation 的作用</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1714901152096.png" alt="" loading="lazy"></figure>
+<p>注：后续的量化方法其实和 Dropout 作用上有些类似，也可以更好的让网络泛华，不至于过早过拟合；且在这之后，对网络的可视化让大家觉得这条路是对的。</p>
+<h3 id="2014-vgg-nets">2014-VGG Nets</h3>
+<p>证明网络越深越好，并且采用统一的 3x3 卷积，并且在用 stack 逐层添加的训练方法来训练更深的网络，也引出了后续对初始化方法的研究</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1714901203220.png" alt="" loading="lazy"></figure>
+<p>注：更深的网络，开启了预训练的时代，也就是迁移学习思想的落地，可以在无标注上进行大规模学习后，其特征表示可以签到其他类似原理的应用场景。</p>
+<h3 id="2014-googlenet">2014-GoogleNet</h3>
+<p>引入了 1x1 网络模块，相当于一个直连的捷径，也开发了同层不同方式的横向组合阶段，但是破坏了网络设计一致性的哲学，也给初始化方法带来了适配挑战。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1714901227590.png" alt="" loading="lazy"></figure>
+<p>注：这个捷径和后续 ResNet 的作用类似，不知道有没有受这个的启发。</p>
+<h3 id="normalizationinitialization-module-in-deep-learning">normalization/initialization module in deep learning</h3>
+<p>网络越深会进入梯度爆炸或者消失问题，需要一个比较好的初始化方法，因为一个简单通用的模块，在网络的每一层添加一个归一化可以让网络越快收敛但是又不会陷入局部最优解，也就是会有更好的结果。其中又以 batch 和 layer 归一化方法最为普遍和好用。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1714901305933.png" alt="" loading="lazy"></figure>
+<h3 id="2015-resnet">2015-ResNet</h3>
+<p>在网络超过 20 层后，发现再继续深层会导致连训练都开始下降，引入 F(x)=H(x)+x 这样一条线，让网络可以更深后不至于性能下降</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1714901328609.png" alt="" loading="lazy"></figure>
+<p>注：这个真的又简单有好用。</p>
+<h3 id="rnn-for-sequence-modeling">RNN for sequence modeling</h3>
+<p>RNN以及后续的 LSTM/GRU 相当于时间局连接【相比于 CNN 的空间局部连接】，只是和当前时间输入以及前一个输出连接，其在训练上非常不友好，因为需要依赖前一时刻的输出。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1714901349178.png" alt="" loading="lazy"></figure>
+<p>注：RNN 上迭代出来的 LSTM 则稍微优化了下 RNN 相乘导致的快速梯度消失或者爆炸问题，但是还是无法支撑较长的记忆；GRU 则优化了 LSTM 的计算复杂度，基本可以说是平替。</p>
+<h3 id="1-d-cnn-for-sequence-modeling">1-D CNN for sequence modeling</h3>
+<p>如果采用 1-D CNN 的来进行时间序列建模，则可以让训练并行，但是模型的当前节点需要不能依赖未来的输入，且 kernel 的长度决定了感受野的范围，如果通过多层增加范围又会让模型急剧扩张，且也无法感知长久的时间</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1714901372819.png" alt="" loading="lazy"></figure>
+<p>注：TNN 就是 1-D CNN 的演化结果。</p>
+<h3 id="rnn-vs-cnn-vs-attention">RNN vs. CNN vs. Attention</h3>
+<p>可以看到 RNN 只依赖当前时间输入以及前一模块的输出；CNN 则依赖历史状态以及当前时间输入；Attention 则是一个更加通用的 CNN，可以在当前节点直接感知历史更多作为输入。</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1714901393714.png" alt="" loading="lazy"></figure>
+<h3 id="2017-transformer">2017-Transformer</h3>
+<p>集大成者，开启了个时代！</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1714901414877.png" alt="" loading="lazy"></figure>
+<h4 id="2018-gpt">2018-GPT</h4>
+<p>Transformer 在语言领域的应用，被称为 GPT 时刻。<br>
+<img src="https://mintisan.github.io/post-images/1714901470154.png" alt="" loading="lazy"></p>
+<h4 id="2021-alphafold">2021-AlphaFold</h4>
+<p>在生物蛋白质序列也可以学习到蛋白质的表征。<br>
+<img src="https://mintisan.github.io/post-images/1714901475986.png" alt="" loading="lazy"></p>
+<h4 id="2021-vit">2021-ViT</h4>
+<p>并且在视觉领域也可以用 Transformer 进行表征学习的方法统一。</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1714901481439.png" alt="" loading="lazy"></figure>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=D_jt-xO_RmI">Deep Learning Bootcamp: Kaiming He</a></li>
+<li><a href="https://www.youtube.com/watch?v=Z5qJ9IxSuKo">麻省理工 电气工程与计算机科学系副教授何恺明（Kaiming He）在 3 月 7 日走上讲台上完成了自己【人生中教的第一堂课—卷积神经网络】</a></li>
+<li><a href="https://www.youtube.com/watch?v=qZ3ygC04Gg4">重塑人类未来的30篇论文精读！</a></li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%85%B3%E9%94%AE%E8%8A%82%E7%82%B9">关键节点</a>
+<ul>
+<li><a href="#1989-lenet">1989-LeNet</a></li>
+<li><a href="#2012-alexnet">2012-AlexNet</a></li>
+<li><a href="#2014-vgg-nets">2014-VGG Nets</a></li>
+<li><a href="#2014-googlenet">2014-GoogleNet</a></li>
+<li><a href="#normalizationinitialization-module-in-deep-learning">normalization/initialization module in deep learning</a></li>
+<li><a href="#2015-resnet">2015-ResNet</a></li>
+<li><a href="#rnn-for-sequence-modeling">RNN for sequence modeling</a></li>
+<li><a href="#1-d-cnn-for-sequence-modeling">1-D CNN for sequence modeling</a></li>
+<li><a href="#rnn-vs-cnn-vs-attention">RNN vs. CNN vs. Attention</a></li>
+<li><a href="#2017-transformer">2017-Transformer</a>
+<ul>
+<li><a href="#2018-gpt">2018-GPT</a></li>
+<li><a href="#2021-alphafold">2021-AlphaFold</a></li>
+<li><a href="#2021-vit">2021-ViT</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/mojo-just-simple-try/">
+              <h3 class="post-title">
+                Mojo ： AI 原生编程语言初体验
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,443 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ESP32-C6 接收速率测试对比 ESP32-Pico | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="ESP32-C6 接收速率测试对比 ESP32-Pico | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="在 基于 PlatformIO 的 ESP32 开发环境 中用小米手机13做热点，测试了下从 PC 端上传单个大文件到 ESP32-Pico 上的速率大概是 140KB/s，这里对比同样的硬件环境。对比 ESP32-C6 的速率大概为 25..." />
+    <meta name="keywords" content="ESP32,开发板" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              ESP32-C6 接收速率测试对比 ESP32-Pico
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-02-28
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/0kWuQOIob/" class="post-tag">
+                  # ESP32
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/4y1Yr8gVV/" class="post-tag">
+                  # 开发板
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/esp32-c6-throughput-compare-esp32-pico.jpg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>在 <a href="https://mintisan.github.io/post/esp32-platformio-arduino-devops/">基于 PlatformIO 的 ESP32 开发环境</a> 中用小米手机13做热点，测试了下从 PC 端上传单个大文件到 ESP32-Pico 上的速率大概是 140KB/s，这里对比同样的硬件环境。对比 ESP32-C6 的速率大概为 250KB/s，有不小的提升，但是距离我认为的起码上 M 还是有点差距。。。<br>
+【当然应该把软件也全部弄成一样才更加严谨，不过有时间再弄吧 XD】</p>
+<!-- more -->
+<h2 id="编写测试代码">编写测试代码</h2>
+<p>借助 GPT 帮忙把之前的 PC 端上传代码修改为 IDF，<a href="https://sharegpt.com/c/FST2tgZ">聊天转换过程</a>没有什么难度，中间去除了打印日志带来的影响。因为目前 ESP32-C6 仅支持 espidf 的框架，如下所示。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1709123126054.png" alt="" loading="lazy"></figure>
+<h2 id="修改默认串口波特率">修改默认串口波特率</h2>
+<p>因为 PlatformIO Monitor 默认的波特率为 9600 ，而代码默认不修改则为 115200，所以需要修改下 PlatformIO Monitor 串口的波特率。添加 <code>monitor_speed = 115200</code> 到 <code>platformio.ini</code> 的最后一行即可。不然打印出来的是乱码。</p>
+<pre><code>; PlatformIO Project Configuration File
+;
+;   Build options: build flags, source filter
+;   Upload options: custom upload port, speed and extra flags
+;   Library options: dependencies, extra library storages
+;   Advanced options: extra scripting
+;
+; Please visit documentation for the other options and examples
+; https://docs.platformio.org/page/projectconf.html
+
+[env:esp32-c6-devkitc-1]
+platform = espressif32
+board = esp32-c6-devkitc-1
+framework = espidf
+monitor_speed = 115200
+</code></pre>
+<h2 id="修改板子信息">修改板子信息</h2>
+<p>因为 C6 板子比较新，对 C6 的 Flash 信息不知道为啥是 2M，需要手动再修改下，打开状态栏的终端图标操作如下：</p>
+<p>输入 <code>pio run -t memuconfig</code><br>
+<img src="https://mintisan.github.io/post-images/1709123464142.png" alt="" loading="lazy"></p>
+<p>选择 <code>Serial flasher config</code><br>
+<img src="https://mintisan.github.io/post-images/1709123467546.png" alt="" loading="lazy"></p>
+<p>选择 <code>Flash size</code>，首次新建工程后应该是 2M，而不是目前显示的 8M，不过最终都需要修改为 8M。<br>
+<img src="https://mintisan.github.io/post-images/1709123470526.png" alt="" loading="lazy"></p>
+<p>选择 <code>8 MB</code><br>
+<img src="https://mintisan.github.io/post-images/1709123473606.png" alt="" loading="lazy"></p>
+<p>修改完退出后，可以看 sdkconfig 文件，会由原来的 2M 修改为 8M：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1709123881949.png" alt="" loading="lazy"></figure>
+<p>不然会有如下编译生成 elf 时报的错误：</p>
+<pre><code>
+
+编译显示如下错误：RAM:   [=         ]   6.1% (used 32156 bytes from 524288 bytes)
+Flash: [========  ]  79.8% (used 836332 bytes from 1048576 bytes)
+Building .pio\build\esp32-c6-devkitc-1\firmware.bin
+esptool.py v4.5.1
+Creating esp32c6 image...
+Merged 2 ELF sections
+
+A fatal error occurred: Contents of segment at SHA256 digest offset 0xb0 are not all zero. Refusing to overwrite.
+*** [.pio\build\esp32-c6-devkitc-1\firmware.bin] Error 2
+====================================================== [FAILED] Took 3.14 seconds ======================================================
+</code></pre>
+<p>注意：修改后如果编译还是报错，需要删除 <code>.pio</code> 缓存目录再编译，如果还不行，则重启 VS Code！！！</p>
+<h2 id="不同网络">不同网络</h2>
+<p>结论：无法进入 5G 网络频段；小米手机热点还不错，有256KB/s；小米路由器6000 的 2.4G 频段拉跨，才不到150KB/s。。。</p>
+<p>小米 AX6000 2.4G 频段的热点：<br>
+<img src="https://mintisan.github.io/post-images/1709123571632.png" alt="" loading="lazy"></p>
+<p>小米 13 手机的热点：<br>
+<img src="https://mintisan.github.io/post-images/1709123576485.png" alt="" loading="lazy"></p>
+<p>小米 AX6000 5G 频段的热点：一直在尝试连接<br>
+<img src="https://mintisan.github.io/post-images/1709124118257.png" alt="" loading="lazy"></p>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li>[ESP32-C6, espidf, error when using components folder, led_strip,h #cc1243](https://github.com/platformio/platform-espressif32/issues/1243</li>
+<li><a href="https://community.platformio.org/t/esp32-c6-espidf-error-when-using-components-folder-led-strip-h/37006/2">https://community.platformio.org/t/）esp32-c6-espidf-error-when-using-components-folder-led-strip-h/37006/2</a></li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+<h2 id="测试代码">测试代码</h2>
+<pre><code class="language-c">#include &lt;string.h&gt;
+#include &lt;sys/param.h&gt;
+#include &quot;freertos/FreeRTOS.h&quot;
+#include &quot;freertos/task.h&quot;
+#include &quot;esp_wifi.h&quot;
+#include &quot;esp_event.h&quot;
+#include &quot;esp_log.h&quot;
+#include &quot;nvs_flash.h&quot;
+#include &quot;esp_http_server.h&quot;
+#include &quot;esp_timer.h&quot; // Include esp_timer.h to resolve esp_timer_get_time
+#include &lt;inttypes.h&gt; // Include inttypes.h for format specifier macros
+
+#define EXAMPLE_ESP_WIFI_SSID      &quot;Xiaomi13&quot;
+#define EXAMPLE_ESP_WIFI_PASS      &quot;1234567890&quot;
+#define EXAMPLE_MAX_STA_CONN       1
+
+static const char *TAG = &quot;speed_test_server&quot;;
+
+/* Event handler for catching system events */
+static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+    if (event_base == WIFI_EVENT &amp;&amp; event_id == WIFI_EVENT_STA_START) {
+        esp_wifi_connect();
+    } else if (event_base == WIFI_EVENT &amp;&amp; event_id == WIFI_EVENT_STA_DISCONNECTED) {
+        esp_wifi_connect();
+        ESP_LOGI(TAG, &quot;retry to connect to the AP&quot;);
+    } else if (event_base == IP_EVENT &amp;&amp; event_id == IP_EVENT_STA_GOT_IP) {
+        ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+        ESP_LOGI(TAG, &quot;got ip:&quot; IPSTR, IP2STR(&amp;event-&gt;ip_info.ip));
+    }
+}
+
+/* Initialize Wi-Fi as sta and set scan method */
+static void wifi_init_sta() {
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    esp_netif_create_default_wifi_sta();
+
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&amp;cfg));
+
+    esp_event_handler_instance_t instance_any_id;
+    esp_event_handler_instance_t instance_got_ip;
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                        ESP_EVENT_ANY_ID,
+                                                        &amp;event_handler,
+                                                        NULL,
+                                                        &amp;instance_any_id));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
+                                                        IP_EVENT_STA_GOT_IP,
+                                                        &amp;event_handler,
+                                                        NULL,
+                                                        &amp;instance_got_ip));
+
+    wifi_config_t wifi_config = {
+        .sta = {
+            .ssid = EXAMPLE_ESP_WIFI_SSID,
+            .password = EXAMPLE_ESP_WIFI_PASS,
+            .threshold.authmode = WIFI_AUTH_WPA2_PSK,
+            .pmf_cfg = {
+                .capable = true,
+                .required = false
+            },
+        },
+    };
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &amp;wifi_config) );
+    ESP_ERROR_CHECK(esp_wifi_start() );
+
+    ESP_LOGI(TAG, &quot;wifi_init_sta finished.&quot;);
+}
+
+/* HTTP POST 处理函数 */
+static esp_err_t upload_handler(httpd_req_t *req) {
+    char buf[100]; // 缓冲区大小可根据需求调整
+    int ret;
+    int remaining = req-&gt;content_len;
+
+    static uint32_t totalBytesReceived = 0;
+    static uint64_t downloadStart = 0;
+
+    if (remaining == req-&gt;content_len) {
+        downloadStart = esp_timer_get_time(); // 获取开始时间（微秒）
+    }
+
+    while (remaining &gt; 0) {
+        // 读取请求数据
+        if ((ret = httpd_req_recv(req, buf, MIN(remaining, sizeof(buf)))) &lt;= 0) {
+            if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
+                // 如果超时，则重试接收
+                continue;
+            }
+            return ESP_FAIL;
+        }
+
+        remaining -= ret;
+        totalBytesReceived += ret;
+    }
+
+    if (remaining == 0) {
+        uint64_t downloadEnd = esp_timer_get_time(); // 获取结束时间（微秒）
+        double downloadTime = (downloadEnd - downloadStart) / 1e6; // 转换为秒
+        double speed = totalBytesReceived / downloadTime; // 计算速度（字节/秒）
+
+        // 打印下载速度
+        ESP_LOGI(TAG, &quot;Download speed: %.2f bytes/s&quot;, speed);
+
+        // 重置计数器以便下一次测量
+        totalBytesReceived = 0;
+    }
+
+    // 发送响应
+    httpd_resp_send_chunk(req, NULL, 0);
+    return ESP_OK;
+}
+
+static const httpd_uri_t upload = {
+    .uri       = &quot;/upload&quot;,
+    .method    = HTTP_POST,
+    .handler   = upload_handler,
+    .user_ctx  = NULL
+};
+
+/* Function for starting the webserver */
+static httpd_handle_t start_webserver(void) {
+    httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+    httpd_handle_t server = NULL;
+
+    // Start the httpd server
+    ESP_LOGI(TAG, &quot;Starting server on port: '%d'&quot;, config.server_port);
+    if (httpd_start(&amp;server, &amp;config) == ESP_OK) {
+        // Set URI handlers
+        ESP_LOGI(TAG, &quot;Registering URI handlers&quot;);
+        httpd_register_uri_handler(server, &amp;upload);
+        return server;
+    }
+
+    ESP_LOGI(TAG, &quot;Error starting server!&quot;);
+    return NULL;
+}
+
+/* Function for stopping the webserver */
+static void stop_webserver(httpd_handle_t server) {
+    // Stop the httpd server
+    httpd_stop(server);
+}
+
+void app_main(void) {
+    // Initialize NVS
+    ESP_ERROR_CHECK(nvs_flash_init());
+    // Initialize Wi-Fi
+    wifi_init_sta();
+    // Start the webserver
+    start_webserver();
+}
+
+</code></pre>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E7%BC%96%E5%86%99%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">编写测试代码</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E4%B8%B2%E5%8F%A3%E6%B3%A2%E7%89%B9%E7%8E%87">修改默认串口波特率</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E6%9D%BF%E5%AD%90%E4%BF%A1%E6%81%AF">修改板子信息</a></li>
+<li><a href="#%E4%B8%8D%E5%90%8C%E7%BD%91%E7%BB%9C">不同网络</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">测试代码</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/esp32-platformio-arduino-devops/">
+              <h3 class="post-title">
+                基于 PlatformIO 的 ESP32 开发环境
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

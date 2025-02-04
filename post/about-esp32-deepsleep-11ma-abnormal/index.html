@@ -1,0 +1,472 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>关于 ESP32 开发板深度睡眠模式电流 11mA 这件事 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="关于 ESP32 开发板深度睡眠模式电流 11mA 这件事 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="在官方渠道购买的 ESP32-Pico-Kit V4.1 的板子，然后尝试了 ESPIDF 官方例程以及 GPT 帮忙生成的 Arduino 和 ESPIDF 的最小代码烧录测量，结果发现通过 USB 测量板子进入深度睡眠之后的电流均为 1..." />
+    <meta name="keywords" content="ESP32,开发板" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              关于 ESP32 开发板深度睡眠模式电流 11mA 这件事
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-03-03
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/0kWuQOIob/" class="post-tag">
+                  # ESP32
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/4y1Yr8gVV/" class="post-tag">
+                  # 开发板
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://deepbluembedded.com/wp-content/uploads/2023/03/ESP32-Power-Modes-And-Their-Power-Consumption.jpg?ezimgfmt=ng%3Awebp%2Fngcb6%2Frs%3Adevice%2Frscb6-1" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>在官方渠道购买的 ESP32-Pico-Kit V4.1 的板子，然后尝试了 ESPIDF 官方例程以及 GPT 帮忙生成的 Arduino 和 ESPIDF 的最小代码烧录测量，结果发现通过 USB 测量板子进入深度睡眠之后的电流均为 11mA 多点，和官方说的 10uA 以下有这天然之别，但是看过程也确实在重启，看内存也只有 RTC 内存会保留状态，也就是说模块符合预期，但是结果功耗不符合，哪里出了问题呢？查了一圈，看到<a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html">两篇相关</a> 的答案：CP2102转换芯片和线性稳压器芯片导致的。<br>
+【其实 <a href="https://shareg.pt/dfeWyyb">GPT</a> 告诉我答案了，但是我不是硬件工程师，没法办进一步定位，最后还是 Google 给了我认知范围内的答案！！！】</p>
+<!-- more -->
+<h2 id="尝试各种姿势的例程">尝试各种姿势的例程</h2>
+<p>尝试了各种最小 deepsleep 的例程代码后，直接把板子接到 USB 测量器上，发现都是 11mA 最左右如下：</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1709464079695.jpg" alt="" loading="lazy"></figure>
+<p>但是各种现象和功能模块确实是符合预期的，有意思的是，这个过程 GPT 其实已经告诉我答案了，就在第一条，但是我还是没有办法在我能力范围内确定，也被我忽略了接着 Google 找来找去【如果是硬件工程师，可能一下子就知道啥原理以及定位到哪个芯片了】。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1709464421875.png" alt="" loading="lazy"></figure>
+<p>直到在 Google 中找到很<a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html">类似</a> 的，也给出了具体芯片，这时候就基本确定了。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1709464505567.png" alt="" loading="lazy"></figure>
+<p>有机会把下面那两个拆掉看下吧，，，【估计就搁置了XD】<br>
+<img src="https://mintisan.github.io/post-images/1709464989226.png" alt="" loading="lazy"></p>
+<h3 id="最简单的-arduino-例程">最简单的 Arduino 例程</h3>
+<pre><code class="language-c">#include &lt;Arduino.h&gt;
+#include &lt;esp_sleep.h&gt;
+
+void setup() {
+  Serial.begin(115200);
+
+  // 给串口足够的时间来初始化
+  delay(1000);
+  Serial.println(&quot;Entering deep sleep for 10 seconds&quot;);
+
+  // 设置ESP32在10秒后自动唤醒
+  esp_sleep_enable_timer_wakeup(10 * 1000000);
+
+  // 进入深度睡眠
+  esp_deep_sleep_start();
+
+  // 注意：ESP32进入深度睡眠后，不会执行下面的代码
+}
+
+void loop() {
+  // 这里的代码在深度睡眠后不会被执行
+}
+
+</code></pre>
+<h3 id="最简单的-espidf-例程">最简单的 ESPIDF 例程</h3>
+<pre><code class="language-c">#include &quot;esp_sleep.h&quot;
+#include &quot;freertos/FreeRTOS.h&quot;
+#include &quot;freertos/task.h&quot;
+#include &quot;esp_log.h&quot;
+
+void app_main() {
+    // 在进入深度睡眠之前打印一条日志
+    ESP_LOGI(&quot;Sleep&quot;, &quot;Entering deep sleep for 10 seconds&quot;);
+
+    // 设置唤醒设备的条件，这里设置为10秒后自动唤醒
+    esp_sleep_enable_timer_wakeup(10 * 1000000);
+
+    // 进入深度睡眠模式
+    esp_deep_sleep_start();
+
+    // 代码不会执行到这里
+}
+</code></pre>
+<h3 id="官方例程"><a href="https://github.com/espressif/esp-idf/tree/v5.2/examples/system/deep_sleep">官方例程</a></h3>
+<pre><code class="language-c">/*
+ * SPDX-FileCopyrightText: 2017-2023 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Unlicense OR CC0-1.0
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;time.h&gt;
+#include &lt;sys/time.h&gt;
+#include &quot;sdkconfig.h&quot;
+#include &quot;soc/soc_caps.h&quot;
+#include &quot;freertos/FreeRTOS.h&quot;
+#include &quot;freertos/task.h&quot;
+#include &quot;esp_sleep.h&quot;
+#include &quot;esp_log.h&quot;
+#include &quot;driver/rtc_io.h&quot;
+#include &quot;nvs_flash.h&quot;
+#include &quot;nvs.h&quot;
+//#include &quot;deep_sleep_example.h&quot;
+
+#if SOC_RTC_FAST_MEM_SUPPORTED
+static RTC_DATA_ATTR struct timeval sleep_enter_time;
+#else
+static struct timeval sleep_enter_time;
+#endif
+
+static void deep_sleep_task(void *args)
+{
+    /**
+     * Prefer to use RTC mem instead of NVS to save the deep sleep enter time, unless the chip
+     * does not support RTC mem(such as esp32c2). Because the time overhead of NVS will cause
+     * the recorded deep sleep enter time to be not very accurate.
+     */
+#if !SOC_RTC_FAST_MEM_SUPPORTED
+    // Initialize NVS
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        // NVS partition was truncated and needs to be erased
+        // Retry nvs_flash_init
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        err = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(err);
+
+    nvs_handle_t nvs_handle;
+    err = nvs_open(&quot;storage&quot;, NVS_READWRITE, &amp;nvs_handle);
+    if (err != ESP_OK) {
+        printf(&quot;Error (%s) opening NVS handle!\n&quot;, esp_err_to_name(err));
+    } else {
+        printf(&quot;Open NVS done\n&quot;);
+    }
+
+    // Get deep sleep enter time
+    nvs_get_i32(nvs_handle, &quot;slp_enter_sec&quot;, (int32_t *)&amp;sleep_enter_time.tv_sec);
+    nvs_get_i32(nvs_handle, &quot;slp_enter_usec&quot;, (int32_t *)&amp;sleep_enter_time.tv_usec);
+#endif
+
+    struct timeval now;
+    gettimeofday(&amp;now, NULL);
+    int sleep_time_ms = (now.tv_sec - sleep_enter_time.tv_sec) * 1000 + (now.tv_usec - sleep_enter_time.tv_usec) / 1000;
+
+    switch (esp_sleep_get_wakeup_cause()) {
+        case ESP_SLEEP_WAKEUP_TIMER: {
+            printf(&quot;Wake up from timer. Time spent in deep sleep: %dms\n&quot;, sleep_time_ms);
+            break;
+        }
+
+#if CONFIG_EXAMPLE_GPIO_WAKEUP
+        case ESP_SLEEP_WAKEUP_GPIO: {
+            uint64_t wakeup_pin_mask = esp_sleep_get_gpio_wakeup_status();
+            if (wakeup_pin_mask != 0) {
+                int pin = __builtin_ffsll(wakeup_pin_mask) - 1;
+                printf(&quot;Wake up from GPIO %d\n&quot;, pin);
+            } else {
+                printf(&quot;Wake up from GPIO\n&quot;);
+            }
+            break;
+        }
+#endif //CONFIG_EXAMPLE_GPIO_WAKEUP
+
+#if CONFIG_EXAMPLE_EXT0_WAKEUP
+        case ESP_SLEEP_WAKEUP_EXT0: {
+            printf(&quot;Wake up from ext0\n&quot;);
+            break;
+        }
+#endif // CONFIG_EXAMPLE_EXT0_WAKEUP
+
+#ifdef CONFIG_EXAMPLE_EXT1_WAKEUP
+        case ESP_SLEEP_WAKEUP_EXT1: {
+            uint64_t wakeup_pin_mask = esp_sleep_get_ext1_wakeup_status();
+            if (wakeup_pin_mask != 0) {
+                int pin = __builtin_ffsll(wakeup_pin_mask) - 1;
+                printf(&quot;Wake up from GPIO %d\n&quot;, pin);
+            } else {
+                printf(&quot;Wake up from GPIO\n&quot;);
+            }
+            break;
+        }
+#endif // CONFIG_EXAMPLE_EXT1_WAKEUP
+
+#ifdef CONFIG_EXAMPLE_TOUCH_WAKEUP
+        case ESP_SLEEP_WAKEUP_TOUCHPAD: {
+            printf(&quot;Wake up from touch on pad %d\n&quot;, esp_sleep_get_touchpad_wakeup_status());
+            break;
+        }
+#endif // CONFIG_EXAMPLE_TOUCH_WAKEUP
+
+        case ESP_SLEEP_WAKEUP_UNDEFINED:
+        default:
+            printf(&quot;Not a deep sleep reset\n&quot;);
+    }
+
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+#if CONFIG_IDF_TARGET_ESP32
+    // Isolate GPIO12 pin from external circuits. This is needed for modules
+    // which have an external pull-up resistor on GPIO12 (such as ESP32-WROVER)
+    // to minimize current consumption.
+    rtc_gpio_isolate(GPIO_NUM_12);
+#endif
+
+    printf(&quot;Entering deep sleep\n&quot;);
+
+    // get deep sleep enter time
+    gettimeofday(&amp;sleep_enter_time, NULL);
+
+#if !SOC_RTC_FAST_MEM_SUPPORTED
+    // record deep sleep enter time via nvs
+    ESP_ERROR_CHECK(nvs_set_i32(nvs_handle, &quot;slp_enter_sec&quot;, sleep_enter_time.tv_sec));
+    ESP_ERROR_CHECK(nvs_set_i32(nvs_handle, &quot;slp_enter_usec&quot;, sleep_enter_time.tv_usec));
+    ESP_ERROR_CHECK(nvs_commit(nvs_handle));
+    nvs_close(nvs_handle);
+#endif
+
+    // enter deep sleep
+    esp_deep_sleep_start();
+}
+
+static void example_deep_sleep_register_rtc_timer_wakeup(void)
+{
+    const int wakeup_time_sec = 20;
+    printf(&quot;Enabling timer wakeup, %ds\n&quot;, wakeup_time_sec);
+    ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(wakeup_time_sec * 1000000));
+}
+
+void app_main(void)
+{
+    /* Enable wakeup from deep sleep by rtc timer */
+    example_deep_sleep_register_rtc_timer_wakeup();
+
+#if CONFIG_EXAMPLE_GPIO_WAKEUP
+    /* Enable wakeup from deep sleep by gpio */
+    example_deep_sleep_register_gpio_wakeup();
+#endif
+
+#if CONFIG_EXAMPLE_EXT0_WAKEUP
+    /* Enable wakeup from deep sleep by ext0 */
+    example_deep_sleep_register_ext0_wakeup();
+#endif
+
+#if CONFIG_EXAMPLE_EXT1_WAKEUP
+    /* Enable wakeup from deep sleep by ext1 */
+    example_deep_sleep_register_ext1_wakeup();
+#endif
+
+#if CONFIG_EXAMPLE_TOUCH_WAKEUP
+    /* Enable wakeup from deep sleep by touch */
+    example_deep_sleep_register_touch_wakeup();
+#endif
+
+    xTaskCreate(deep_sleep_task, &quot;deep_sleep_task&quot;, 4096, NULL, 6, NULL);
+}
+</code></pre>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://en.kohacraft.com/archives/esp32-devkitcs-deepsleep-is-consuming-quite-a-bit-of-current-so-i-investigated-the-cause.html"><strong>ESP32-DevKitC's DeepSleep is consuming quite a bit of current, so I investigated the cause.</strong></a> : 从 11.8mA 理清到 8.15mA 到 10uA【主要是电源转换芯片和USB转换芯片带来的】</li>
+<li><a href="https://www.yiboard.com/thread-1644-1-1.html">ESP32正常工作模式和深度睡眠模式的功耗对比</a></li>
+<li><a href="https://en.kohacraft.com/archives/esp32-reduced-current-consumption-during-deepsleep-by-putting-hx711-into-power-down-mode.html">ESP32 reduced current consumption during DeepSleep by putting HX711 into power down mode.</a></li>
+<li><a href="https://blog.csdn.net/chentuo2000/article/details/125033711">ESP32深度睡眠电流怎样低于10uA</a></li>
+<li><a href="https://shareg.pt/dfeWyyb">Implementing and Measuring Deep Sleep Power Consumption on ESP32 with ESP-IDF</a></li>
+<li><a href="https://github.com/espressif/esp-idf/tree/v5.2/examples/system/deep_sleep">Deep Sleep Example</a></li>
+<li><a href="https://www.instructables.com/ESP32-Deep-Sleep-Tutorial/">ESP32 Deep Sleep Tutorial</a></li>
+<li><a href="https://deepbluembedded.com/esp32-sleep-modes-power-consumption/">ESP32 Sleep Modes &amp; Power Consumption in Each Mode</a></li>
+<li><a href="https://docs.espressif.com/projects/esp-faq/en/latest/test-verification/power-consumption-verification.html">Power Consumption Verification</a></li>
+<li><a href="https://www.esp32.com/viewtopic.php?t=21766">Deep sleep Power consumption Problem.</a></li>
+<li><a href="https://learn.circuit.rocks/esp32-deep-sleep">FreeRTOS: ESP32 Deep Sleep</a></li>
+<li><a href="https://www.programmingelectronics.com/esp32-deep-sleep-mode/">A Practical Guide To ESP32 Deep Sleep Modes</a></li>
+<li><a href="https://lastminuteengineers.com/esp32-sleep-modes-power-consumption/">Insight Into ESP32 Sleep Modes &amp; Their Power Consumption</a></li>
+<li><a href="https://community.home-assistant.io/t/why-is-it-using-so-much-power-while-deep-sleeping/560884">Why is it using so much power while deep-sleeping?</a></li>
+<li><a href="https://forum.arduino.cc/t/deep-sleep-power-consumtion-esp32-devkit/1201123">Deep sleep power consumtion ESP32 devkit</a></li>
+<li><a href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/current-consumption-measurement-modules.html">Current Consumption Measurement of Modules</a></li>
+</ul>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%B0%9D%E8%AF%95%E5%90%84%E7%A7%8D%E5%A7%BF%E5%8A%BF%E7%9A%84%E4%BE%8B%E7%A8%8B">尝试各种姿势的例程</a>
+<ul>
+<li><a href="#%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84-arduino-%E4%BE%8B%E7%A8%8B">最简单的 Arduino 例程</a></li>
+<li><a href="#%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84-espidf-%E4%BE%8B%E7%A8%8B">最简单的 ESPIDF 例程</a></li>
+<li><a href="#%E5%AE%98%E6%96%B9%E4%BE%8B%E7%A8%8B">官方例程</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/esp32-c6-throughput-compare-esp32-pico/">
+              <h3 class="post-title">
+                ESP32-C6 接收速率测试对比 ESP32-Pico
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

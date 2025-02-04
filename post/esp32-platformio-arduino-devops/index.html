@@ -1,0 +1,348 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>基于 PlatformIO 的 ESP32 开发环境 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="基于 PlatformIO 的 ESP32 开发环境 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="ESP32 的开发环境有很多，有官方的 Eclipse Plugin 和 VSCode Extension ，但是后续还需要其他依赖啥的，比较麻烦。而 PlatformIO IDE 支持很多的开发板，当然也包括我们的 ESP32 ，唯一的缺..." />
+    <meta name="keywords" content="ESP32,开发环境" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              基于 PlatformIO 的 ESP32 开发环境
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-02-24
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/0kWuQOIob/" class="post-tag">
+                  # ESP32
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/UpWR_7OW2/" class="post-tag">
+                  # 开发环境
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/esp32-platformio-arduino-devops.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>ESP32 的开发环境有很多，有<a href="https://docs.espressif.com/projects/esp-idf/zh_CN/v5.1.2/esp32/get-started/index.html">官方</a>的 <a href="https://github.com/espressif/idf-eclipse-plugin/blob/master/README.md">Eclipse Plugin</a> 和 <a href="https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md">VSCode Extension</a> ，但是后续还需要其他依赖啥的，比较麻烦。而 <a href="https://platformio.org/platformio-ide">PlatformIO IDE</a> 支持很多的开发板，当然也包括我们的 ESP32 ，唯一的缺点应该是需要能上外网，而这对我来说正好不是问题。这里在 Windows 环境下记录下这个过程，以及一些例程的资源记录。</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1708764242858.png" alt="" loading="lazy"></figure>
+<h2 id="安装驱动">安装驱动</h2>
+<p>将 ESP32 开发板连接 Micro-B USB 接口连接到电脑，可以看到电脑上默认是没有安装串口转 USB 的驱动的，打开设备管理器显示如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1708760697286.png" alt="" loading="lazy"></figure>
+<p>在 Silabs 官网<a href="https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers">下载</a>后解压，再手动右键安装驱动选择解压后的目录：</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1708761050668.png" alt="" loading="lazy"></figure>
+<p>待安装结束可以看到驱动显示正常如下：</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1708761100200.png" alt="" loading="lazy"></figure>
+<h2 id="安装-vs-code-和插件">安装 VS Code 和插件</h2>
+<p>在 VS Code 的<a href="https://code.visualstudio.com/">官网</a>下载安装后，在插件里面安装  <a href="https://platformio.org/">PlatformIO</a> 插件：</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1708761223180.png" alt="" loading="lazy"></figure>
+<p>安装完后会提示自动重启 VS Code，然后可以看到左侧出现 PIatformIO 的图标，点开选择 <code>Open</code> 新建一个工程【我这里选择Pico+Arduino】：</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1708761348263.png" alt="" loading="lazy"></figure>
+<p>点击确认后会自动下载那些依赖，完后会在工程中出现刚才新建的工程文件夹。<br>
+打开官方的<a href="https://registry.platformio.org/platforms/platformio/espressif32/examples/arduino-blink/src/Blink.cpp">跑马灯例程</a>，将其复制拷贝到工程中的 <code>main.cpp</code> 文件中，显示如下：</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1708761586307.png" alt="" loading="lazy"></figure>
+<p>代码如下：</p>
+<pre><code class="language-c">/*
+ * Blink
+ * Turns on an LED on for one second,
+ * then off for one second, repeatedly.
+ */
+// https://registry.platformio.org/platforms/platformio/espressif32/examples/arduino-blink/src/Blink.cpp
+#include &lt;Arduino.h&gt;
+
+// Set LED_BUILTIN if it is not defined by Arduino framework
+#ifndef LED_BUILTIN
+    #define LED_BUILTIN 2
+#endif
+
+void setup()
+{
+  // initialize LED digital pin as an output.
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop()
+{
+  // turn the LED on (HIGH is the voltage level)
+  digitalWrite(LED_BUILTIN, HIGH);
+  // wait for a second
+  delay(1000);
+  // turn the LED off by making the voltage LOW
+  digitalWrite(LED_BUILTIN, LOW);
+   // wait for a second
+  delay(1000);
+}
+</code></pre>
+<h2 id="编译-设置-下载跑马灯例程">编译-设置-下载跑马灯例程</h2>
+<p>点击右上角的箭头展开，可以选择编译或者下载：</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1708763121121.png" alt="" loading="lazy"></figure>
+<p>编译成功后，终端显示如下：</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1708763145631.png" alt="" loading="lazy"></figure>
+<p>然后再下载到板子，但是有可能默认串口会选择错误，显示错误如下：</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1708763195053.png" alt="" loading="lazy"></figure>
+<p>此时，需要点击状态栏的 <code>Auto</code> 后，在顶部选择 Silabs 的那个串口如下：</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1708763289056.png" alt="" loading="lazy"></figure>
+<p>然后再下载，就可以看到如下终端显示的正确日志信息：</p>
+<figure data-type="image" tabindex="12"><img src="https://mintisan.github.io/post-images/1708763335359.png" alt="" loading="lazy"></figure>
+<p>这里的代码采用的 PIN2 ，所以我们直接把示波器接到 GND 和 IO2 上，就可以看到翻转如下：</p>
+<figure data-type="image" tabindex="13"><img src="https://mintisan.github.io/post-images/1708763911208.bmp" alt="" loading="lazy"></figure>
+<h2 id="http-server-测速例程导入">HTTP Server 测速例程导入</h2>
+<p>以上是新建一个工程，然后添加代码运行。这里以打开已经有的工程为例，点开选择 <code>Open</code>  打开一个工程目录到 <code>platformio.ini</code> 的目录，再设置完开发板类型，点击确认导入即可。</p>
+<figure data-type="image" tabindex="14"><img src="https://mintisan.github.io/post-images/1708763450752.png" alt="" loading="lazy"></figure>
+<p>这里的速率测试代码如下：</p>
+<pre><code class="language-c">#include &lt;WiFi.h&gt;
+#include &lt;ESPAsyncWebServer.h&gt;
+
+// 替换为你的 WiFi 名称和密码:mintisan 防火墙会拦截，手机热点可以，VPN也需要关闭
+const char* ssid = &quot;Xiaomi13&quot;;
+const char* password = &quot;1234567890&quot;;
+
+AsyncWebServer server(80);
+
+uint32_t downloadStart;
+uint32_t totalBytesReceived;
+
+void setup() {
+  Serial.begin(9600);
+
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println(&quot;Connecting to WiFi...&quot;);
+  }
+
+  Serial.println(WiFi.localIP());
+  // curl -F &quot;file=@bigfile.bin&quot; http://esp8266_ip_address/upload
+  server.on(&quot;/upload&quot;, HTTP_POST, [](AsyncWebServerRequest *request) {
+    request-&gt;send(200);
+    uint32_t downloadEnd = millis();
+    float downloadTime = (downloadEnd - downloadStart) / 1000.0;
+    float speed = totalBytesReceived / downloadTime;
+    Serial.printf(&quot;Download speed: %.2f bytes/s\n&quot;, speed);
+  }, [](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+    if(!index){
+      downloadStart = millis();
+      totalBytesReceived = 0;
+    }
+    totalBytesReceived += len;
+  });
+
+  server.begin();
+}
+
+void loop() { }
+</code></pre>
+<p>同样编译烧录后，打开终端的串口显示 ESP32 设备的 IP 地址信息如下[注意波特率匹配！]：</p>
+<figure data-type="image" tabindex="15"><img src="https://mintisan.github.io/post-images/1708763576332.png" alt="" loading="lazy"></figure>
+<p>此时在 PC 上打开终端 <a href="https://cmder.app/">cmder</a> 【自带 curl 工具】，将本地的不管啥文件上传上去【不要太大，1-2MB 即可】，就可以看到最后我们的 ESP32 Pico 速率是也就 180 kb/s 左右。</p>
+<figure data-type="image" tabindex="16"><img src="https://mintisan.github.io/post-images/1708763702146.png" alt="" loading="lazy"></figure>
+<p>【注：如果开了 VPN，则会超时！！！】</p>
+<h2 id="参考以及例程">参考以及例程</h2>
+<ul>
+<li>https://registry.platformio.org/platforms/platformio/espressif32</li>
+<li>https://docs.platformio.org/en/latest/platforms/espressif32.html</li>
+<li>https://docs.espressif.com/projects/esp-idf/en/stable/esp32/hw-reference/esp32/get-started-pico-kit.html</li>
+<li>https://github.com/platformio/platform-espressif32/</li>
+<li>https://github.com/me-no-dev/ESPAsyncWebServer</li>
+<li>https://registry.platformio.org/libraries/nkolban/ESP32%20BLE%20Arduino</li>
+<li>https://github.com/nkolban/ESP32_BLE_Arduino</li>
+<li>https://github.com/nkolban/esp32-snippets</li>
+<li>https://github.com/espressif/esp-idf</li>
+<li>https://github.com/espressif/esp-idf/tree/master/examples</li>
+<li>https://github.com/espressif/arduino-esp32</li>
+</ul>
+<figure data-type="image" tabindex="17"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85%E9%A9%B1%E5%8A%A8">安装驱动</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85-vs-code-%E5%92%8C%E6%8F%92%E4%BB%B6">安装 VS Code 和插件</a></li>
+<li><a href="#%E7%BC%96%E8%AF%91-%E8%AE%BE%E7%BD%AE-%E4%B8%8B%E8%BD%BD%E8%B7%91%E9%A9%AC%E7%81%AF%E4%BE%8B%E7%A8%8B">编译-设置-下载跑马灯例程</a></li>
+<li><a href="#http-server-%E6%B5%8B%E9%80%9F%E4%BE%8B%E7%A8%8B%E5%AF%BC%E5%85%A5">HTTP Server 测速例程导入</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E4%BB%A5%E5%8F%8A%E4%BE%8B%E7%A8%8B">参考以及例程</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/tailscale-simple-vpn/">
+              <h3 class="post-title">
+                Tailscale - 简单好用的 VPN 组网工具
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

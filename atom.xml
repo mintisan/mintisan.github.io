@@ -1,0 +1,2469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://mintisan.github.io</id>
+    <title>Mintisan</title>
+    <updated>2025-02-04T12:16:19.339Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://mintisan.github.io"/>
+    <link rel="self" href="https://mintisan.github.io/atom.xml"/>
+    <subtitle>On the way to be a practical idealism</subtitle>
+    <logo>https://mintisan.github.io/images/avatar.png</logo>
+    <icon>https://mintisan.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2025, Mintisan</rights>
+    <entry>
+        <title type="html"><![CDATA[fnOS 虚拟机安装 ImmortalWRT 做旁路由]]></title>
+        <id>https://mintisan.github.io/post/immortalwrt-on-fnos-as-side-router/</id>
+        <link href="https://mintisan.github.io/post/immortalwrt-on-fnos-as-side-router/">
+        </link>
+        <updated>2025-02-04T11:38:42.000Z</updated>
+        <summary type="html"><![CDATA[<p><a href="https://www.fnnas.com/">飞牛 OS</a> 在 <code>TRIM-0.8.36-645</code> 版本支持了虚拟机的应用功能，可以支持 <code>iso</code> 文件的直接加载安装，那么拿他来安装 WRT 并替代之前的<a href="https://mintisan.github.io/post/r2s-nano-pi-pang-lu-you-she-zhi/">硬件的旁路由</a>那很正常吧，毕竟软件是免费的。。。感觉在 All-In-One 的道路上持续狂奔。。。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p><a href="https://www.fnnas.com/">飞牛 OS</a> 在 <code>TRIM-0.8.36-645</code> 版本支持了虚拟机的应用功能，可以支持 <code>iso</code> 文件的直接加载安装，那么拿他来安装 WRT 并替代之前的<a href="https://mintisan.github.io/post/r2s-nano-pi-pang-lu-you-she-zhi/">硬件的旁路由</a>那很正常吧，毕竟软件是免费的。。。感觉在 All-In-One 的道路上持续狂奔。。。</p>
+<!-- more -->
+<p><a href="https://github.com/immortalwrt/immortalwrt">ImmortalWrt</a> 为专门为中国宝宝打造的 OpenWRT 发行版分支。这里直接采用<a href="https://github.com/wkccd/FireFoxImmortalWrt">悟空编译的版本</a> ，好处是可以直接打开网页配置了。</p>
+<h2 id="安装-immortalwrt">安装 ImmortalWrt</h2>
+<p>在应用中安装完虚拟机后，打开创建并选择 <code>Linux</code> 设置如下：</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1738670496469.png" alt="" loading="lazy"></figure>
+<p>下一步后，选择 ISO 文件，并修改启动方式为 UEFI，其他保持默认：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1738670521177.png" alt="" loading="lazy"></figure>
+<p>下一步后添加硬盘，这里选择 16G 大小：</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1738670566493.png" alt="" loading="lazy"></figure>
+<p>下一步后，设置网络【如果未开启，按照指引打开 <code>OVS</code>】，因为只需要作为旁路由，所以一个网口就可以了。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1738670595514.png" alt="" loading="lazy"></figure>
+<p>下一步后，无硬件直通什么事，直接创建就可以了。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1738670688650.png" alt="" loading="lazy"></figure>
+<p>再然后，开机后点击 VNC 等待日志不刷新后就回车输入 <code>ip a</code> 就可以看到本机的 IP 地址【记住这个地址，可以直接在浏览器中打开然后修改密码以及语言之类的，然后记住一定要保存！！！不然重启后就配置就会丢失】。</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1738670766248.png" alt="" loading="lazy"></figure>
+<h2 id="配置旁路由网络模式">配置旁路由网络模式</h2>
+<p>这里相比 iStoreOS 稍微复杂一点，不过总结起来也没几点。</p>
+<h3 id="1-设置静态-ip-地址和网关">1. 设置静态 IP 地址和网关</h3>
+<p>就用刚才上面分配到的 IP 相同就可以。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1738671083078.png" alt="" loading="lazy"></figure>
+<h3 id="2-设置网关为-dns">2. 设置网关为 DNS</h3>
+<p>用网关的地址就可以了。</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1738671095712.png" alt="" loading="lazy"></figure>
+<h3 id="3-关闭-dhcp-功能">3. 关闭 DHCP 功能</h3>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1738671103690.png" alt="" loading="lazy"></figure>
+<h3 id="4-开启防火墙-ip-动态伪装">4. 开启防火墙 IP 动态伪装</h3>
+<p>不然，Google 会出现网页端受 DNS 污染，被提示不安全而无法访问。</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1738671139075.png" alt="" loading="lazy"></figure>
+<p>完成网络的设置最好重启下网络！！！</p>
+<h3 id="5-导入机场配置">5 导入机场配置</h3>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1738671117951.png" alt="" loading="lazy"></figure>
+<h3 id="5-客户端修改网关和-dns-地址">5. 客户端修改网关和 DNS 地址</h3>
+<figure data-type="image" tabindex="12"><img src="https://mintisan.github.io/post-images/1738671282717.jpg" alt="" loading="lazy"></figure>
+<p>So, have fun...</p>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=JuqwI8uogCw&amp;ab_channel=%E6%82%9F%E7%A9%BA%E7%9A%84%E6%97%A5%E5%B8%B8">飞牛虚拟机如何安装iStoreOS/ImmortalWrt</a></li>
+<li><a href="https://wkdaily.cpolar.top/archives/16">2025飞牛OS如何使用虚拟机创建iStoreOS/OpenWrt</a></li>
+<li>ImmortalWrt 的 ISO下载地址 : https://slink.ltd/https://github.com/wkccd/FireFoxImmortalWrt/releases/download/Autobuild-x86-64/immortalwrt-24.10.0-rc4-x86-64-generic-image-efi.iso</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[fnOS 飞牛系统上用 Cloudflare Tunnel 实现内网服务外网访问]]></title>
+        <id>https://mintisan.github.io/post/fnos-clareflare-tunnel-mapping/</id>
+        <link href="https://mintisan.github.io/post/fnos-clareflare-tunnel-mapping/">
+        </link>
+        <updated>2025-01-03T12:29:06.000Z</updated>
+        <summary type="html"><![CDATA[<p>互联网活菩萨 Cloudflare 的免费服务，可以将内网的服务映射到公网，对于没有公网 IP 以及不想折腾 IPv6 的人来说是真是好东西，又免费又快，冲冲冲。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>互联网活菩萨 Cloudflare 的免费服务，可以将内网的服务映射到公网，对于没有公网 IP 以及不想折腾 IPv6 的人来说是真是好东西，又免费又快，冲冲冲。</p>
+<!-- more -->
+<h2 id="设置-dns-托管">设置 DNS 托管</h2>
+<p>如果在没有公网IP的情况下需要映射到公网，那么域名就是必要的。所以，需要先在 https://dash.cloudflare.com/ 中接管一个域名【需要自己先去注册购买一个】，打开<code>网站</code>，直接 <code>添加域</code> 然后一步一步按着步骤走就行了。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1735913913697.png" alt="" loading="lazy"></figure>
+<p>然后，将生成 <code>DNS</code> 地址复制到购买厂商的那里的修改如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1735914145954.png" alt="" loading="lazy"></figure>
+<p>然后等待邮箱收到如下成功的邮件。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1735914168803.png" alt="" loading="lazy"></figure>
+<h2 id="生成-clareflare-tunnel-token">生成 Clareflare Tunnel Token</h2>
+<p>进入 Tunnel 如下：</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1735914371953.png" alt="" loading="lazy"></figure>
+<p>点击 <code>创建隧道</code> ，然后选择 <code>Cloudflared</code> ，完成隧道名字的输入，比如 <code>fnOS</code>。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1735914512613.png" alt="" loading="lazy"></figure>
+<p>选择 <code>Docker</code> 方式，然后将其中的 Token 复制出来。</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1735914637264.png" alt="" loading="lazy"></figure>
+<h2 id="fnos-上用-docker-安装客户端">fnOS 上用 Docker 安装客户端</h2>
+<p>打开 fnOS 的 Docker，采用 Compose 的方式进行安装。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1735914821947.png" alt="" loading="lazy"></figure>
+<p>其中的代码如下：</p>
+<pre><code>version: '3'
+
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --token xxxxxxx
+    restart: always # 加上一条开机自启动
+</code></pre>
+<p>启动后，会在 Cloudflare 下面出现上面安装的客户端。</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1735915626890.png" alt="" loading="lazy"></figure>
+<h2 id="映射内网服务">映射内网服务</h2>
+<p>添加公共主机名：</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1735915063866.png" alt="" loading="lazy"></figure>
+<p>然后填入内网的服务地址：端口和前面接管 DNS 的二级域名名称。</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1735915133802.png" alt="" loading="lazy"></figure>
+<p>然后，直接打开二级域名就可以访问了。</p>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://club.fnnas.com/forum.php?mod=viewthread&amp;tid=2854">在飞牛系统下安装Cloudflare Zero Trust 下的 Networks Tunnels（网络隧道）</a></li>
+<li><a href="https://blog.ydxian.xyz/archives/cf-tunnel">无需公网IP，利用Cloudflare Tunnel 实现内网设备访问</a></li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Bluetooth® Channel Sounding 技术概览]]></title>
+        <id>https://mintisan.github.io/post/channel-sounding-tech-overview-translation-cn/</id>
+        <link href="https://mintisan.github.io/post/channel-sounding-tech-overview-translation-cn/">
+        </link>
+        <updated>2024-11-10T04:04:52.000Z</updated>
+        <summary type="html"><![CDATA[<p>蓝牙®信道探测是一项新的安全精确测距功能，旨在提升蓝牙连接设备的便利性、安全性和保障性。该功能在BLE 6.0中使用了两种经过验证的测距方法：基于相位的测距（PBR）和往返时间（RTT）。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>蓝牙®信道探测是一项新的安全精确测距功能，旨在提升蓝牙连接设备的便利性、安全性和保障性。该功能在BLE 6.0中使用了两种经过验证的测距方法：基于相位的测距（PBR）和往返时间（RTT）。</p>
+<!-- more -->
+<h1 id="蓝牙通道探测技术概述-蓝牙技术网站">蓝牙®通道探测：技术概述 | 蓝牙®技术网站</h1>
+<p>通过：<a href="https://www.bluetooth.com/channel-sounding-tech-overview/">https://www.bluetooth.com/channel-sounding-tech-overview/</a> 技术概述</p>
+<p><strong>版本：</strong></p>
+<p>1.0</p>
+<p><strong>修订日期：</strong></p>
+<p>2024 年 7 月 9 日</p>
+<p><strong>作者：</strong></p>
+<p>马丁·伍利，蓝牙 SIG</p>
+<h2 id="1-介绍"><strong>1. 介绍</strong></h2>
+<p>蓝牙®低能耗（LE）在全球范围内以提供无线数据传输和音频功能而闻名。这项技术因其在我们日益智能的手机中的应用而进入我们的口袋。它在我们的手腕上，出现在智能手表和健身追踪器中。它在我们的汽车中，允许免提控制和通信。它在我们的耳朵中，使个人音乐设备和通过新的蓝牙 LE 音频功能的广播源流式传输高质量音频成为可能，<a href="https://www.bluetooth.com/auracast/">Auracast™广播音频</a>。</p>
+<p>但多年来，蓝牙低能耗（Bluetooth LE）也已确立为一种普遍且可靠的技术，成为构建设备定位应用的基础。蓝牙低能耗可以用于检测和报告周围环境中另一个设备的存在，估计设备之间的距离，并计算可以找到另一个设备的方向。这些设备定位功能已被用于启用广泛的应用，包括数字钥匙、资产追踪、查找我的（Find My）和室内导航。</p>
+<p>蓝牙技术在其 25 年的历史中不断改进。它走上了一条积极的演变道路，带来了系列显著的新特性和产品可以实现的改进。</p>
+<p>对蓝牙核心规范的更新增加了一项名为蓝牙信道探测的新功能，该功能使得两个蓝牙设备之间能够进行安全的精确测距，这也是本文的主题。本文并不打算替代或作为蓝牙核心规范的替代品。</p>
+<h2 id="2-背景"><strong>2. 背景</strong></h2>
+<h4 id="21-设备定位和蓝牙低能耗"><strong>2.1 设备定位和蓝牙低能耗</strong></h4>
+<p>蓝牙低能耗（Bluetooth LE）首次在 2010 年被规定。从那时起，可以识别出蓝牙低能耗作为定位服务技术演变中的一些关键事件。</p>
+<h5 id="211-蓝牙-找我"><strong>2.1.1 蓝牙® 找我</strong></h5>
+<p>在蓝牙核心规范首次包含蓝牙低能耗（Bluetooth LE）的同一年，首个正式的与位置相关的蓝牙低能耗配置文件规范发布了。这就是“寻找我”配置文件。</p>
+<p>查找我个人资料定义了一种标准的方法来寻找个人物品，也称为_查找我的_。一个设备承担查找我定位器的角色。这通常是智能手机。其他设备，用户可能有丢失历史的设备（带有蓝牙钥匙扣的钥匙是一个热门选择），与查找我定位器设备配对，并各自承担查找我目标的角色。</p>
+<p>目标设备实现了一个名为即时警报服务的 GATT1 服务。</p>
+<p>当用户需要帮助寻找丢失的设备时，他们在智能手机上运行一个应用程序。该应用程序通过扫描缺失设备广播的广告数据包来执行设备发现程序。在发现目标设备后，定位器与其连接。应用程序的用户界面（UI）指示这一操作已完成。用户通常会在用户界面上按下一个按钮。这会导致应用程序写入属于即时警报服务的警报级别特征。目标设备以某种合适的方式响应警报级别值的变化，可能发出响亮的蜂鸣声，闪烁的 LED 灯或两者兼而有之。此时，用户意识到他们的钥匙一直在他们的夹克口袋里，掉到了沙发的后面，或者在某个不太可预测的地方。无论如何，蓝牙技术拯救了这一切，用户和他们丢失的物品重聚。</p>
+<p>Bluetooth® Find Me 是一个存在应用的例子。蓝牙 LE 用于确定丢失的设备在附近，但不提供其与定位器的方向或距离的指示。</p>
+<h5 id="212-信标和第一代距离估计"><strong>2.1.2 信标和第一代距离估计</strong></h5>
+<p>蓝牙信标利用蓝牙低能耗的广告功能。广告涉及广播小数据包，任何在范围内的设备都可以通过扫描接收。</p>
+<p>在 2013 年，苹果发布了 iBeacon 格式的规范。这成为了信标设备广播的有效载荷内容的一个流行格式。iBeacon 消息中的数据包括一个名为 TX Power 的字段，该字段包含一个值，表示在距离信标一米的地方测量时可以预期的信号强度。正是 iBeacon 消息中 TX Power 字段的存在，以及在其他可比信标数据格式中，如谷歌的 Eddystone，预示着第一代蓝牙低能耗距离估计的到来。</p>
+<p>这个早期版本的蓝牙距离估计涉及使用两个数据值和一些简单的物理原理，工作原理如下：</p>
+<ul>
+<li>信标消息中的 TX 功率字段提供了在已知距离（例如一米）处的参考功率水平。</li>
+<li>与每个接收到的信标消息相关的接收信号强度指示器（RSSI）量化了接收设备的信号强度。</li>
+<li>物理学定义了信号强度随离发射器距离增加而减弱的速率之间的理论关系。具体而言，接收器的信号强度与其距离发射器的平方成反比。</li>
+<li>随着我们离发射器越来越远，测量到的信号强度的降低被称为路径损耗或衰减。在 iBeacon 传输的情况下，路径损耗 = 发射功率 - 接收信号强度指示。</li>
+<li>因此，知道在固定距离下的参考功率水平、接收到的信标传输的测量 RSSI 以及距离与路径损耗之间的反平方关系，可以利用衰减来估计信标与接收器之间的距离。</li>
+</ul>
+<figure data-type="image" tabindex="1"><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_1.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_1.png" alt="Figure 1" loading="lazy"></a></figure>
+<p><em>图 1 – 路径损失和距离</em></p>
+<p>能够像这样估算距离是一个相当大的突破，信标在零售、旅行和博物馆等各种应用中变得越来越受欢迎。</p>
+<p>虽然信标非常适合某些需求，但基于 RSSI 和路径损耗的距离测量对于其他应用来说并不够准确。当需要位置数据而不仅仅是接近度时，缺乏发射器方向的指示也是一个限制。此外，各种专有信标类型，如 iBeacon，并未包含任何明确的安全保障。</p>
+<h5 id="213-蓝牙-定位与到达角aoa和离开角aod"><strong>2.1.3 蓝牙® 定位与到达角（AoA）和离开角（AoD）</strong></h5>
+<p>在 2019 年，蓝牙核心规范的 5.1 版本包含了一项重大新功能，蓝牙方向查找。</p>
+<p>蓝牙方向查找功能使应用能够通过蓝牙低能耗控制器进行的相位测量准确计算接收信号的方向。定义了两种方法。</p>
+<p>在到达角（AoA）方法中，接收设备具有天线阵列，并且在不同天线上接收到的信号的测量显示出相位差，这是由于每个天线与发射设备中的单个天线之间的距离略有不同。</p>
+<p>在离角（AoD）方法中，发射设备具有天线阵列。接收设备只有一个天线，但拥有远程发射设备中天线阵列的详细信息。这使得它能够根据在其单个天线上进行的相位测量进行类似的计算。</p>
+<p><em><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_2.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_2.png" alt="Figure 2" loading="lazy"></a><br>
+图 2 – 使用 AoA 和 AoD 进行方向查找</em></p>
+<p>相位测量以同相和正交（IQ）样本的形式从蓝牙控制器传递到应用程序。IQ 样本由相位和幅度值的对组成，应用程序可以利用这些值计算发射器的位置方向。</p>
+<p><em><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_3.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_3.png" alt="Figure 3" loading="lazy"></a><br>
+图 3 - IQ 样本</em></p>
+<h5 id="214-蓝牙信道探测"><strong>2.1.4 蓝牙信道探测</strong></h5>
+<p>新的蓝牙通道探测功能使得能够创建具有计算两个蓝牙设备之间距离能力的产品，其准确性显著优于使用 RSSI 和路径损耗第一代方法所能达到的水平。它以完全不同的方式工作，并包括多种安全保障措施，以降低各种风险。</p>
+<p>预计蓝牙信道探测将有利于“查找我的”解决方案、数字钥匙产品以及更多蓝牙连接设备。</p>
+<h4 id="22-蓝牙信道探测简介"><strong>2.2 蓝牙信道探测简介</strong></h4>
+<p>在讨论蓝牙低能耗中的蓝牙信道探测之前，本节将首先介绍该功能背后的基本理论。已经熟悉该主题的读者应跳过到第 3 节，蓝牙信道探测。</p>
+<h5 id="221-无线电波的基本特性"><strong>2.2.1 无线电波的基本特性</strong></h5>
+<p>无线电是一种电磁辐射，物理学家通常用波的形式来描述它。无线电波具有各种基本特性，理解这些特性是很重要的。</p>
+<p><strong>2.2.1.1 振幅和波周期</strong></p>
+<p>无线电波的振幅对应于它携带的能量，或者用更常见的术语来说，就是信号强度。它在一个中心参考值上方和下方振荡。这种上下振荡定期且规律地重复。一次从峰值振幅上升到谷值，再回到起始参考值的过渡称为一个波周期。图 4 描绘了两个完整的波周期，振幅在垂直坐标上。第一个波周期的范围被突出显示。</p>
+<p><em><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_4.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_4-1200x417.png" alt="Figure 4" loading="lazy"></a>图 4 – 波动周期，垂直尺度为振幅</em></p>
+<p><strong>2.2.1.2 波长</strong></p>
+<p>一个波周期具有物理长度。波长与频率相关，在蓝牙技术的情况下，波长大约在 12.0 厘米到 12.5 厘米之间。</p>
+<p><em><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_5.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_5-1200x417.png" alt="Figure 5" loading="lazy"></a>图 5 – 波长</em></p>
+<p><strong>2.2.1.3 频率</strong></p>
+<p>无线电在真空中的传播速度是光速。每秒钟通过空间中固定点的完整波周期数量称为频率。频率以赫兹（Hz）为单位测量，其中 1 Hz 代表每秒一个波周期。蓝牙信号的工作频率要高得多，以千兆赫（GHz）为单位测量。</p>
+<p><em><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_6.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_6-1000x348.png" alt="Figure 6" loading="lazy"></a>图 6 – 频率</em></p>
+<p><strong>2.2.1.4 阶段</strong></p>
+<p>在单个波周期内的某些点通过称为相位的角度测量来表示。相位值的范围为 0 – 360 度或 0 – 2π弧度。图 7 通过在波周期的适当点上标记多个相位值（以弧度表示）来说明相位的概念。</p>
+<p><em><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_7.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_7-1000x348.png" alt="Figure 7" loading="lazy"></a>图 7 – 阶段</em></p>
+<p><strong>2.2.1.5 频率与波长之间的数学关系</strong></p>
+<p>频率 (f) 和波长 (λ) 彼此成反比。波长越短，频率越高，反之亦然。此外，这两个变量与光速 (c) 之间的关系由一组简单的公式定义，允许从已知的其他两个量计算出任一数量。光速是一个常数，值为 299792458 m/s。</p>
+<p>公式</p>
+<p>使用</p>
+<p>根据已知频率和光速常数计算未知波长。</p>
+<p>根据已知波长和光速常数计算未知频率。</p>
+<p>使用频率值和相应波长计算光速。</p>
+<p><em>表 1 - 频率和波长公式</em></p>
+<h5 id="222-距离测量方法"><strong>2.2.2 距离测量方法</strong></h5>
+<p>无线距离测量技术中最常用的两种方法是基于相位的测距（PBR）和往返时间测量（RTT）。本节将概述这两种方法背后的理论。</p>
+<p><strong>2.2.2.1 基于相位的测距 (PBR)</strong></p>
+<p><strong>2.2.2.1.1 理论</strong></p>
+<p>很容易将距离可视化为信号波长的函数，具体来说，就是信号从发射器到接收器所需的波周期数。</p>
+<p><em><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_8.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_8-1000x348.png" alt="Figure 8" loading="lazy"></a>图 8 - 波长与波周期的距离</em></p>
+<p>在图 8 中，插图左侧传输的信号明显距离接收器十个半波长。如果我们知道信号的频率，那么我们就知道波长。如果我们知道波长，那么知道波周期的数量，我们可以使用乘法来找到两个设备之间的距离。</p>
+<p>如果传输频率为 2402 MHz，那么波长为 12.48095162 厘米。这个数字是通过将光速除以频率得出的。</p>
+<p>然而，发射设备无法知道其天线与接收器天线之间的波周期数。因此，PBR 方法涉及一种技术，允许根据其他数据推断发射器和接收器之间的距离。它的工作原理如下。</p>
+<p>我们将把希望计算距离测量的设备称为设备 A。另一个设备将是设备 B。</p>
+<ol>
+<li>设备 A 以已知频率 f1 发射信号。设备 A 已知该信号的初始相位，为了说明，假设该信号以零弧度的相位发射。</li>
+<li>设备 B 在其天线接收到 f1 信号并记录其相位，我们将其称为接收相位。</li>
+<li>设备 B 然后通过在相同频率 f1 上发射，将接收到的信号回传给设备 A，并且关键的是确保该传输的初始相位与从设备 A 接收到的信号的接收相位完全相同。这导致返回信号在相位和频率上是设备 A 信号的延续。</li>
+<li>设备 A 测量来自设备 B 的信号接收相位。我们将这个值称为 Pf1。</li>
+</ol>
+<p>图 9 说明了频率为 f1 的信号交换。</p>
+<p><em><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_9.png"></a>图 9 – 使用频率 f1 的双向测距</em></p>
+<p>设备 A 现在选择一个新的频率 f2，并重复这四个步骤。这四个步骤的第二次执行结果是设备 A 对从设备 B 接收到的信号进行的新相位测量，我们称之为 Pf2。</p>
+<p>图 10 说明了频率为 f2 的信号交换。</p>
+<p><em><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_10.png"></a>图 10 – 使用频率 f2 的双向测距</em></p>
+<p>设备 A 现在计算 f1 和 f2 的相位值之间的差，即计算 Pf2 - Pf1。凭借相位差和频率 f1 与 f2 之间的差异，现在可以使用以下公式计算距离：</p>
+<figure data-type="image" tabindex="2"><img src="https://www.bluetooth.com/wp-content/uploads/2024/05/2405_Channel_Sounding_Formulas_4.svg" alt="2405 Channel Sounding Formulas 4" loading="lazy"></figure>
+<p>其中 c 是光速，(Pf2 – Pf1) 是相位差，(f2 – f1) 是频率间隔。</p>
+<p>这种方法称为双向测距，其中第二个设备向原始设备发送信号，以便它可以进行相位测量。</p>
+<p>现实世界可能会带来一些在本基本理论解释中未反映的挑战。我们将在本节后面遇到这些挑战。</p>
+<p><strong>2.2.2.1.2 示例</strong></p>
+<p>让我们尝试一个简单的示例来看看这个是如何运作的。我们将使用一个相当人工的案例，在这个案例中我们已经知道两个设备之间的距离，以便我们可以看到公式是如何正确得出相同的结果的。</p>
+<p>图 11 显示了两个设备，设备 A 和设备 B，它们之间的距离正好是 1.248095162 米。设备 A 发射了频率为 2.402 MHz、波长为 12.48095162 厘米的信号。由于一个真正了不起的巧合，这两个设备之间的距离正好是这个波长的十倍。</p>
+<p><em><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_9.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_9-1000x157.png" alt="Figure 9" loading="lazy"></a>图 11 - 设备之间正好相隔十个 f1 波周期</em></p>
+<p>由于设备 A 以零的初始相位发送此信号，并且由于设备 B 与波长的距离是一个整数倍，因此设备 B 的接收相位也是零。如图所示，设备 B 将信号传回设备 A，将初始相位设置为与其最初接收到的信号的接收相位相同的值，从而有效地实现了延续。</p>
+<p>图 12 显示了设备 A 以频率 f2 传输的第二个信号。这次选择的频率高于 f1，值为 f2 = 2.432 MHz。设备 A 的初始相位再次为零。</p>
+<p><em><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_10.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_10-1000x157.png" alt="Figure 10" loading="lazy"></a>图 12 – 设备相距十个 f2 波周期左右</em></p>
+<p>f2 的波长比 f1 的波长短，因为 f2 的频率更高。这导致设备 B 的接收相位非零。实际上，它是 0.784744210 弧度。当信号被设备 B 重新传输时，保持相同的初始相位并被设备 A 接收，它的相位将是 1.56948842 弧度。</p>
+<p>在这种情况下，我们如何知道设备 B 和设备 A 的相位值？</p>
+<p>在实际实现中，相位值将由接收设备测量。在这个例子中，我们已经知道设备之间的距离，并且只是展示主公式如何得出该距离估计，我们有幸能够使用以下公式从已知的距离和波长计算预期的相位值：</p>
+<figure data-type="image" tabindex="3"><img src="https://www.bluetooth.com/wp-content/uploads/2024/07/2405_Channel_Sounding_Formulas_5.png" alt="2405 Channel Sounding Formulas 5" loading="lazy"></figure>
+<p>其中 λ 是波长，r 是已知距离。</p>
+<p>设备 A 现在拥有计算设备 B 距离所需的所有信息。频率差为 30 MHz，相位差为 1.56948842。将这些值代入 r 的公式，计算出的距离为 2.49 米，保留两位小数。但这是设备 A 到设备 B 再返回的往返距离，因此两个设备之间的实际距离是该数值的一半，即 1.24 米。这是预期的结果，展示了基于光速和已知的两个传输信号的相位和频率差异的 r 公式如何用于准确计算两个设备之间的距离。</p>
+<p>然而，这里有一个复杂性，这在相位的公式和(2 * π)的模除中有所暗示。相位值随着距离的增加而变化，但它们是周期性的，这意味着当相位值达到(2 * π)弧度时，它会重置为零，并且相同的值开始重复。这可能导致在确定两个设备之间的距离时出现歧义，因为同一个相位差值可能暗示多个距离。这被称为距离歧义。</p>
+<p>距离模糊出现的确切时间取决于频率分离。一般来说，距离模糊在较大的频率差异下会更早出现。幸运的是，可以通过将 PBR 与第二种距离测量方法——往返时延结合使用来解决这个问题。</p>
+<p><strong>2.2.2.2 往返时间 (RTT)</strong></p>
+<p><strong>2.2.2.2.1 理论</strong></p>
+<p>使用往返时间计算两个设备之间距离的理论非常简单。无线电（RF）传输以光速传播，这是一个已知的常数。因此，如果我们能够计算传输在两个设备之间所需的时间，我们就可以计算出距离。我们所要做的就是将往返时间乘以光速。</p>
+<p>例如，如果一个射频信号从设备 A 到设备 B 再返回到设备 A 需要 20 纳秒，那么简单地将光速乘以 20 纳秒将给我们一个总的双向距离，略低于六米，因此这两个设备之间的距离略低于三米。</p>
+<h2 id="双向距离-2r-c-000000002"><em>双向距离 2r = c * 0.00000002</em></h2>
+<p>其中 c 是光速（299792458 米/秒），0.00000002 是双向飞行时间（ToF），单位为秒。这给我们带来了以下结果：</p>
+<h2 id="2r-299792458-000000002-599584916"><em>2r = 299792458 * 0.00000002<br>
+= 5.99584916</em></h2>
+<p>因此设备 A 和设备 B 之间的距离是</p>
+<h2 id="299792458-米"><em>2.99792458 米</em></h2>
+<p>但是，虽然这个基本公式是正确的，但在蓝牙设备的上下文中使用它要复杂一些，目前所呈现的理论是不完整的。</p>
+<p>形成和传输射频信号的过程需要时间，接收、处理和传输往返响应的过程也是如此。一个设备可能需要大约 200 微秒的时间来形成和传输一个数据包，并且考虑到无线电波在一个微秒内可以传播不到 300 米，这些看似短暂的时间段在距离测量的背景下可能具有重要意义。</p>
+<p>图 13 显示了这一细分，并标记了时间线上的关键点。</p>
+<figure data-type="image" tabindex="4"><a href="https://www.bluetooth.com/wp-content/uploads/2024/07/2405_Channel_Sounding_Figure_13.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/07/2405_Channel_Sounding_Figure_13.png" alt="2405 Channel Sounding Figure 13" loading="lazy"></a></figure>
+<p><em>图 13 – RTT 分解（不按比例 - 信号内容不具代表性）</em></p>
+<p>瞬间</p>
+<p>解释</p>
+<p><strong>ToDA</strong></p>
+<p>从设备 A 出发的时间。</p>
+<p>这是设备 A 通过空气传输信号的时间。</p>
+<p><strong>ToAB</strong></p>
+<p>设备 B 的到达时间。</p>
+<p>这是信号到达设备 B 天线的时间。</p>
+<p><strong>ToDB</strong></p>
+<p>从设备 B 出发的时间。</p>
+<p>这是设备 B 通过无线传输的时间。</p>
+<p><strong>ToAA</strong></p>
+<p>设备 A 的到达时间。</p>
+<p>这是设备 B 的信号在设备 A 的天线接收到的时间。</p>
+<p>绿色虚线（· · · · · · · · · · · ·）表示在这段时间内两个信号都没有_在空中_。</p>
+<p>往返时间（RTT）可以通过图 13 中所示的时间瞬间表示如下：</p>
+<h2 id="rtt-2-tof-toaa-toda-todb-toab"><em>RTT = 2 * ToF (ToAA – ToDA) – (ToDB – ToAB)</em></h2>
+<p>为了让设备 A 计算 RTT，它需要知道设备 B 的周转时间（即 ToDB—ToAB）。理论上，有多种方法可以实现这一点。在实践中，最简单的解决方案是设备 A 和设备 B 事先达成固定的周转时间协议。设备 B 必须保证在处理完成后，正好在该周转时间到期时传输其响应。设备 A 随后使用该预先商定的值作为（ToDB—ToAB）。</p>
+<p><strong>2.2.2.3 现实世界的挑战</strong></p>
+<p>对于 PBR 和 RTT 距离测量方法所提出的理论足以让人对该主题有初步的了解，并且在纯理论的背景下是完整的。然而，在现实世界中，准确的距离测量要复杂得多。如果要通过在现实世界中使用的真实设备产生令人满意的结果，就必须解决几个挑战。</p>
+<p>无线距离测量技术应解决的挑战类型示例包括：</p>
+<ul>
+<li>无线信号多径传播引起的复杂情况</li>
+<li>生成信号频率的准确性和稳定性</li>
+<li>内部时钟的稳定性以及时间戳的准确性和分辨率</li>
+<li>基于相位的测距中的距离模糊性</li>
+<li>安全</li>
+</ul>
+<p>在本文的剩余部分，我们将学习蓝牙技术中的高精度距离测量，并了解该技术是如何设计以有效应对这些现实世界问题的。</p>
+<h2 id="3-蓝牙信道探测"><strong>3. 蓝牙®信道探测</strong></h2>
+<h4 id="31-概述"><strong>3.1 概述</strong></h4>
+<p>蓝牙信道探测提供了产品实现比以往更高精度距离测量的潜力。测量的准确性取决于环境条件以及应用层如何利用蓝牙信道探测功能。它还取决于实施选择，具体细节超出了蓝牙核心规范的范围，但可以提高用于计算的原始数据的质量。</p>
+<p>蓝牙信道探测为应用提供了一套灵活的工具包，用于距离测量，支持多种不同的配置。规范中支持基于相位的测距（PBR）和往返时间（RTT）距离测量方法。在大多数情况下，预计 PBR 将作为主要和最准确的距离测量方法使用，而 RTT 将与之一起使用以提供额外的安全性。</p>
+<p>PBR，作为蓝牙信道探测使用的，可以测量大约 150 米的距离，之后会出现距离模糊。通过在 PBR 的基础上使用 RTT，应用程序可以识别并消除距离模糊，从而测量更长的距离。</p>
+<p>应用程序可能会对准确性、安全性、延迟和功耗等问题赋予不同的优先级。蓝牙通道探测功能的可配置性使应用程序能够控制或影响系统的许多关键能力和行为，从而使其操作专注于使用它的应用程序的正确优先级。</p>
+<p>在本节中，我们将继续研究蓝牙信道探测功能及其依赖的核心蓝牙协议栈能力。</p>
+<h4 id="32-架构"><strong>3.2 架构</strong></h4>
+<h5 id="321-设备角色"><strong>3.2.1 设备角色</strong></h5>
+<p>蓝牙信道探测功能定义了两个设备角色。第一个是发起者，第二个是反射者。</p>
+<p>发起器是希望计算自身与另一个设备之间距离的设备。另一个设备是反射器。</p>
+<p>发起者或反射者都可以启动蓝牙信道探测程序，具体细节将在本文后面介绍。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_14.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_14.png" alt="Figure 14" loading="lazy"></a><em>图 14 - 角色</em></p>
+<h5 id="322-拓扑"><strong>3.2.2 拓扑</strong></h5>
+<p>蓝牙信道探测在一对一拓扑中进行，通信发生在一个充当发起者角色的设备和一个充当反射者角色的设备之间。</p>
+<p>需要注意的是，蓝牙通道探测发起者角色可以由充当链路层 LE 中心角色的设备或 LE 外设承担。蓝牙通道探测反射器角色也是如此，可以由 LE 中心设备或 LE 外设设备承担。</p>
+<h5 id="323-天线阵列"><strong>3.2.3 天线阵列</strong></h5>
+<p>使用蓝牙信道探测的设备可能包括天线阵列。这提供了一系列替代路径，用于交换用于基于相位的测距的蓝牙信道探测传输，并通过减少多路径传播的影响来提高距离测量的准确性。</p>
+<h5 id="324-应用程序"><strong>3.2.4 应用程序</strong></h5>
+<p>蓝牙信道探测要求应用层使用蓝牙控制器提供的数据计算距离。这些数据是在执行蓝牙信道探测程序期间由控制器获取的，是每个设备之间信号交换和低级测量的结果。数据通过 HCI 事件传递给应用层。</p>
+<p>应用层还负责向蓝牙控制器提供配置选项和偏好，这些选项和偏好用于建立一个由两个设备上的应用程序支持和适合的蓝牙通道探测配置。</p>
+<p>为了使两个设备能够参与一个系统，其中一个设备担任发起者角色，另一个设备担任反射者角色，两个设备都必须具有支持蓝牙通道探测功能的蓝牙低能耗控制器。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_15_New.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_15_New-1000x648.png" alt="Figure 15 New" loading="lazy"></a><em>图 15 – 蓝牙信道探测应用和蓝牙协议栈</em></p>
+<h5 id="325-数据传输架构"><strong>3.2.5 数据传输架构</strong></h5>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_16.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_16.png" alt="Figure 16" loading="lazy"></a><em>图 16 - 蓝牙通用数据传输架构</em></p>
+<p>蓝牙核心规范从多个角度定义了蓝牙技术的架构。在第一个角度中，定义了一种通用的数据传输架构。其在核心规范中的描述在此图 16 中重现。</p>
+<p>根据蓝牙核心规范中的定义，图 16 中的术语描述如下：</p>
+<ul>
+<li>L2CAP 是逻辑链路控制和适配协议。L2CAP 通道是两个设备之间在 L2CAP 层的逻辑连接，用于单个应用程序或更高层协议。</li>
+<li>逻辑链路是“用于向蓝牙系统的客户端提供独立数据传输服务的最低架构级别”。</li>
+<li>逻辑传输处理诸如传输和接收例程、流控制机制、确认协议和链路识别等问题。逻辑传输可以是同步的、异步的或等时的。</li>
+<li>物理链路是设备之间在链路层级建立的连接。链路层是蓝牙协议栈的层之一。</li>
+<li>物理通道定义了一个或多个通信设备对射频载波的占用模式。</li>
+<li>物理传输定义了一般适用的问题，例如用于通过无线信号作为载体传输数字数据的空中数据包结构和调制方案。</li>
+</ul>
+<p>通用数据传输架构适用于蓝牙低能耗（Bluetooth LE）和蓝牙基本速率/增强数据速率（BR/EDR）。</p>
+<p>定义了一系列特定类型的物理传输、物理通道、物理链接、逻辑传输和 L2CAP 通道。仅允许某些类型的组合。特定的数据传输架构组件类型和允许的组合在蓝牙核心规范中定义，以支持不同的应用类型。它们在拓扑、传输时序模式、可靠性、功耗和射频通道使用等方面有所不同。</p>
+<p>图 17 显示了数据传输架构的一个子集。蓝色突出显示的是为通道探测定义的新物理通道类型和新物理链接类型。</p>
+<figure data-type="image" tabindex="5"><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_17.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_17.png" alt="Figure 17" loading="lazy"></a></figure>
+<p><em>图 17 - CS 和数据传输架构</em></p>
+<p>没有与 LE 通道声测物理链路关联的逻辑传输类型或逻辑链路类型。</p>
+<h5 id="326-蓝牙低能耗协议栈中的信道探测"><strong>3.2.6 蓝牙低能耗协议栈中的信道探测</strong></h5>
+<p>定义蓝牙低能耗（Bluetooth LE）更全面的方式是从完整的协议栈及其层次来考虑。蓝牙核心规范的大部分内容致力于定义每一层。图 18 描绘了蓝牙低能耗栈。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_18.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_18.png" alt="Figure 18" loading="lazy"></a><em>图 18 - 蓝牙低能耗协议栈</em></p>
+<p>蓝牙低能耗堆栈每一层的职责总结包含在表 2 中。</p>
+<p>层</p>
+<p>主要职责</p>
+<p>通用接入配置文件 (GAP)</p>
+<p>定义在非连接状态下可使用的操作模式和程序，例如如何使用广告进行无连接通信和设备发现。</p>
+<p>定义安全级别和一些用户界面标准。</p>
+<p>通用属性配置文件 (GATT)</p>
+<p>定义高层数据类型，称为服务、特征和描述符，基于属性表中的基本属性。</p>
+<p>属性协议 (ATT)</p>
+<p>一种用于发现和使用服务器中以称为属性表的逻辑数据结构保存的数据的协议。</p>
+<p>安全管理协议 (SMP)</p>
+<p>在配对等安全程序执行期间使用的协议。</p>
+<p>逻辑链路控制和适配协议 (L2CAP)</p>
+<p>通过射频连接提供数据通道复用服务、大型 SDU 的分段和重组，以及增强的错误检测和重传功能。</p>
+<p>主控制器接口 (HCI)</p>
+<p>提供主机组件与控制器之间命令和数据的双向通信接口。</p>
+<p>等时适配层 (ISOAL)</p>
+<p>允许使用等时通道的设备使用不同的帧持续时间。</p>
+<p>链路层</p>
+<p>定义空中接口数据包格式、比特流处理程序（如错误检查）、状态机和空中通信及链路控制的协议。</p>
+<p>定义了几种使用底层无线电进行无连接、面向连接和等时通信的不同方式，称为逻辑传输。</p>
+<p>物理层</p>
+<p>定义与无线电（RF）使用相关的蓝牙技术的所有方面，包括调制方案、频段、信道使用、发射器和接收器特性。</p>
+<p>定义了三种物理层参数组合，称为 LE 1M、LE 2M 和 LE 2M 2BT PHY。LE 2M 2BT 首次在蓝牙核心规范的 6.0 版本中定义，仅可与蓝牙信道探测一起使用。有关 LE 2M 2BT PHY 的更多详细信息，请参见<a href="#tle2m2btphy">3.11 LE 2M 2BT PHY</a>部分。</p>
+<p>定义了进一步的 PHY，LE 编码。尽管名称如此，LE 编码使用与 LE 1M 相同的物理层参数，但在链路层应用前向错误纠正编码和模式映射。</p>
+<p><em>表 2 - 蓝牙低能耗协议栈各层的主要职责和特征总结</em></p>
+<p>蓝牙核心规范的物理层、链路层、主控制器接口和通用访问配置文件部分都受到蓝牙信道探测引入的影响。<a href="#asbcsc">4. 蓝牙核心规范变更摘要</a>部分对此进行了进一步说明。</p>
+<p>还引入了专门为蓝牙信道探测设计的新安全功能。第<a href="#security">3.13 节 安全</a>专门讨论蓝牙信道探测安全性的话题。</p>
+<h4 id="33-蓝牙信道探测控制程序"><strong>3.3 蓝牙信道探测控制程序</strong></h4>
+<p>在开始蓝牙信道探测之前，链接层 LE 中央角色的设备必须连接到链接层 LE 外设角色的设备。然后在建立的 LE-ACL 连接上启动安全性，以便为在准备和启动蓝牙信道探测的多个过程中交换各种链接层协议数据单元（PDU）提供安全传输。</p>
+<p>准备和启动蓝牙信道探测的主要程序是：</p>
+<ol>
+<li>安全启动</li>
+<li>能力交换</li>
+<li>配置</li>
+<li>开始</li>
+</ol>
+<p>并非所有这些程序都是强制性的，这取决于一些问题，例如两个设备是否之前交换过可能已被缓存的信息。图 19 中显示了可能的程序序列和相关的 PDU。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_19.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_19.png" alt="Figure 19" loading="lazy"></a><em>图 19 - 可能的 CS 启动程序序列</em></p>
+<p>对启动蓝牙信道探测时通常涉及的四个关键程序进行更深入的检查。</p>
+<h5 id="331-蓝牙信道探测安全启动"><strong>3.3.1 蓝牙信道探测安全启动</strong></h5>
+<p>蓝牙信道探测具有其独特的安全能力，这些能力与执行初始化程序的 LE-ACL 连接相关的安全能力不同。蓝牙信道探测启动程序允许两个设备安全地交换参数，这些参数随后用于蓝牙信道探测安全功能。</p>
+<p>蓝牙信道探测安全启动程序从 LE 中央设备生成三个随机数开始，并将它们发送到 LE 外设设备的 LL_CS_SEC_REQ PDU 中。LE 外设设备生成三个自己的随机数，遵循与中央设备的随机数相同的规则，并将它们通过 LL_CS_SEC_RSP PDU 发送回中央设备。</p>
+<p>每个设备生成的随机数在表 3 中命名和描述。</p>
+<p>名字</p>
+<p>描述</p>
+<p>长度（位）</p>
+<p>CS_IV_C</p>
+<p>中央生成的初始化向量。</p>
+<p>64</p>
+<p>CS_IN_C</p>
+<p>中央生成的实例化随机数。</p>
+<p>32</p>
+<p>CS_PV_C</p>
+<p>中央生成的个性化向量。</p>
+<p>64</p>
+<p>CS_IV_P</p>
+<p>由外设生成的初始化向量。</p>
+<p>64</p>
+<p>CS_IN_P</p>
+<p>外围生成的实例化随机数。</p>
+<p>32</p>
+<p>CS_PV_P</p>
+<p>由外设生成的个性化向量。</p>
+<p>64</p>
+<p><em>表 3 – CS 安全参数</em></p>
+<p>当两个设备都拥有两组蓝牙信道探测安全参数时，每对中央/外设的值由各自的链路层连接。这导致两个设备在三个蓝牙信道探测安全参数 CS_IV、CS_IN 和 CS_PV 上拥有相同的值。</p>
+<p>有关这些参数使用的更多信息，请参见<a href="#security">3.13 安全性</a>部分。</p>
+<h5 id="332-蓝牙信道探测能力交换"><strong>3.3.2 蓝牙信道探测能力交换</strong></h5>
+<p>两个设备的蓝牙信道探测能力可能会有显著差异，为了在开始之前达成一个相互支持的配置，这两个设备必须各自掌握关于对方设备能力的信息。</p>
+<p>能力交换是通过一个设备在 LL_CS_CAPABILITIES_REQ PDU 中发送其详细信息，另一个设备在 LL_CS_CAPABILITIES_RSP PDU 中响应其详细信息来实现的。设备可以缓存之前接收到的能力数据，因此可以选择不与另一个设备交换能力。然而，任一设备都可以发起此过程。</p>
+<p>能力可能有所不同的示例包括 PHY 支持、RTT 精度、支持的蓝牙信道探测模式、攻击检测支持以及支持的最大天线路径数量。蓝牙核心规范提供了 LL_CS_CAPABILITIES_REQ PDU 和 LL_CS_CAPABILITIES_RSP PDU 的完整细节。</p>
+<h5 id="333-蓝牙信道探测配置"><strong>3.3.3 蓝牙信道探测配置</strong></h5>
+<p>该过程涉及 LL_CS_CONFIG_REQ 和 LL_CS_CONFIG_RSP PDU 的交换。实质上，利用先前交换的能力，该过程允许设备选择将要使用的特定配置。</p>
+<p>可以维护多个配置参数集。每个这样的配置由主机分配一个标识符。该标识符在这对设备使用的标识符中必须是唯一的，并且可以在链路层程序中用于引用给定的参数集。</p>
+<p>设备上用于传输 LL_CS_CONFIG_REQ PDU 的应用程序能够选择它想要承担的发起者或反射者角色。另一个设备以 LL_CS_CONFIG_RSP 响应，并必须承担另一个角色。</p>
+<h5 id="334-模式-0-fae-表请求"><strong>3.3.4 模式-0 FAE 表请求</strong></h5>
+<p>分数频率偏移激励误差（FAE）是生成频率与预期或请求频率之间差异的度量，以百万分之一（ppm）表示。所有设备在这方面都有一定程度的不准确性，通常，其大小会根据所使用的射频通道而有所不同。</p>
+<p>为了实现尽可能准确的距离测量结果，支持蓝牙通道探测的设备可能会有一个称为模式 0 FAE 表的数据表。该表包含每个通道的 FAE 值，并在制造过程中设置。模式 0 的含义将在 3.5.3 步骤模式中阐明。</p>
+<p>模式 0 FAE 表请求程序允许发起者请求反射器的模式 0 FAE 表。这涉及到发起者发送一个 LL_CS_FAE_REQ PDU，反射器则回复一个包含其 FAE 表的 LL_CS_FAE_RSP PDU。</p>
+<p>一旦获得，FAE 表可以存储以便将来与相同的反射器一起使用，这样对于给定的设备对，此过程只需执行一次。</p>
+<h5 id="335-蓝牙信道探测开始"><strong>3.3.5 蓝牙信道探测开始</strong></h5>
+<p>当蓝牙信道探测安全已启动时，设备掌握彼此的能力信息，发起者拥有反射器的模式 0 FAE 表（如果有的话），并且设备已就合适的配置达成一致，则可以启动信道探测开始程序。这是通过 LL_CS_REQ、LL_CS_RSP 和 LL_CS_IND PDU 完成的。</p>
+<p>LL_CS_REQ 和 LL_CS_RSP PDU 包含来自每个设备的提议时间和结构参数。这些参数决定了时间的划分方式以及在蓝牙信道探测期间如何使用时间。在接收到来自外设的 LL_CS_REQ 或 LL_CS_RSP PDU 后，中央角色的设备会发送 LL_CS_IND PDU。LL_CS_IND 表示蓝牙信道探测现在应该开始，并包含基于先前 PDU 交换中包含的提议，两个设备都可以接受的参数值。</p>
+<h5 id="336-蓝牙信道探测"><strong>3.3.6 蓝牙信道探测</strong></h5>
+<p>蓝牙信道探测程序在蓝牙信道探测启动程序完成后开始。这是两个设备交换射频信号以进行测量的机制，这些测量可以被应用程序用于距离计算。此过程的工作原理将在本文的后续部分进行探讨。</p>
+<h4 id="34-事件-子事件和步骤"><strong>3.4 事件、子事件和步骤</strong></h4>
+<h5 id="341-le-acl-连接和时间分配"><strong>3.4.1 LE-ACL 连接和时间分配</strong></h5>
+<p>在 ACL 连接中，数据包可以在连接事件期间传输。连接事件的时机基于该 ACL 连接的连接间隔参数的值。在连接事件期间，中央设备和外设轮流传输数据包，中央设备首先传输，外设进行响应。根据其他连接参数，外设可能仅被允许响应部分数据包，而中央设备可能仅被允许在部分事件期间传输。</p>
+<p>在每个连接事件中，双方传输的数据包的大小和数量可能会有所不同。</p>
+<p>在<a href="#cscp">3.3 蓝牙信道探测控制程序</a>中描述的蓝牙信道探测的初始化过程中使用 LE-ACL 连接。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_20.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_20.png" alt="Figure 20" loading="lazy"></a><em>图 20 - LE-ACL 连接中的连接事件和间隔</em></p>
+<h5 id="342-时间划分"><strong>3.4.2 时间划分</strong></h5>
+<p><strong>3.4.2.1 结构</strong></p>
+<p>蓝牙信道探测是在一系列程序中进行的。每个程序由多个 CS 事件组成，每个 CS 事件又进一步划分为 CS 子事件。在这个分层方案中，时间的最终细分是 CS 步骤。在步骤中，数据包或音调被传输和接收。图 21 展示了通过一个示例进行时间划分的结构方案。</p>
+<figure data-type="image" tabindex="6"><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_21.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_21.png" alt="Figure 21" loading="lazy"></a></figure>
+<p><em>图 21 - 示例配置中蓝牙信道探测程序的结构</em></p>
+<p>3.5 CS Steps 解释了 CS Steps 期间发生的活动的更多信息。</p>
+<p>有多个参数可以控制蓝牙信道探测程序的结构方面，特别是关于不同层次元素之间关系的基数。一些关键的可配置变量如表 4 所示。</p>
+<p>可配置变量</p>
+<p>范围/值</p>
+<p>描述</p>
+<p>CS 程序重复次数</p>
+<p>0 到 65535</p>
+<p>在终止蓝牙信道探测之前要执行的蓝牙信道探测（CS）程序重复次数。值为 0 是一个特殊值，表示 CS 程序应运行直到通过主机可以调用的蓝牙信道探测程序重复终止程序终止。</p>
+<p>每个事件的子事件数量</p>
+<p>1 到 16</p>
+<p>与同一 ACL 事件相关联的子事件数量。</p>
+<p>子事件间隔</p>
+<p>0 或在 625 微秒到 40959.375 毫秒的范围内。</p>
+<p>同一 CS 事件中，CS 子事件开始与下一个 CS 子事件开始之间的时间间隔。</p>
+<p>0 表示没有分成子事件。</p>
+<p>可配置变量</p>
+<p>范围/值</p>
+<p>描述</p>
+<p>每个子事件的持续时间</p>
+<p>变量</p>
+<p>每个子事件的持续时间。</p>
+<p>每个子事件的步骤数</p>
+<p>2 到 160</p>
+<p>从配置的范围中随机选择。</p>
+<p>每个程序最多有 256 个步骤。</p>
+<p><em>表 4 - 示例蓝牙信道探测配置参数</em></p>
+<p><strong>3.4.2.2 定时</strong></p>
+<p>程序、事件、子事件和步骤的时机、持续时间和调度由多个参数控制，这些参数在蓝牙信道探测配置和蓝牙信道探测开始程序中进行配置。</p>
+<p>所有程序、事件、子事件和步骤的开始时间都直接或间接地锚定在基础 LE ACL 连接中选择的连接事件上，通过该连接事件执行了启动蓝牙信道探测的链路层程序。在第一次蓝牙信道探测程序实例中，其第一个事件和子事件同时开始，计划在与选定连接事件锚点的偏移量处发生。第一个步骤在第一个子事件开始的偏移量处发生，称为 T_FCS。T_FCS 的值范围为 15 微秒到 150 微秒，覆盖的周期用于通过跳频改变频率。3.9 RF 通道和通道选择提供了更多关于此主题的信息。</p>
+<p>程序和事件以间隔发生，其值以 ACL 连接间隔的数量表示。图 22 显示了一个示例，其中程序间隔的值为 4，事件间隔的值为 2。如图所示，这导致每第 4 个 ACL 连接事件开始一个新的程序间隔，每第 2 个连接事件开始一个事件间隔。程序及其事件实际上在各自的间隔内相对于相关连接事件锚点以偏移量开始。偏移量的值以微秒表示。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_22.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_22.png" alt="Figure 22" loading="lazy"></a><em>图 22 - 程序和事件调度，程序间隔 = 4，事件间隔 = 2</em></p>
+<p>每个事件中的第一个子事件与事件同时开始，偏移量来自相关的 ACL 连接事件。每个事件的子事件数量是一个配置参数，子事件在每个子事件间隔内发生一次，如图 23 所示。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_23.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_23.png" alt="Figure 23" loading="lazy"></a><em>图 23 - CS 事件调度中 CS 子事件的示例</em></p>
+<p>每个子事件至少包括两个步骤。这可能因子事件而异，具体取决于应用程序如何使用通道声学。步骤的持续时间也可能不同，同样取决于配置。步骤的调度以及分配给它们的射频传输和接收时隙受严格的时间规则的约束，更多细节可以在蓝牙核心规范中找到。</p>
+<h4 id="35-蓝牙信道探测步骤"><strong>3.5 蓝牙信道探测步骤</strong></h4>
+<h5 id="351-关于步骤"><strong>3.5.1 关于步骤</strong></h5>
+<p>图 21 显示了蓝牙信道探测程序的结构，包括事件、子事件和步骤。在步骤中，发起者和接收者之间会进行射频信号的交换。根据应用层选择使用的信道探测方法（PBR 和/或 RTT），细节会有所不同。</p>
+<p>一般来说，步骤要么与校准有关，要么与获取可以被距离测量算法的应用层使用的低级测量值有关。</p>
+<h5 id="352-数据包和音调"><strong>3.5.2 数据包和音调</strong></h5>
+<p>当 RTT 在使用时，发起者和反射者之间会交换一种称为 CS_Sync 的类型的数据包。</p>
+<p>A CS_SYNC packet has the following structure:</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_24.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_24.png" alt="Figure 24" loading="lazy"></a><em>图 24 - CS_Sync 数据包</em></p>
+<p>在 CS_Sync 数据包末尾包含声音序列或随机序列是可选的。这些术语将在 3.10 RTT 选项和准确性中解释。</p>
+<p>CS_Sync 数据包可以使用 LE 1M、LE 2M 或 LE 2M 2BT PHY 进行传输。与其他蓝牙 LE 数据包一样，使用 GFSK4 调制方案。</p>
+<p>当 PBR 在使用时，称为 CS 音调的信号在发起者和反射者之间交换。这些信号使用幅度键控（ASK）来创建一个在指定时间段内频率固定的符号。</p>
+<h5 id="353-步骤模式"><strong>3.5.3 步骤模式</strong></h5>
+<p>步骤具有相关的模式，决定了步骤的目标和其中进行的活动类型。定义了四种模式，分别称为模式 0、模式 1、模式 2 和模式 3。</p>
+<p><strong>3.5.3.1 模式-0</strong></p>
+<p>模式 0 与校准有关。所有设备都会表现出一定程度的时钟漂移和频率生成不准确。这是 RTT 和 PBR 距离测量方法的一个问题。</p>
+<p>模式 0 步骤的目的是允许发起者测量反射器传输的信号频率与发射器生成的信号频率之间的差异。</p>
+<p>发起者在选定的频道和频率上发送一个 CS_Sync 数据包。反射器回复一个 CS_Sync 数据包和一个 CS 音调。两者都需要在与从发起者接收到的信号相同的频率上进行传输。</p>
+<p>CS_Sync 数据包为发起者提供了一个前导，用于调整接收器并设置其增益。CS 音调用作测量频率偏移的基础，如下所述。</p>
+<p>在接收到来自反射器的响应信号后，发起者计算一个称为分数频率偏移（FFO）的值。FFO 的计算涉及从反射器接收到的音调频率和反射器的模式 0 FAE 表（见<a href="#mfaetr">3.3.4 模式 0 FAE 表请求</a>）。</p>
+<p>FFO 随后用于计算，以补偿两个设备之间的差异并提高结果的准确性。</p>
+<p>图 25 显示了发起者发送 CS_Sync 数据包，随后反射器响应发送 CS_Sync 和 CS 音调。各种时间槽的持续时间由符号名称表示，具有以下含义：</p>
+<p>T_SY</p>
+<p>同步序列的时间。持续时间取决于 CS_Sync 数据包的长度和使用的物理层。</p>
+<p>T_RD</p>
+<p>传输降幅时间。这个时间是 5 微秒，用于发射器从射频通道中移除能量。</p>
+<p>T_IP1</p>
+<p>在发起者传输结束和反射器传输开始之间的插曲时间。持续时间在 10 微秒到 145 微秒之间，具体由能力交换程序确定。</p>
+<p>T_GD</p>
+<p>保护时间。始终为 10 微秒。</p>
+<p>T_FM</p>
+<p>频率测量的时间。步进模式-0 的持续时间始终为 80 微秒。</p>
+<p><em>表 5 – 时间段参数</em></p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_25.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_25.png" alt="Figure 25" loading="lazy"></a><em>图 25 - 模式 0 传输和时间槽</em></p>
+<p>对模式 0 步骤的支持是强制性的。</p>
+<p><strong>3.5.3.2 模式-1</strong></p>
+<p>在模式 1 步骤中，从发起者发送到反射者的 CS_Sync 数据包的往返时间（RTT）被计算。</p>
+<p>在发送初始 CS_Sync 数据包时，发起者记录一个时间戳，称为出发时间（ToD）。发起者在接收到反射器发送回的 CS_Sync 数据包时记录第二个时间戳，这被称为到达时间（ToA）。</p>
+<p>图 26 显示了发起者对 CS_Sync 数据包的模式 1 传输，随后反射器响应发送的 CS_Sync。各种时间槽的持续时间由符号名称表示，这些名称在表 5 中进行了描述。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_26.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_26-1000x248.png" alt="Figure 26" loading="lazy"></a><em>图 26 - 模式 1 传输和时间槽</em></p>
+<p>插曲期 T_IP1 是一个已知的固定长度，足以让反射器准备并传输其数据包。在交换的这一部分使用预先商定的固定时间段意味着发起者知道接收方的周转时间，并可以在其 RTT 计算中使用这一点。</p>
+<p>定义了几种用于 ToD 和 ToA 时间戳的方法。不同的方法选择提供了不同程度的准确性。替代方法在 3.10 RTT 选项和准确性中进行了说明。</p>
+<p>对模式 1 步骤的支持是强制性的。</p>
+<p><strong>3.5.3.3 模式-2</strong></p>
+<p>模式 2 步骤的目的是支持基于相位的测距（PBR）。</p>
+<p>模式 2 步骤开始时，发起者在选定的频道上通过每个可用的天线路径发送一个 CS 音调。在降幅时间和间隔期之后，反射器以 CS 音调回复，选择与从发起者接收到的音调相同的频率，并通过其每个天线路径发送。图 27 说明了这一交换。时间槽持续时间涉及表 5 中描述的术语以及此处表 6 中定义的附加术语。</p>
+<p>T_SW</p>
+<p>天线切换保留的时间段。</p>
+<p>T_PM</p>
+<p>相位测量音的传输时间。</p>
+<p>T_IP2</p>
+<p>CS 音调之间的插曲时间。</p>
+<p>N_AP</p>
+<p>天线路径数量。</p>
+<p><em>表 6 – 附加步骤模式-2 时间参数</em></p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_27.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_27-1000x268.png" alt="Figure 27" loading="lazy"></a><em>图 27 - 模式 2 传输和时间槽</em></p>
+<p>发起器在每个天线路径上测量在时间段 T_PM 内从反射器接收到的 CS 音调的相位。使用在模式 0 步骤中计算的补偿值进行调整。相位测量结果以 IQ 样本数组的形式通过 HCI 事件传递给应用层。</p>
+<p>需要注意的是，CS 音调传输的总持续时间的表达式包括术语_<strong>N_AP + 1</strong>_。这是因为一个额外的时间段称为 CS 音调扩展时隙，跟在为每个天线路径分配的 T_PM 持续时间时隙之后。出于安全原因（见 3.12 安全），该时隙的传输使用是随机的，但在使用时，CS 音调是通过在紧接着的 T_PM 时隙中使用的相同天线进行传输的。</p>
+<p>对模式 2 步骤的支持是强制性的。</p>
+<p><strong>3.5.3.4 模式-3</strong></p>
+<p>模式 3 步骤支持通过 CS_Sync 数据包和 CS 音调的组合交换进行 RTT 计算和 PBR。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_27_B.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_27_B-1000x260.png" alt="" loading="lazy"></a><em>图 28 – 模式 3 传输和时间槽</em></p>
+<p>对模式 3 的支持不是强制性的。希望结合 PBR 和 RTT 的应用程序，如果通过能力交换程序发现发起者和反射者都不支持模式 3，可以改为使用结合模式 2 和模式 1 步骤的模式序列。有关蓝牙信道探测此功能的更多信息，请参见 3.8 模式序列。</p>
+<p>模式-3 步骤包括一个扩展插槽，正如模式-2 步骤中所描述的那样。</p>
+<h4 id="36-建立相位差"><strong>3.6 建立相位差</strong></h4>
+<p>在前面的关于模式 0、模式 1、模式 2 和模式 3 步骤的部分中，重点是每种类型的单个步骤中时间如何划分和使用的细节。但距离计算需要多次交换，或者是为了提高计算距离的准确性，或者是因为所使用的方法要求这样。根据定义，PBR 至少需要两个交换。</p>
+<p>为了能够测量相位差，需要有多个传输信号，并且必须涉及多个频率。单个步骤涉及在单个选定的通道和频率上交换一个 CS 音调。因此，很明显，PBR 方法需要执行至少两个支持 PBR 方法的步骤。在蓝牙通道探测程序中的步骤序列及其重复和模式变化的模式是 3.8 模式序列的主题。需要注意的是，通常情况下，使用相应更大数量的 RF 通道进行更多的 CS 音调交换将为应用程序提供更多数据，并有机会产生更准确的距离测量。然而，更多的交换将需要更多的时间来执行。</p>
+<h4 id="37-天线切换"><strong>3.7 天线切换</strong></h4>
+<p>如 3.2.3 天线阵列中所述，设备可能包括多个天线，用于相位基测距交换期间。设备在 PBR 交换（即模式 2 或模式 3 步骤）期间可使用的天线最大数量为四个。给定的一对天线配置，一个属于发起者，一个属于反射者，提供了两个设备之间的多个天线路径。</p>
+<p>根据蓝牙核心规范，共定义了八种天线排列。与核心规范中的类似表格相对应，表 7 列出了这些配置。表格后面的数字显示了几个示例。</p>
+<p>天线配置索引 (ACI)</p>
+<p>设备 A 多根天线</p>
+<p>设备 B 的天线数量</p>
+<p>天线路径数量 (N_AP)</p>
+<p>0</p>
+<p>1</p>
+<p>1</p>
+<p>1</p>
+<p>1</p>
+<p>2</p>
+<p>1</p>
+<p>2</p>
+<p>2</p>
+<p>3</p>
+<p>1</p>
+<p>3</p>
+<p>3</p>
+<p>4</p>
+<p>1</p>
+<p>4</p>
+<p>4</p>
+<p>1</p>
+<p>2</p>
+<p>2</p>
+<p>5</p>
+<p>1</p>
+<p>3</p>
+<p>3</p>
+<p>6</p>
+<p>1</p>
+<p>4</p>
+<p>4</p>
+<p>7</p>
+<p>2</p>
+<p>2</p>
+<p>4</p>
+<p><em>表 7 - 天线配置</em></p>
+<p><em>图 29 – 1:1 天线配置（ACI=0，N_AP=1）</em></p>
+<p><em>图 30 – 1:2 天线配置（ACI=4，N_AP=2）</em></p>
+<p><em>图 31 – 3:1 天线配置（ACI=2，N_AP=3）</em></p>
+<p><em>图 32 – 2:2 天线配置（ACI=7，N_AP=4）</em></p>
+<p>天线切换发生在模式 2 步骤（PBR）和每个模式 3 步骤的 PBR 相关部分。具体来说，在发送 CS 音调时，可以根据发射设备的天线配置应用天线切换。模式 2 和模式 3 步骤中 CS 音调传输时间槽的持续时间计算考虑了天线切换和多个天线路径：</p>
+<p>(T_SW+T_PM)*(N_AP+1)</p>
+<p>→ T_SW 提供天线切换所需的时间，其值为 0、2、4 或 10 微秒。</p>
+<p>→ T_PM 是 CS 音调传输的时间。</p>
+<p>→ N_AP 是天线路径的数量。+1 项是为了允许扩展插槽。</p>
+<h4 id="38-模式排序"><strong>3.8 模式排序</strong></h4>
+<h5 id="381-模式序列概述"><strong>3.8.1 模式序列概述</strong></h5>
+<p>蓝牙信道探测程序始终涉及执行多个步骤的序列和至少两种模式的混合。蓝牙核心规范定义了模式组合和排序规则，本节将探讨其中的关键方面。</p>
+<p>蓝牙信道探测应用在获得来自蓝牙控制器的数据时，能够通过更多的包和音调交换产生更高质量、更准确的距离测量。</p>
+<h5 id="382-模式组合"><strong>3.8.2 模式组合</strong></h5>
+<p>在蓝牙信道探测过程中，总是涉及至少两种不同模式类型的步骤。第一步是用于频率偏移测量的模式 0 步骤，第二步必须是其他任何一种模式。但也可以使用两种非模式 0 模式与强制的模式 0 类型的组合。在所有情况下，主要的非模式 0 模式称为主模式（Main_Mode）。如果有的话，次要的非模式 0 模式称为子模式（Sub_Mode）。表 8 摘自蓝牙核心规范，列出了六种允许的非模式 0 模式组合。</p>
+<p>Main_Mode</p>
+<p>Sub_Mode</p>
+<p>模式-1</p>
+<p>无</p>
+<p>模式-2</p>
+<p>无</p>
+<p>模式-3</p>
+<p>无</p>
+<p>模式-2</p>
+<p>模式-1</p>
+<p>模式-2</p>
+<p>模式-3</p>
+<p>Mode-3</p>
+<p>模式-2</p>
+<p><em>表 8 - 允许的非模式 0 模式组合</em></p>
+<h5 id="383-模式序列配置和子模式插入"><strong>3.8.3 模式序列配置和子模式插入</strong></h5>
+<p>应用程序能够使用 HCI 命令配置步进模式序列。这发生在蓝牙信道探测配置和启动程序期间。设备之间可能请求和达成一致的关键参数包括表 9 中所示的参数。</p>
+<p>HCI 参数</p>
+<p>目的</p>
+<p>Mode_0_Steps</p>
+<p>定义在每个 CS 子事件开始时要执行的连续模式 0 步骤的数量。允许的值为 1、2 或 3。</p>
+<p>Main_Mode_Type</p>
+<p>指示将作为主要模式的模式（1、2 或 3）。</p>
+<p>Sub_Mode_Type</p>
+<p>指示将成为子模式的模式（1、2 或 3）。</p>
+<p>Min_Main_Mode_Steps</p>
+<p>确定在子模式步骤之前必须始终执行的主模式步骤的最小数量。</p>
+<p>Max_Main_Mode_Steps</p>
+<p>确定在子模式步骤之前必须始终执行的主模式步骤的最大数量。</p>
+<p><em>表 9 – 模式序列控制参数</em></p>
+<p>通过使用这些参数，应用程序可以指定将在序列中发生的步骤模式。</p>
+<p>一般来说，步进模式序列遵循以下模式：</p>
+<ol>
+<li>一个或多个模式 0 步骤开始子事件</li>
+<li>接下来是一系列 n 个主要模式步骤，其中 n 是随机选择的，范围在 Min_Main_Mode_Steps 到 Max_Main_Mode_Steps 之间（包括这两个值）</li>
+<li>由于蓝牙核心规范称为子模式插入的过程，单个子模式步骤跟随 n 个主模式步骤的序列</li>
+</ol>
+<p>步骤模式序列与子事件边界没有直接关联，除了一个一般规则，即子事件必须始终以一个或多个模式 0 步骤开始。完整序列可以跨越多个子事件。</p>
+<p>图 33 显示了一些模式序列参数影响的简单示例。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_32.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_32-1000x334.png" alt="Figure 32" loading="lazy"></a><em>图 33 - 步骤模式序列示例</em></p>
+<p>子事件 1 以两个连续的模式 0 步骤开始。所有子事件至少以一个模式 0 步骤开始，在这个例子中，Mode_0_Steps 参数的值为 2。</p>
+<p>接下来，我们有一系列三个模式 2 步骤。它们是模式 2 步骤，因为主模式类型为 2。序列化的主模式步骤数量是随机选择的，最小主模式步骤和最大主模式步骤作为上下限。在这种情况下，随机选择的值是三个。</p>
+<p>在三个主要模式步骤之后，由于 Sub_Mode_Type 的值为 1，并且所需的主要模式步骤已完成，因此包含一个类型为模式-1 的单个子模式步骤。</p>
+<p>在子事件中还有足够的时间（其持续时间在 CS 启动过程中通过 Subevent_Len 参数指定）可以包含一个步骤。前一个步骤是子模式步骤，因此主模式/子模式序列再次开始，但这次随机选择两个主模式步骤作为必需计数。子事件 1 中的最后一步是模式-2 的主模式步骤，它开始了新的序列。</p>
+<p>子事件 2 以两个模式 0 步骤开始。上一个子事件中启动的主要模式序列随后继续进行一个主要模式步骤，完成所需的两个步骤计数。这个序列以一个子模式步骤完成。</p>
+<p>再次，一个新的主模式/子模式序列开始，这次随机选择了五个主模式步骤。三个步骤在当前子事件结束之前包含在内。子事件三以这个示例的两个模式 0 步骤开始，然后是所需的五个步骤中的另外两个主模式步骤，最后是一个子模式步骤。</p>
+<p>该模式继续，每次需要新序列时随机选择主要模式步骤的数量，直到完成程序指定的子事件数量。</p>
+<h5 id="384-主模式重复"><strong>3.8.4 主模式重复</strong></h5>
+<p>还有另一个可以被应用程序使用的模式序列参数。Main_Mode_Repetition 指定从上一个子事件到当前子事件要重复的最近主模式步骤的数量。</p>
+<p>当主模式重复适用时，当前子事件中重复的步骤使用与前一个子事件中相应步骤相同的通道索引。这确保了重复步骤的传输具有相同的预期频率。然而，重复传输的其他方面，特别是与安全性相关的方面，在每一步中都是重新生成的。请注意，在相同频率上重复主模式步骤的目的是解决可能的频率漂移以及多普勒效应。</p>
+<p>主模式重复为应用程序提供了关联某些交换属性的机会，并可能使跟踪移动设备的速度变得更容易。</p>
+<p>由于主模式重复而纳入模式序列的步骤不计入在<a href="#mscsmi">3.8.3 模式序列配置和子模式插入</a>中描述的子模式插入过程。</p>
+<h5 id="385-应用程序和模式排序考虑事项"><strong>3.8.5 应用程序和模式排序考虑事项</strong></h5>
+<p>能够通过子模式插入和主模式重复来配置模式组合和控制步进模式序列，使应用程序在蓝牙信道探测过程中拥有很大的控制权。应用程序可能有多种目标，以寻求从这种灵活性中受益。</p>
+<p>PBR 是两种距离测量方法中最准确的一种，同时使用 RTT 为系统增加了相当大的安全性。它还允许处理使用 PBR 方法可能出现的距离模糊性。</p>
+<p>步骤模式-3 在单一模式类型中同时支持这两种方法，但对模式-3 的支持是可选的。因此，在能力交换过程中发现模式-3 不可用的设备，必须混合模式-1（RTT）和模式-2（PBR）步骤。这可以通过选择模式-2 作为主模式，模式-1 作为子模式来实现。</p>
+<p>另一个应用考虑因素是延迟。每次信号交换都需要时间。根据天线路径的数量，模式 1 的 RTT 交换有时比模式 2 的 PBR 交换花费更长时间。鉴于 RTT 的作用是通过使整体蓝牙信道探测过程更安全来补充 PBR，因此需要将延迟保持在某个阈值以下的应用可能会选择在蓝牙信道探测过程中包含较低比例的 RTT 交换。这可以通过选择模式 2（PBR）作为主要模式，模式 1（RTT）作为子模式，并将 Min_Main_Mode_Steps 和 Max_Main_Mode_Steps 参数设置为合适的值，以便展现所需的主模式与子模式步骤的最小比例。</p>
+<p>在两台设备都支持模式 3 的情况下，延迟和 PBR 与 RTT 交换的比例仍然是应用需要考虑的问题。模式 3 中的所有交换都以相等的比例包含 PBR 相关的 CS 音调和 RTT 相关的 CS_Sync 数据包。这对于某些应用来说可能被认为是次优的。</p>
+<p>另一方面，如果得到支持，模式 3 在与其他模式一起使用时可以提供优势。如果应用程序需要一定数量的相位测量和一定比例的 RTT 测量，那么可以通过结合模式 2 和模式 3 来实现，而不是模式 2 和模式 1，从而减少步骤。</p>
+<p>图 34 显示了使用模式 2 的主模式和模式 1 的子模式实现的 3:1 PBR 与 RTT 测量比。在这个例子中，9 个 PBR 测量和 3 个 RTT 测量通过一系列 3 个子事件交付。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_33.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_33-1000x334.png" alt="Figure 33" loading="lazy"></a><em>图 34 - 使用模式 2 和模式 1 的 3:1 PBR 与 RTT 比率</em></p>
+<p>图 35 显示了在主模式为模式 2 但这次子模式为模式 3 的情况下，在两个子事件中交付的 PBR 和 RTT 测量的相同数量和比例。请注意，这两个插图都不是按比例绘制的，可能无法反映实际的空中时间。假设子事件的长度足以容纳两个插图中所示的步骤，并且只涉及一条天线路径，则两个设备之间的步骤和交换数量是正确的，这些插图应有助于解释这两种看似相似的配置之间的潜在差异。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_34.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_34-1000x334.png" alt="Figure 34" loading="lazy"></a><em>图 35 - 使用模式 2 和模式 3 的 3:1 PBR 与 RTT 比率</em></p>
+<h4 id="39-rf-通道和通道选择"><strong>3.9 RF 通道和通道选择</strong></h4>
+<h5 id="391-蓝牙信道探测信道映射"><strong>3.9.1 蓝牙信道探测信道映射</strong></h5>
+<p>通常，蓝牙低能耗将 2.4 GHz ISM 频段划分为 40 个频道，每个频道宽 2 MHz。然而，使用蓝牙频道探测时情况并非如此。</p>
+<p>为了蓝牙信道探测的目的，定义了 72 个信道，每个信道宽度为 1 MHz，并具有唯一的信道索引值。这些信道的排列确保避免了 LE 主要广告信道。</p>
+<p>1 MHz 的信道宽度而不是通常的 2 MHz，确保使用相邻信道的 PBR 信号之间的频率间隔，使得距离模糊性直到大约 150 米才会出现。相比之下，频率间隔为 2 MHz 的信号在 PBR 计算中大约在 75 米时会产生距离模糊性。</p>
+<p>从蓝牙核心规范中复制，表 10 显示了用于蓝牙信道探测的信道索引值及其相关的射频中心频率。第三列指示某个信道是否可以用于蓝牙信道探测交换。</p>
+<p>CS 频道索引</p>
+<p>射频中心频率</p>
+<p>允许</p>
+<p>1</p>
+<p>2402 MHz</p>
+<p>不</p>
+<p>2</p>
+<p>2403 MHz</p>
+<p>不</p>
+<p>3</p>
+<p>2404 MHz</p>
+<p>是</p>
+<p>…</p>
+<p>…</p>
+<p>…</p>
+<p>22</p>
+<p>2424 MHz</p>
+<p>是</p>
+<p>23</p>
+<p>2425 MHz</p>
+<p>不</p>
+<p>24</p>
+<p>2426 MHz</p>
+<p>不</p>
+<p>25</p>
+<p>2427 MHz</p>
+<p>不</p>
+<p>26</p>
+<p>2428 MHz</p>
+<p>是</p>
+<p>…</p>
+<p>…</p>
+<p>…</p>
+<p>76</p>
+<p>2478 MHz</p>
+<p>是</p>
+<p>77</p>
+<p>2479 MHz</p>
+<p>不</p>
+<p>78</p>
+<p>2480 MHz</p>
+<p>不</p>
+<p><em>表 10 - 蓝牙信道测量信道索引和射频物理信道</em></p>
+<h5 id="392-通道过滤"><strong>3.9.2 通道过滤</strong></h5>
+<p>维护一个通道索引过滤位图。这是一个为蓝牙通道探测定义的通道索引列表，如<a href="#tcscm">3.9.1 蓝牙通道探测通道图</a>中所述，每个通道标记为包含或排除。蓝牙通道探测通道索引过滤图由一个称为通道探测通道图更新程序的链路层过程维护，该过程允许发起者或反射者根据其对本地通道条件的评估，通知另一个设备使用或避免哪些通道。任何通道选择算法都不会选择被排除的通道。</p>
+<h5 id="393-频率跳变"><strong>3.9.3 频率跳变</strong></h5>
+<p>频率跳变通常发生在步骤执行之前，如图 36 所示。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_35.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_35-1000x81.png" alt="Figure 35" loading="lazy"></a><em>图 36 - 执行步骤前的频率跳变</em></p>
+<p>当主模式重复参数被配置为非零值时，此规则有例外。由于模式重复而重复的步骤将使用与它们重复的前一个子事件中的步骤相同的通道索引。</p>
+<h5 id="394-通道选择"><strong>3.9.4 通道选择</strong></h5>
+<p><strong>3.9.4.1 概述</strong></p>
+<p>一组新的三通道选择算法（CSA）已被定义用于蓝牙信道探测。它们统称为 CSA #3，分别为 CSA #3a、CSA #3b 和 CSA #3c。</p>
+<p>CSA #3a 仅用于选择在模式 0 步骤中使用的通道。</p>
+<p>CSA #3b 和 CSA #3c 都是为非模式 0 步骤设计的，但在蓝牙信道探测程序实例中只能使用其中一个。</p>
+<p>因此，任何时候都有两种不同的信道选择算法与蓝牙信道探测积极相关。</p>
+<p><strong>3.9.4.1 通道索引洗牌</strong></p>
+<p>频道选择涉及两个不同的频道索引列表。第一个由 CSA #3a 使用，用于模式 0 步骤的频道选择。第二个用于 CSA #3b 或 CSA #3c 的非模式 0 步骤。</p>
+<p>CSA #3a 和 CSA #3b 几乎相同。</p>
+<p>通道索引列表是通过随机化通道图中标记为包含的通道的顺序来创建的，从而生成一个打乱的通道列表。CSA #3a 和 CSA #3b 以完全相同的方式执行此操作。CSA #3c 采用不同的方法，但依赖于相同的基本打乱函数，称为 Bluetooth Core Specification 中的 cr1。</p>
+<p><strong>3.9.4.2 CSA #3a</strong></p>
+<p>模式 0 通道选择算法 CSA #3a 使用了一个洗牌的通道列表，如<a href="#cis">3.9.4.1 通道索引洗牌</a>中所述。用于模式 0 步频跳频的洗牌通道列表与用于非模式 0 跳频的相应通道列表不同。</p>
+<p>洗牌频道列表中的每个条目都是唯一的，仅使用一次。当洗牌频道列表中的所有条目都被使用后，它会被重新生成，创建一个新的随机频道列表。</p>
+<p><strong>3.9.4.3 CSA #3b</strong></p>
+<p>非模式 0 通道选择算法 CSA #3b 使用一个与模式 0 通道跳跃所用的通道列表不同的洗牌通道列表。CSA #3b 允许通道索引列表在重新生成之前迭代多次，这由一个名为 CSNumRepetitions 的参数控制，应用程序可以设置该参数。</p>
+<p><strong>3.9.4.3 CSA #3c</strong></p>
+<p>算法 CSA #3c 与 CSA #3b 有显著不同。通道图中包含的通道子集被组织成组，并生成形成形状的通道模式。支持两种模式类型，分别称为帽子和 X。CSA #3c 在某些情况下可能在检测反射信号路径方面提供一些优势。有关更多详细信息，请参阅蓝牙核心规范。对 CSA #3c 的支持是可选的。</p>
+<h4 id="310-rtt-选项和准确性"><strong>3.10 RTT 选项和准确性</strong></h4>
+<p>RTT 方法涉及在模式 1 和/或模式 3 的步骤中交换 CS_Sync 数据包。图 24 显示了 CS_Sync 数据包的结构。</p>
+<p>定义了几种建立到达时间（ToA）时间戳的方法，这些时间戳用于计算往返时间。应用程序可以通过使用 RTT_Type 参数的 HCI 命令在蓝牙信道探测配置过程中指示要使用的方法。</p>
+<p>选项是基于访问地址字段进行时间测量，使用长度为 32 或 96 位的探测序列，或使用长度为 32、64、96 或 128 位的随机序列。时间估计的准确性根据所使用的方法和用于计时目的的字段长度而有所不同。使用探测序列和使用随机序列都允许进行一种更准确的估计形式，称为分数时间估计。</p>
+<h5 id="3101-基于访问地址的定时"><strong>3.10.1 基于访问地址的定时</strong></h5>
+<p>CS_Sync 数据包包含一个 32 位的访问地址字段。建立 ToA 值的最简单方法是控制器使用其时钟在接收到 CS_Sync 数据包中的访问地址字段时捕获时间戳。</p>
+<p>接入地址是链路层的 32 位二进制值，但在传输时，其值由一系列模拟符号表示，这些符号是通过对这些数字位应用 GFSK 调制形成的。单个符号由一个频率的无线传输组成，该频率表示 0 位或 1 位值，并且根据符号速率（由选择 LE 1M 或 LE 2M PHY/LE 2M 2BT PHY 决定），持续时间为一微秒或半微秒。</p>
+<p>接收信号的过程涉及对 incoming 信号的采样，这由以某一速率运行的本地振荡器驱动。该信号的传输同样由另一设备中的振荡器驱动。</p>
+<p>获取入站信号中访问地址接收的时间戳有多种方法。具体细节留给实现，但可能包括记录数据包到达蓝牙控制器的时间，然后根据数据包长度、符号速率和采样率进行调整，以估算访问地址接收的时间。或者，实施可能能够在无线信号处理期间计算 ToA 时间戳，但在解调和检查访问地址值后需要验证时间戳，然后才能将其用于 RTT 计算中的 ToA。</p>
+<p>发射器的振荡器和接收器的振荡器不太可能彼此同步，这可能是该过程中的不准确来源。为了改善结果，建议在一系列交换的数据包中进行测量，并计算值的分布。然后可以使用该分布来提高到达时间（ToA）时间戳的准确性。</p>
+<p>链路层规范，部分 H，第 3.2.2 节提供了有关如何通过确定由于最佳采样点与实际采样点之间的差异而导致的访问地址采样中的分数定时误差来改进使用此方法创建的时间戳的信息。这种误差是由于本地振荡器与远程设备不同步造成的。</p>
+<h5 id="3102-分数时间估计"><strong>3.10.2 分数时间估计</strong></h5>
+<p>在链路层规范 H 部分的 3.3 和 3.4 节中描述了两种可选方法，这些方法提供更好的 ToA 时间戳精度。两者都提供分数时间估计。</p>
+<p>CS_Sync 数据包可以在数据包末尾容纳额外的可选数据。如果使用此选项，可以将两个字段中的一个附加到 CS_Sync 数据包：随机序列或声波序列。</p>
+<p>第一种分数定时方法涉及分析 CS_Sync 数据包中的可选随机序列字段，以确定分数定时误差。这与<a href="#tbaa">3.10.1 基于接入地址的定时</a>中描述的技术类似，用于确定最佳采样点与实际采样点之间的差异。从随机序列计算的分数定时误差同样用于优化接入地址时间戳。</p>
+<p>第二种分数定时方法基于对附加在 CS_Sync 数据包上的声测序列字段的分析。声测序列是在链路层上交替出现的 0 和 1 的模式，当使用 GFSK 调制时，会产生两个具有不同频率和相位的不同无线电音调。对声测序列产生的两个音调所表现出的相位差的分析可以计算出分数定时误差，并用于优化 ToA 时间戳。</p>
+<h5 id="3103-rtt-方法的比较"><strong>3.10.3 RTT 方法的比较</strong></h5>
+<p>蓝牙信道探测应用程序开发人员可以根据三种不同方法产生的测量值推导往返时间。选择包括使用接入地址的到达时间（ToA）或使用基于随机序列或在 CS_Sync 数据包中的探测序列的两种分数方法之一。</p>
+<p>蓝牙通道探测功能的实施者必须实现该功能的强制性方面，但在可选功能方面可以选择性实施，前提是他们愿意。实施复杂性各不相同，可能是做出该决定时考虑的因素之一。</p>
+<p>这三种 RTT 方法为应用开发者提供了不同程度的距离测量准确性、安全性和延迟。一般来说，分数方法有潜力提供最准确的结果和最佳的安全性。</p>
+<h4 id="311-le-2m-2bt-phy"><strong>3.11 LE 2M 2BT PHY</strong></h4>
+<h5 id="3111-调制方案"><strong>3.11.1 调制方案</strong></h5>
+<p>调制方案定义了一种通过信号的一个或多个物理属性对数字信息进行编码的方法。调制方案产生的符号在模拟世界中承载信息，就像比特在数字世界中包含信息一样。符号表示一个或多个比特，具体取决于调制方案的工作方式。</p>
+<p>频移键控（FSK）是调制方案的一个简单示例。它是一种二进制调制方案，其中一个数字位对应一个模拟符号。</p>
+<p>FSK 涉及通过将载波信号的频率向上移动一定量（称为频率偏移）来产生表示二进制值 1 的符号，或者向下移动相同的量来表示二进制 0。</p>
+<p>图 37 提供了基本频移键控（FSK）应用于特定比特值流的示例。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_36.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_36-1000x256.png" alt="Figure 36" loading="lazy"></a><em>图 37 – 频移键控（FSK）编码比特流 01010101010</em></p>
+<p>基本频移键控（FSK）的一个特征是频率之间的突然切换，这会产生噪声，噪声的频率范围比理想情况要宽。为了应对这一点，蓝牙技术使用了一种特殊的 FSK 变体，称为高斯频移键控（GFSK）。</p>
+<p>GFSK 与基本的 FSK 不同，它涉及一个滤波器，使得频率之间的过渡遵循一个曲线。曲线的形状和频率过渡的速率由各种参数决定，包括带宽-比特周期乘积或 BT。</p>
+<h5 id="3112-带宽-比特周期乘积"><strong>3.11.2 带宽-比特周期乘积</strong></h5>
+<p>带宽-比特周期乘积（BT）是信号的一个属性，提供有关其带宽与符号持续时间之间关系的信息。</p>
+<p>BT 影响构成符号的无线电脉冲的形状和跨度。较高的 BT 值会导致脉冲更窄、更方，而较低的值则会导致脉冲形状更宽、更圆。</p>
+<h5 id="3113-le-2m-2bt"><strong>3.11.3 LE 2M 2BT</strong></h5>
+<p>即将发布的蓝牙核心规范更新引入了一种新的物理层，称为 LE 2M 2BT。LE 2M 2BT 目前可能仅与蓝牙信道探测一起使用。</p>
+<p>表 11 中突出显示了 PHY 与 LE 2M 2BT 关键方面的比较。</p>
+<p>LE 1M</p>
+<p>LE Coded</p>
+<p>LE 2M</p>
+<p>LE 2M 2BT</p>
+<p>符号率</p>
+<p>1 Msym/s</p>
+<p>1 Msym/s</p>
+<p>2 Msym/s</p>
+<p>2 Msym/s</p>
+<p>BT</p>
+<p>0.5</p>
+<p>0.5</p>
+<p>0.5</p>
+<p>2.0</p>
+<p>最小频率偏差</p>
+<p>185 kHz</p>
+<p>185 kHz</p>
+<p>370 kHz</p>
+<p>420 kHz</p>
+<p>错误检测</p>
+<p>CRC</p>
+<p>CRC</p>
+<p>CRC</p>
+<p>不适用</p>
+<p>错误修正</p>
+<p>无</p>
+<p>FEC</p>
+<p>无</p>
+<p>不适用</p>
+<p>需求</p>
+<p>强制性</p>
+<p>可选</p>
+<p>可选</p>
+<p>可选。仅用于通道探测。</p>
+<p><em>表 11 - 蓝牙低能耗物理层的比较</em></p>
+<p>LE 2M 2BT PHY 只能与蓝牙信道探测一起使用。它的使用可以增强安全性，如<a href="#le2m2bt-2">第 3.13.7 节</a>中所述。</p>
+<p>当 BT=0.5 与 BT=2.0 时脉冲的形状如图 38 所示。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_37.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_37.png" alt="Figure 37" loading="lazy"></a><em>图 38 - 脉冲形状</em></p>
+<h4 id="312-蓝牙信道探测的信噪比控制步骤"><strong>3.12 蓝牙信道探测的信噪比控制步骤</strong></h4>
+<p>一些无线电发射器具有调整其信噪比（SNR）以位于指定范围内的能力。如果发起器和反射器设备都支持此功能，则可以用于提高与 RTT 距离测量方法相关的蓝牙通道探测步骤的安全性，即模式 1 和模式 3 步骤。第<a href="#snrcrtts">3.13.8 节 SNR 控制和 RTT 安全性</a>对此进行了详细说明。</p>
+<p>蓝牙核心规范定义了一些与以分贝（dB）测量的相关信噪比输出水平对应的信噪比输出指数（SOI）值。表 12 重现了这些定义。</p>
+<p>SNR 输出指数（SOI）</p>
+<p>信噪比输出水平（分贝）</p>
+<p>0</p>
+<p>18</p>
+<p>1</p>
+<p>21</p>
+<p>2</p>
+<p>24</p>
+<p>3</p>
+<p>27</p>
+<p>4</p>
+<p>30</p>
+<p><em>表 12 – SNR 输出指标和水平</em></p>
+<p>在信道探测能力交换过程中（见<a href="#csce">3.3.2 蓝牙信道探测能力交换</a>），设备之间交换有关 SNR 输出控制和支持的 SOI 值的信息，以及在蓝牙信道探测开始过程中发送的 LL_CS_REQ 链路层 PDU 中指示是否使用 SNR 控制及其 SOI 值。</p>
+<h4 id="313-安全"><strong>3.13 安全</strong></h4>
+<h5 id="3131-概述"><strong>3.13.1 概述</strong></h5>
+<p>与距离测量解决方案独特相关的安全问题通常涉及不受信任的设备以某种方式欺骗一个受信任的设备，使其得出另一个受信任的设备足够接近以便授予或采取某些行动的结论。例如，在无钥匙进入系统中，如果一个恶意设备能够欺骗门锁，使其认为相关的受信任无线钥匙卡足够接近以便门自动解锁，则未经授权的人员可能会获得进入权限。</p>
+<p>一系列与距离测量相关的攻击被安全专家识别。一些涉及独立的恶意设备伪装成来自受信设备的通信（称为欺骗），而其他则是中间人攻击（MITM），它们中继来自受信设备的信号，通常在此过程中操纵信号或其数字内容，以导致受信设备错误计算与其受信对应设备之间的距离。这些攻击的细节在复杂性和实施成本上各不相同。</p>
+<p>蓝牙信道探测包括一系列功能，可以作为多种距离测量安全威胁的对策。这些功能可以被视为分为四个类别：</p>
+<ol>
+<li>结合使用 PBR 和 RTT 方法</li>
+<li>比特流和传输模式的随机化</li>
+<li>防御符号操作</li>
+<li>射频信号分析技术，包括攻击检测</li>
+</ol>
+<p>此外，蓝牙控制器实施者和应用程序开发者可以在需要时通过额外的保护措施增强蓝牙通道探测安全功能提供的标准安全特性。</p>
+<p>本节总结了蓝牙信道探测安全的关键方面。</p>
+<h5 id="3132-pbr-和-rtt-交叉检查"><strong>3.13.2 PBR 和 RTT 交叉检查</strong></h5>
+<p>蓝牙信道探测支持两种距离测量方法：基于相位的测距（PBR）和往返时间测量（RTT）。这两种方法的工作原理完全不同。</p>
+<p>应用程序可以通过选择合适的模式组合同时使用这两种方法，例如将模式-2 作为 PBR 的主要模式，将模式-1 作为 RTT 的子模式。有关模式组合和顺序的更多信息，请参见<a href="#ms">3.8 模式排序</a>。</p>
+<p>同时攻击这两种方法的复杂性，使得蓝牙信道探测信号的相位和计算的往返时间被操控以产生误导性和一致的结果，被安全专家视为非常高。</p>
+<h5 id="3133-初始化蓝牙通道探测安全性"><strong>3.13.3 初始化蓝牙通道探测安全性</strong></h5>
+<p><a href="#csss">3.3.1 蓝牙信道探测安全启动描述了初始化蓝牙信道探测安全的过程。这个过程在多个方面使蓝牙信道探测安全得以实现，并且本身也是安全的。</a></p>
+<p>首先，设备必须彼此配对。这是创建加密的 LE-ACL 链接所必需的。</p>
+<p>CS Security Start 然后通过加密的 LE-ACL 链接进行，这意味着蓝牙通道探测安全密钥数据的交换受到窃听者的保护。</p>
+<p>最后，中央设备和外围设备安全地交换蓝牙信道探测安全数据的部分值。这为两个设备提供了相同的数据，以构建每个 CS 初始化向量（CS_IV）、CS 实例化随机数（CS_IN）和 CS 个性化向量（CS_PV）的完整和共同值。</p>
+<p>CS_IV、CS_IN 和 CS_PV 是确定性随机比特生成器（DRBG）的输入，DRBG 是许多蓝牙信道探测安全功能的基本组件。</p>
+<h5 id="3134-确定性随机比特生成器-drbg"><strong>3.13.4 确定性随机比特生成器 (DRBG)</strong></h5>
+<p>蓝牙核心规范定义了一种随机位生成器，该生成器“与 NIST 特别出版物 800-90Ar1 中定义的建议一致”。它被称为确定性随机位生成器或 DRBG。</p>
+<p>实例化 DRBG 需要提供三个蓝牙信道探测安全参数，CS_IV、CS_IN 和 CS_PV 作为输入。在执行蓝牙信道探测安全启动程序后，发起者和反射器设备对这些参数具有相同的值。当使用相同的参数值初始化时，两个 DRBG 实例将在一系列调用中产生完全相同的比特序列，这使得该算法是确定性的。</p>
+<p>对于不具备 CS_IV、CS_IN 和 CS_PV 值的设备，使用 DRBG 生成的启动器和反射器设备对的比特序列看起来是随机的，且比特序列越长，未受信任设备匹配该序列中的比特值就越困难。</p>
+<p>使用 DRBG 对蓝牙信道探测比特流和某些传输调度方面进行随机化，可以降低恶意设备伪装可信设备的风险。</p>
+<p>使用 DRBG 的 CS 安全特性如下。</p>
+<p><strong>3.13.4.1 安全访问地址</strong></p>
+<p>访问地址字段出现在所有蓝牙链路层数据包中。它的目的是让设备决定一个数据包是否相关。例如，广告广播（ADVB）数据包使用一个特殊的访问地址值，该值将数据包标识为对任何接收它的设备可能相关，而通过 LE-ACL 连接交换的数据包具有一个访问地址值，该值实际上充当该连接的唯一标识符。</p>
+<p>在蓝牙信道探测的情况下，每个设备在每个模式 0、模式 1 和模式 3 的 CS 步骤中更改其 CS_Sync 数据包中的访问地址字段。因此，每个设备在每个步骤都有一个唯一的访问地址。新的访问地址值是使用涉及 DRBG 的选择规则生成的，并且两个设备都知道对方将使用的访问地址。接收设备检查访问地址值，并向主机报告任何问题。</p>
+<p>访问地址字段长度为 32 位，可以有 4,294,967,296 个不同的值。因此，恶意设备想要伪造 CS_Sync 数据包，每个交换的多个 CS_Sync 数据包中都有 1/4,294,967,296 的机会猜测正确的访问地址值。</p>
+<p><strong>3.13.4.2 RTT 分数定时的随机序列</strong></p>
+<p>如<a href="#rsrttft">3.12.4.2 RTT 分数定时的随机序列</a>中所述，CS_Sync 数据包可以包含一个可选的随机序列字段。该字段支持其中一种分数 RTT 方法。</p>
+<p>随机序列字段的内容是使用 CS DRBG 为每个传输的 CS_Sync 数据包（重新）生成的。随机序列字段的长度可以是 32、64、96 或 128 位。</p>
+<p><strong>3.13.4.3 声音序列标记信号</strong></p>
+<p>声音序列由 32 位或 96 位的可预测交替模式组成，用于分数 RTT 计算。为了降低这种已知位模式被以某种方式利用的风险，使用 DRBG 在序列中选择位置插入两个随机选择的 4 位值之一，称为标记信号。DRBG 选择的标记信号的值为 0b1100 或 0b0011。</p>
+<p>在声波序列中随机插入随机比特模式可以防止声波序列欺骗。</p>
+<p><strong>3.13.4.4 音调扩展插槽随机传输</strong></p>
+<p>模式 2 和模式 3 步骤包括一个音调扩展时隙（见<a href="#sm">3.5.3 步骤模式</a>）。音调扩展时隙始终被保留，但在该时间时隙内是否进行传输是随机的，并由 DRBG 控制。接收设备知道何时预期传输以及何时不预期传输在音调扩展时隙内，但攻击设备则不知道。</p>
+<p><strong>3.13.4.5 随机选择天线路径</strong></p>
+<p>基于相位的测距可以与八种配置中的天线阵列一起使用，如<a href="#as">3.7 天线切换</a>中所讨论的。在基于相位的测距过程中，信号通过两个设备之间存在的每个可用天线路径进行传输。所使用的路径序列在每个蓝牙信道探测步骤中使用 DRBG 进行随机化。</p>
+<h5 id="3135-声音序列"><strong>3.13.5 声音序列</strong></h5>
+<p>如<a href="#fte">3.10.2 分数定时估计</a>中所述，声波序列由交替的 0 和 1 的比特值序列组成。相应的射频信号可以视为由两种不同频率和不同相位的音调组成。这对应于在应用 GFSK 调制之前，数字域中交替的二进制 0 和 1 的序列。</p>
+<p>因此，可以同时使用单个 CS_Sync 数据包中的 Sounding Sequence 字段编码的两个音调的相位差来进行 PBR 计算，同时使用 CS_Sync 数据包计算往返时间。</p>
+<p>基于单个数据包同时计算 RTT 和 PBR 测量，使得攻击交换的尝试变得极其复杂。</p>
+<h5 id="3136-攻击检测与报告"><strong>3.13.6 攻击检测与报告</strong></h5>
+<p>蓝牙链路层规范的蓝牙信道探测部分包括对攻击检测系统的描述。这作为蓝牙控制器实现者遵循的框架架构和一般方法提供，而不是作为详细的、规定性的规范。</p>
+<p>蓝牙通道探测攻击检测在蓝牙控制器中是基于对接收信号与参考信号定义的评估，以及对接收信号进行检查以寻找可能攻击的指示，例如意外的比特转换或相位调整。规范提供的指导基于包含随机序列、探测序列或两者的 CS_Sync 数据包。</p>
+<p>一个用于以形容词形式报告攻击正在进行的概率的标准化指标由蓝牙核心规范定义，称为标准化攻击检测器指标或 NADM。NADM 值由控制器根据接收到的信号的评估分配，采用滑动尺度的形式，表示攻击可能性，范围从攻击极不可能开始，到攻击极可能在上限处增加。表 13 包含 NADM 值定义，摘自蓝牙核心规范。</p>
+<p><strong>NADM Value</strong></p>
+<p><strong>描述</strong></p>
+<p>0x00</p>
+<p>攻击极不可能</p>
+<p>0x01</p>
+<p>攻击非常不可能</p>
+<p>0x02</p>
+<p>攻击不太可能</p>
+<p>0x03</p>
+<p>攻击是可能的</p>
+<p>0x04</p>
+<p>攻击可能会发生</p>
+<p>0x05</p>
+<p>攻击非常可能</p>
+<p>0x06</p>
+<p>攻击极有可能发生</p>
+<p>0xFF</p>
+<p>未知的 NADM。</p>
+<p>对于没有随机序列或声序列的 RTT 类型的默认值。</p>
+<p><em>表 13 – NADM 值</em></p>
+<p>图 39 展示了轮廓攻击检测器系统。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_38.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_38-1000x693.png" alt="Figure 38" loading="lazy"></a><em>图 39 - 攻击检测系统概述</em></p>
+<p>控制器的 NADM 算法分配的 NADM 值通过 HCI 事件在一个名为 Packet_NADM 的字段中报告给主机。对接收到的 NADM 值应用攻击检测算法，并将威胁级别报告给用户应用程序。</p>
+<p>未来的蓝牙配置文件规范可能会促进设备之间在蓝牙通道探测期间共享 NADM 数据，如图 39 中从设备 B 到设备 A 的虚线所示。</p>
+<p>蓝牙核心规范包括允许正确识别显示已知攻击模式的信号的测试定义。然而，图 39 中所示的攻击检测算法和用户应用的细节未被指定。</p>
+<h5 id="3137-le-2m-2bt"><strong>3.13.7 LE 2M 2BT</strong></h5>
+<p>存在多种已知的物理层攻击，这些攻击涉及中间人（MITM）攻击者预测来自合法发送设备的部分接收符号的值，并中继这些符号的完整生成版本，同时操控时序，使得合法接收者错误计算往返时间，从而错误估计距离。攻击者的信号通常会被放大，以便目标设备将操控后的信号视为主要信号，而不是可能看起来像反射的较弱原始信号。持续时间较长的符号比持续时间较短的符号更容易受到这种类型的攻击。</p>
+<p>LE 2M 2BT PHY 的带宽比特周期乘积值为 2.0，涉及的符号脉冲持续时间短于其他 PHY 相关的脉冲，这降低了这些类型攻击的风险。</p>
+<h5 id="3138-snr-控制和-rtt-安全"><strong>3.13.8 SNR 控制和 RTT 安全</strong></h5>
+<p>SNR 控制功能允许发起者和接收者将预先商定的随机噪声量混入信号中。这仅适用于在模式 1（RTT）和模式 3（RTT 和 PBR）步骤中进行的 CS_Sync 数据包传输。</p>
+<p>在<a href="#le2m2bt">3.12.7 LE 2M 2BT</a>中提到的中间人攻击类别依赖于攻击者能够非常快速地隔离和操纵合法信号，所需时间远少于符号的完整持续时间。通过向信号中注入噪声，攻击者的分析完成变得更加困难和缓慢，从而降低了此类攻击成功的可能性。另一方面，发起者和反射器设备在预先商定信噪比的情况下，能够轻松过滤人工添加的噪声。</p>
+<h5 id="3139-cs-安全级别"><strong>3.13.9 CS 安全级别</strong></h5>
+<p>蓝牙核心规范的通用访问配置文件（GAP）部分定义了安全模式和安全级别。包括了蓝牙信道探测的四个安全级别的正式定义。未来的蓝牙配置文件规范可能会引用这些定义。</p>
+<h5 id="31310-供应商特定实现和附加安全性"><strong>3.13.10 供应商特定实现和附加安全性</strong></h5>
+<p>控制器实施者可以选择引入进一步的供应商特定安全措施。</p>
+<h4 id="314-主机应用程序"><strong>3.14 主机应用程序</strong></h4>
+<p>创建蓝牙精确测距应用程序和产品涉及利用控制器的蓝牙信道探测功能，并将其与自定义的应用层代码相结合。解决方案的应用组件开发人员必须注意本节所强调的各种问题。</p>
+<h5 id="3141-距离测量算法"><strong>3.14.1 距离测量算法</strong></h5>
+<p>蓝牙协议栈并不直接生成距离测量。相反，在蓝牙控制器执行 CS 步骤期间，会进行相位和/或时序的低级测量，应用程序可以根据这些数据计算距离测量。</p>
+<p>应用程序用于计算距离的算法并未在蓝牙核心规范中指定。因此，这是一个供应商可以区分的领域。更优越的算法将产生更优越的结果。</p>
+<p>控制器获取的数据并报告给应用层是标准化的，因此原则上，所有应用距离测量算法可以处理相同类型的输入数据。在实践中，传递给应用层的数据取决于在蓝牙信道探测程序中使用的模式组合和顺序。数据的质量也可能有所不同，这取决于控制器实现的细节，这些细节超出了蓝牙核心规范的范围。</p>
+<h5 id="3142-控制器与主机的蓝牙信道探测数据通信"><strong>3.14.2 控制器与主机的蓝牙信道探测数据通信</strong></h5>
+<p><strong>3.14.2.1 HCI 事件类型</strong></p>
+<p>主控制器接口功能规范定义了两个事件，控制器用它们将蓝牙信道探测数据传递给主机，主机用于距离测量计算和评估当前的安全条件。这两个事件被称为 LE CS 子事件结果和 LE CS 子事件结果继续。</p>
+<p><strong>3.14.2.2 HCI 事件时序</strong></p>
+<p>控制器汇总在蓝牙信道探测子事件中执行的步骤生成的测量值。完整或部分结果集通过 LE CS 子事件结果 HCI 事件报告。如果报告了不完整的结果集，其余结果将在稍后发送的一个或多个 LE CS 子事件结果继续事件中报告。HCI 事件字段 Subevent_Done_Status 和 Procedure_Done_Status 指示应用层子事件或过程的所有数据是否已报告，或者是否还有更多数据要来。</p>
+<p><a href="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_39.png"><img src="https://www.bluetooth.com/wp-content/uploads/2024/10/Figure_39.png" alt="Figure 39" loading="lazy"></a><em>图 40 - 示例蓝牙信道探测 HCI 数据报告</em></p>
+<p>使用 HCI 事件进行报告与子事件相关，但不一定严格与子事件边界对齐。子事件中的步骤数量将影响控制器报告结果的方式。如果步骤数量意味着控制器必须聚合超过其容量的数据，则控制器将把 HCI 报告拆分为多个事件。单个事件可以容纳的步骤数量限制为 160，这也是控制器需要考虑的另一个限制因素。</p>
+<p><strong>3.14.2.3 HCI 事件内容</strong></p>
+<p>蓝牙通道探测 HCI 事件将各种类型的数据从控制器传输到主机。应参考蓝牙核心规范主控制器接口功能规范以获取完整细节。这里描述了一些关键字段和数据结构。</p>
+<p>频率补偿</p>
+<p>模式 0 步骤的目的是确定发起器和反射器生成的期望频率与实际频率之间的差异。这用于计算一个分数频率偏移（FFO），然后可以用来补偿这些差异对频率和时间值的影响，最终提高距离测量的准确性。HCI CS 事件的频率补偿字段包含这个控制器计算的值。</p>
+<p>Num_Steps_Reported</p>
+<p>此字段指示在此 HCI 事件中报告了多少步。它还指示四个与步相关的数据数组的大小，Step_Mode、Step_Channel、Step_Data_Length 和 Step_Data。</p>
+<p>步态模式 [ ]</p>
+<p>该数组包含每个步骤的模式，按步骤编号排序，并以 0 到 3 的范围内的值表示。</p>
+<p>步骤通道 [ ]</p>
+<p>该数组包含在执行相应步骤时使用的 RF 频道的索引。</p>
+<p>步骤数据长度 [ ]</p>
+<p>每个步骤报告的数据在内容和结构上是可变的。该数组包含与相关步骤数据数组中每个元素的长度。</p>
+<p>步骤数据 [ ]</p>
+<p>每个步骤报告的数据取决于步骤模式、设备角色（发起者或反射器）以及是否使用声波序列进行基于相位的测距和 RTT 计算。包含相关数据的结构称为 Mode_Role_Specific_Info 对象，并定义了该结构的十一种变体。</p>
+<p>在 Mode_Role_Specific_Info 对象中可能包含的数据示例包括字段 Packet_Quality 和 Tone_Quality、接收信号强度指示器 (RSSI)、测量的频率偏移、NADM 值、天线标识符、相位修正项以及数据包传输和到达之间的经过时间测量（或反之）。这些时间值以半纳秒单位的倍数表示。</p>
+<h5 id="3143-模式组合和模式序列"><strong>3.14.3 模式组合和模式序列</strong></h5>
+<p><a href="#amsc">3.8.5 应用程序和模式序列考虑解释了应用程序如何控制在蓝牙通道探测程序中涉及的步骤模式组合和序列。应用层负责决定使用哪些步骤模式，以及在使用主模式和子模式的情况下，所选模式的每个步骤数量之间的比例。应用程序或产品开发人员需要考虑距离测量精度要求、安全性和延迟，以得出结论，以及本地控制器支持的功能。</a></p>
+<h5 id="3144-应用层安全"><strong>3.14.4 应用层安全</strong></h5>
+<p>应用层可以通过选择模式组合和 RTT 参数对整体解决方案的安全性进行一定的控制。开发人员应首先了解和评估通用接入配置文件（GAP）中定义的安全级别，作为确定采用哪些安全选项的起点，具体内容见<a href="#cssl">3.12.9 蓝牙信道探测安全级别</a>。</p>
+<p>建议始终将 PBR 和 RTT 结合使用，以便可以基于这两种方法进行距离计算的交叉检查。PBR 通过蓝牙信道探测提供最准确的距离测量，而支持 RTT 的主要原因是作为安全措施。选择由应用层负责。</p>
+<p>NADM 值是由蓝牙控制器中的 NADM 算法创建的，并为这些值定义了标准化的形容词形式的含义。但必须由应用层决定对每个可能的 NADM 值采取什么行动（如果有的话）。</p>
+<h2 id="4-蓝牙核心规范变更摘要"><strong>4. 蓝牙核心规范变更摘要</strong></h2>
+<p>为了引入蓝牙通道探测功能，蓝牙核心规范的多个层面进行了更改。本节提供了关键更改的摘要，旨在仅作为章节级别的高层参考以供定位。有关详细信息，请参阅蓝牙核心规范。</p>
+<h4 id="41-架构"><strong>4.1 架构</strong></h4>
+<p>蓝牙核心规范第 1 卷，第 A 部分描述了该技术的架构。</p>
+<p>• 第 3 节，传输架构介绍了一种新的数据包结构和蓝牙信道探测的信令格式。它还定义了新的 LE 信道探测物理信道和 LE 信道探测物理链路。</p>
+<p>• 第 9 节，使用蓝牙低能耗的蓝牙信道探测提供了蓝牙信道探测功能的简要概述。</p>
+<h4 id="42-主机"><strong>4.2 主机</strong></h4>
+<h5 id="421-通用接入配置文件"><strong>4.2.1 通用接入配置文件</strong></h5>
+<p>第 3 卷，第 C 部分定义了通用接入配置文件。</p>
+<p>• 第 9 节介绍了 GAP 蓝牙信道探测程序以及发起者和反射者的角色。</p>
+<p>• 第 10 节 四个蓝牙信道探测安全级别。</p>
+<h5 id="422-主控制器接口"><strong>4.2.2 主控制器接口</strong></h5>
+<p>第 4 卷，第 E 部分包含主控制器接口功能规范。</p>
+<p>• 第 7.7.6.5 节 LE 元事件已更新，增加了与蓝牙信道探测相关的多种新事件类型，包括 LE CS 子事件结果事件和 LE CS 子事件结果继续事件。</p>
+<p>• 第 7.8 节 LE 控制器命令现在包括用于通道探测的额外命令，例如 LE CS 读取远程 FAE 表命令、LE CS 创建配置命令、LE CS 安全启用命令和 LE CS 程序启用命令。</p>
+<h4 id="43-控制器"><strong>4.3 控制器</strong></h4>
+<h5 id="431-物理层"><strong>4.3.1 物理层</strong></h5>
+<p>第 6 卷，第 A 部分包含物理层规范。</p>
+<ul>
+<li>第 1 节介绍了新的 LE 2M 2BT PHY。</li>
+<li>第二节介绍了一种新的蓝牙信道探测通道安排。</li>
+<li>第 3 节定义了新的 SNR 控制功能。</li>
+<li>第 3.4 节为支持蓝牙信道探测的设备增加了稳定相位要求。</li>
+<li>第 3.5 节描述了蓝牙信道探测中频率测量和生成的要求。这包括对分数频率偏移（FFO）测量要求的规范。</li>
+<li>第 5.3 节是一个新章节，描述了蓝牙信道探测的天线切换。</li>
+<li>第 6 节涵盖了相位测量要求，包括参考接收器定义、相位测量精度要求的描述、频率激励误差补偿要求以及相位测量时序规则。</li>
+<li>附录 B 提供了蓝牙信道探测测试设备设置的示例。</li>
+</ul>
+<h5 id="432-链路层"><strong>4.3.2 链路层</strong></h5>
+<p>第六卷，B 部分包含链路层规范。</p>
+<ul>
+<li>第 2.4.2 节定义了与蓝牙信道探测功能相关的新链路层控制器 PDU 类型及其操作码。</li>
+<li>第 4 节包含了对通道蓝牙探测的链路层空中接口协议的更新。这包括第 4.2 节中更新的睡眠时钟精度要求，以及第 4.5.18 节中关于蓝牙通道探测程序、事件、子事件和步骤的规范。第 4.5.18.2 节提供了与蓝牙通道探测相关的 ACL 链路的安全要求以及它可能传输的控制 PDU。</li>
+<li>第 5.1 节涵盖了链路层控制的主题。它已更新以包括与蓝牙信道探测相关的新控制程序，例如蓝牙信道探测启动程序、蓝牙信道探测能力交换程序、蓝牙信道探测配置程序和蓝牙信道探测启动程序。</li>
+</ul>
+<h5 id="433-蓝牙信道探测"><strong>4.3.3 蓝牙信道探测</strong></h5>
+<p>第 6 卷，第 H 部分是一个专门介绍新蓝牙信道探测功能的新章节。它涵盖了用于蓝牙信道探测的物理射频信道的定义、新的 CS_Sync 数据包格式、测量往返时间（RTT）以及获取到达或离开时间戳的各种方法。本节定义了蓝牙信道探测的新信道选择算法，以及步进模式、步进组合和排序规则、相位测量规则和使用 DRBG 生成随机位。</p>
+<h2 id="5-结论"><strong>5. 结论</strong></h2>
+<p>通过蓝牙信道探测，开发人员可以创建令人兴奋的产品和应用，利用该功能的安全精确测距能力。</p>
+<p>基于全球最普遍的低功耗无线技术的“查找我的设备”和数字钥匙解决方案的最终用户，将因使用蓝牙信道探测功能的设备所能实现的结果质量而享受性能提升。而且，知道产品开发者已经获得了一整套全面的安全功能来解决相关问题，将带来安心。</p>
+<p>蓝牙信道探测的技术灵活性意味着开发者可以优先考虑最重要的测距方面，无论是安全性、准确性还是延迟。并非所有应用程序都是相同的，这在蓝牙信道探测功能的设计中得到了认可和照顾。开发者被赋予了自由，可以决定在其产品的实施中对他们和用户最重要的是什么。</p>
+<p>每年出货超过五十亿个蓝牙设备。这导致了巨大的规模经济，惠及产品和组件制造商，最终也惠及他们的客户。</p>
+<p>蓝牙信道探测和执行安全精确测距的能力为增强许多蓝牙连接设备的便利性、安全性和保障提供了机会。存在检测、方向查找以及现在的信道探测可以单独使用或结合使用，以创建空间感知的产品和应用，最终用户和企业都能从中受益。</p>
+<p>蓝牙技术无处不在，基于广泛采用和精心制定的技术标准。采用蓝牙信道探测是开发者为其蓝牙产品添加精细测距功能的简单、安全选择。下载蓝牙核心规范以获取有关这一激动人心的蓝牙技术功能扩展的完整细节！</p>
+<h2 id="6-参考文献"><strong>6. 参考文献</strong></h2>
+<p>项目</p>
+<p>位置</p>
+<p>Bluetooth®核心规范 v6.0</p>
+<p><a href="https://www.bluetooth.com/specifications/specs/core60-html/">https://www.bluetooth.com/specifications/specs/core60-html/</a></p>
+<p>找到我个人资料</p>
+<p><a href="https://www.bluetooth.com/specifications/specs/find-me-profile-1-0/">https://www.bluetooth.com/specifications/specs/find-me-profile-1-0/</a></p>
+<p>即时警报服务</p>
+<p><a href="https://www.bluetooth.com/specifications/specs/immediate-alert-service-1-0/">https://www.bluetooth.com/specifications/specs/immediate-alert-service-1-0/</a></p>
+<p><strong>脚注</strong></p>
+<hr>
+<p><em>通用属性配置文件<br>
+2. 信号通过的材料会影响速度。在理论计算中，通常使用光速。<br>
+3. CS 模式在 3.5 节中解释。<br>
+4. 高斯频移键控</em></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Seafile 服务端安装]]></title>
+        <id>https://mintisan.github.io/post/seafile-server-setup-docker/</id>
+        <link href="https://mintisan.github.io/post/seafile-server-setup-docker/">
+        </link>
+        <updated>2024-07-15T05:08:38.000Z</updated>
+        <summary type="html"><![CDATA[<p><a href="https://www.seafile.com/home/">Seafile</a> 作为个人开源网盘服务有一个自动备份历史修改的功能，已经基本足够了。而且几乎所有客户端也都有，分享和权限管理也做的刚好足够。但是其安装方式从原来的 GitHub 脚本<a href="https://github.com/haiwen/seafile-docker">一键安装</a>，到后续的各种老的 Docker 安装，以及目前<a href="https://cloud.seafile.com/published/seafile-manual-cn/docker/%E7%94%A8Docker%E9%83%A8%E7%BD%B2Seafile.md">官网主页最新的 Docker 安装方式</a>，变化较大，这里记录实际安装的环境版本以及安装好后与 Nginx 冲突的问题。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p><a href="https://www.seafile.com/home/">Seafile</a> 作为个人开源网盘服务有一个自动备份历史修改的功能，已经基本足够了。而且几乎所有客户端也都有，分享和权限管理也做的刚好足够。但是其安装方式从原来的 GitHub 脚本<a href="https://github.com/haiwen/seafile-docker">一键安装</a>，到后续的各种老的 Docker 安装，以及目前<a href="https://cloud.seafile.com/published/seafile-manual-cn/docker/%E7%94%A8Docker%E9%83%A8%E7%BD%B2Seafile.md">官网主页最新的 Docker 安装方式</a>，变化较大，这里记录实际安装的环境版本以及安装好后与 Nginx 冲突的问题。</p>
+<!-- more -->
+<h2 id="系统版本选择">系统版本选择</h2>
+<p>我这里选择的是 Ubuntu 20.04 版本.</p>
+<h2 id="docker-安装">Docker 安装</h2>
+<p>不能用 snap 安装，都否会出现类似如下没有权限新建文件夹的错误：</p>
+<pre><code>ERROR: for worker-1 Cannot start service worker-1: error while creating mount source path '/var/www/html/lensin/html': mkdir /var/www: read-only file system
+</code></pre>
+<p>用官方的 apt-get 安装：</p>
+<pre><code>sudo apt-get update
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg
+sudo mkdir -m 0755 -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo \
+  &quot;deb [arch=&quot;$(dpkg --print-architecture)&quot; signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  &quot;$(. /etc/os-release &amp;&amp; echo &quot;$VERSION_CODENAME&quot;)&quot; stable&quot; | \
+  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+</code></pre>
+<p>常用命令</p>
+<pre><code>查看 Docker 版本和详细信息
+docker info
+查看正在运行的容器
+docker ps
+列出所有容器，包括已停止的容器：
+docker ps -a
+删除引用该镜像的容器:
+docker rm &lt;CONTAINER ID&gt;
+列出所有安装的镜像
+docker images
+强制删除镜像
+docker rmi -f &lt;IMAGE ID&gt;
+
+</code></pre>
+<h2 id="seafile-安装">Seafile 安装</h2>
+<p>下载 <a href="https://cloud.seafile.com/d/f4e8883db63845d29350/"><code>docker-compose.yml</code> 文件</a>，我这里选择的是 11.0 CE 社区版本，并修改管理员账号(SEAFILE_ADMIN_EMAIL)，密码(SEAFILE_ADMIN_PASSWORD)以及服务器地址(SEAFILE_SERVER_HOSTNAME)。</p>
+<pre><code>services:
+  db:
+    image: mariadb:10.11
+    container_name: seafile-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=db_dev  # Requested, set the root's password of MySQL service.
+      - MYSQL_LOG_CONSOLE=true
+      - MARIADB_AUTO_UPGRADE=1
+    volumes:
+      - /opt/seafile-mysql/db:/var/lib/mysql  # Requested, specifies the path to MySQL data persistent store.
+    networks:
+      - seafile-net
+
+  memcached:
+    image: memcached:1.6.18
+    container_name: seafile-memcached
+    entrypoint: memcached -m 256
+    networks:
+      - seafile-net
+          
+  seafile:
+    image: seafileltd/seafile-mc:11.0-latest
+    container_name: seafile
+    ports:
+      - &quot;80:80&quot;
+#      - &quot;443:443&quot;  # If https is enabled, cancel the comment.
+    volumes:
+      - /opt/seafile-data:/shared   # Requested, specifies the path to Seafile data persistent store.
+    environment:
+      - DB_HOST=db
+      - DB_ROOT_PASSWD=db_dev  # Requested, the value shuold be root's password of MySQL service.
+      - TIME_ZONE=Asia/Shanghai # Optional, default is UTC. Should be uncomment and set to your local time zone.
+      - SEAFILE_ADMIN_EMAIL=xxx@163.com # Specifies Seafile admin user, default is 'me@example.com'.
+      - SEAFILE_ADMIN_PASSWORD=xxx     # Specifies Seafile admin password, default is 'asecret'.
+      - SEAFILE_SERVER_LETSENCRYPT=false   # Whether use letsencrypt to generate cert.
+      - SEAFILE_SERVER_HOSTNAME=161.xx.xxx.xx # Specifies your host name.
+    depends_on:
+      - db
+      - memcached
+    networks:
+      - seafile-net
+
+networks:
+  seafile-net:
+</code></pre>
+<p>然后，执行 <code>docker compose up -d</code> 命令即可。进入 Seafile 页面用 <code>docker-compose.yml</code> 设置的管理员账号密码登陆即可。</p>
+<p>注：如果有碰到 <code>80</code> 端口倍 Nginx 占用，表现为打开服务器地址显示 Nginx 页面，则通过 <code>sudo systemctl stop nginx</code> 将这个服务停止，然后再执行 docker 运行命令即可。完整过程如下所示：</p>
+<pre><code>root@MicroFB:~# docker compose up -d
+[+] Running 0/3
+[+] Running 33/33                                                                                                                                            0.3s 
+ ✔ db Pulled                                                                                                                                                27.7s 
+   ✔ 3713021b0277 Pull complete                                                                                                                             10.5s 
+   ✔ b7ed4502c671 Pull complete                                                                                                                             10.6s 
+   ✔ ccee233ae035 Pull complete                                                                                                                             12.5s 
+   ✔ 0c8d32e87829 Pull complete                                                                                                                             12.6s 
+   ✔ 257a4184da5c Pull complete                                                                                                                             12.7s 
+   ✔ 079eb852aa15 Pull complete                                                                                                                             26.3s 
+   ✔ c6b6414a516a Pull complete                                                                                                                             26.4s 
+   ✔ 96faa6efb673 Pull complete                                                                                                                             26.4s 
+ ✔ memcached Pulled                                                                                                                                         18.2s 
+   ✔ 3f9582a2cbe7 Pull complete                                                                                                                             16.0s 
+   ✔ 2b4a13da561f Pull complete                                                                                                                             16.2s 
+   ✔ 98ecfc959437 Pull complete                                                                                                                             16.4s 
+   ✔ 03ca80a0778b Pull complete                                                                                                                             16.8s 
+   ✔ 143814477eae Pull complete                                                                                                                             16.8s 
+   ✔ 3c2bc07c763e Pull complete                                                                                                                             16.8s 
+ ✔ seafile Pulled                                                                                                                                           56.5s 
+   ✔ 3dd181f9be59 Pull complete                                                                                                                             12.6s 
+   ✔ d700e64e05a2 Pull complete                                                                                                                             12.7s 
+   ✔ c378ae4eca3c Pull complete                                                                                                                             22.7s 
+   ✔ ebd7cb07e8d9 Pull complete                                                                                                                             22.8s 
+   ✔ 673ebd0b2c79 Pull complete                                                                                                                             27.3s 
+   ✔ 8f3a871686f0 Pull complete                                                                                                                             30.1s 
+   ✔ 491259946e61 Pull complete                                                                                                                             32.3s 
+   ✔ e6b2a7810eae Pull complete                                                                                                                             38.3s 
+   ✔ b733a29f4802 Pull complete                                                                                                                             49.2s 
+   ✔ 4260865b66b4 Pull complete                                                                                                                             49.3s 
+   ✔ 74053ed00b75 Pull complete                                                                                                                             49.3s 
+   ✔ 643b124b9da1 Pull complete                                                                                                                             49.3s 
+   ✔ eca46377af8e Pull complete                                                                                                                             49.5s 
+   ✔ 47c599991f4c Pull complete                                                                                                                             49.5s 
+   ✔ 1ae61a16c5a1 Pull complete                                                                                                                             49.5s 
+   ✔ 8fa7edb38442 Pull complete                                                                                                                             55.2s 
+[+] Running 3/4
+ ✔ Network root_seafile-net     Created                                                                                                                      0.1s 
+ ✔ Container seafile-memcached  Started                                                                                                                      1.5s 
+ ✔ Container seafile-mysql      Started                                                                                                                      1.5s 
+ ⠴ Container seafile            Starting                                                                                                                     1.5s 
+Error response from daemon: driver failed programming external connectivity on endpoint seafile (cb5121ad6d6fc6b826f87d668f8b3f960d15a017e8788637b6ecea6c050320f0): failed to bind port 0.0.0.0:80/tcp: Error starting userland proxy: listen tcp4 0.0.0.0:80: bind: address already in use
+root@MicroFB:~# 
+root@MicroFB:~# docker images
+REPOSITORY              TAG           IMAGE ID       CREATED         SIZE
+seafileltd/seafile-mc   11.0-latest   f513b59a77cd   2 hours ago     1.39GB
+mariadb                 10.11         fccf0a9f80df   8 weeks ago     404MB
+memcached               1.6.18        0730201b15c1   17 months ago   89.3MB
+root@MicroFB:~# sudo lsof -i :80
+COMMAND   PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+nginx   20048     root    6u  IPv4  79714      0t0  TCP *:http (LISTEN)
+nginx   20048     root    7u  IPv6  79715      0t0  TCP *:http (LISTEN)
+nginx   20049 www-data    3u  IPv4  79992      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60852 (ESTABLISHED)
+nginx   20049 www-data    6u  IPv4  79714      0t0  TCP *:http (LISTEN)
+nginx   20049 www-data    7u  IPv6  79715      0t0  TCP *:http (LISTEN)
+nginx   20049 www-data   11u  IPv4  80202      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:15291 (ESTABLISHED)
+nginx   20049 www-data   12u  IPv4  80203      0t0  TCP MicroFB:http-&gt;178.157.57.117.16clouds.com:51641 (ESTABLISHED)
+nginx   20049 www-data   13u  IPv4  80252      0t0  TCP MicroFB:http-&gt;175.152.79.16:10373 (ESTABLISHED)
+nginx   20049 www-data   14u  IPv4  81189      0t0  TCP MicroFB:http-&gt;178.157.57.117.16clouds.com:51642 (ESTABLISHED)
+nginx   20049 www-data   15u  IPv4  82164      0t0  TCP MicroFB:http-&gt;175.152.79.16:10374 (ESTABLISHED)
+nginx   20049 www-data   16u  IPv4  91290      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:61131 (ESTABLISHED)
+nginx   20049 www-data   17u  IPv4  84293      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:15317 (ESTABLISHED)
+nginx   20049 www-data   18u  IPv4  84993      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60872 (ESTABLISHED)
+nginx   20049 www-data   19u  IPv4  84994      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60870 (ESTABLISHED)
+nginx   20049 www-data   20u  IPv4  84995      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60871 (ESTABLISHED)
+nginx   20049 www-data   21u  IPv4  84997      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:60873 (ESTABLISHED)
+nginx   20049 www-data   22u  IPv4  95716      0t0  TCP MicroFB:http-&gt;23.106.143.212.16clouds.com:15956 (ESTABLISHED)
+root@MicroFB:~# sudo systemctl stop nginx
+root@MicroFB:~# sudo netstat -tuln | grep :80
+sudo: netstat: command not found
+root@MicroFB:~# apt-get install netstat
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+E: Unable to locate package netstat
+root@MicroFB:~# docker images
+REPOSITORY              TAG           IMAGE ID       CREATED         SIZE
+seafileltd/seafile-mc   11.0-latest   f513b59a77cd   2 hours ago     1.39GB
+mariadb                 10.11         fccf0a9f80df   8 weeks ago     404MB
+memcached               1.6.18        0730201b15c1   17 months ago   89.3MB
+root@MicroFB:~# docker ps
+CONTAINER ID   IMAGE              COMMAND                  CREATED         STATUS         PORTS       NAMES
+503a0522b070   memcached:1.6.18   &quot;memcached -m 256&quot;       2 minutes ago   Up 2 minutes   11211/tcp   seafile-memcached
+e86086fd9f89   mariadb:10.11      &quot;docker-entrypoint.s…&quot;   2 minutes ago   Up 2 minutes   3306/tcp    seafile-mysql
+root@MicroFB:~# docker-compose up -d
+
+Command 'docker-compose' not found, but can be installed with:
+
+snap install docker          # version 24.0.5, or
+apt  install docker-compose  # version 1.25.0-1
+
+See 'snap info docker' for additional versions.
+
+root@MicroFB:~# docker compose up -d
+[+] Running 3/3
+ ✔ Container seafile-memcached  Running                                                                                                                      0.0s 
+ ✔ Container seafile-mysql      Running                                                                                                                      0.0s 
+ ✔ Container seafile            Started                                                                                                                      0.7s 
+root@MicroFB:~# 
+root@MicroFB:~# 
+root@MicroFB:~# docker ps
+CONTAINER ID   IMAGE                               COMMAND                  CREATED         STATUS          PORTS                               NAMES
+de29eaa96e6d   seafileltd/seafile-mc:11.0-latest   &quot;/sbin/my_init -- /s…&quot;   3 minutes ago   Up 13 seconds   0.0.0.0:80-&gt;80/tcp, :::80-&gt;80/tcp   seafile
+503a0522b070   memcached:1.6.18                    &quot;memcached -m 256&quot;       3 minutes ago   Up 3 minutes    11211/tcp                           seafile-memcached
+e86086fd9f89   mariadb:10.11                       &quot;docker-entrypoint.s…&quot;   3 minutes ago   Up 3 minutes    3306/tcp                            seafile-mysql
+root@MicroFB:~# docker ps
+CONTAINER ID   IMAGE                               COMMAND                  CREATED         STATUS          PORTS                               NAMES
+de29eaa96e6d   seafileltd/seafile-mc:11.0-latest   &quot;/sbin/my_init -- /s…&quot;   3 minutes ago   Up 21 seconds   0.0.0.0:80-&gt;80/tcp, :::80-&gt;80/tcp   seafile
+503a0522b070   memcached:1.6.18                    &quot;memcached -m 256&quot;       3 minutes ago   Up 3 minutes    11211/tcp                           seafile-memcached
+e86086fd9f89   mariadb:10.11                       &quot;docker-entrypoint.s…&quot;   3 minutes ago   Up 3 minutes    3306/tcp                            seafile-mysql
+</code></pre>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li>https://cloud.seafile.com/published/seafile-manual-cn/docker/%E7%94%A8Docker%E9%83%A8%E7%BD%B2Seafile.md</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[OpenVPN 服务器自建和使用]]></title>
+        <id>https://mintisan.github.io/post/openvpn-server-selfhost/</id>
+        <link href="https://mintisan.github.io/post/openvpn-server-selfhost/">
+        </link>
+        <updated>2024-06-28T09:46:54.000Z</updated>
+        <summary type="html"><![CDATA[<p>OpenVPN 这个技术是很老的技术，常用于企业或者学校比较多。之前买了 VPS 后想过用这个来科学上网，但是服务器端搭建安装还是挺麻烦的，最近看到 <a href="https://github.com/angristan/openvpn-install">openvpn-install</a> 项目可以一键安装，就试试看喽。对比 <code>tailscale</code> 下载速率相差不大，上传速率没有其优秀。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>OpenVPN 这个技术是很老的技术，常用于企业或者学校比较多。之前买了 VPS 后想过用这个来科学上网，但是服务器端搭建安装还是挺麻烦的，最近看到 <a href="https://github.com/angristan/openvpn-install">openvpn-install</a> 项目可以一键安装，就试试看喽。对比 <code>tailscale</code> 下载速率相差不大，上传速率没有其优秀。</p>
+<!-- more -->
+<h2 id="安装-openvpn-服务器">安装 OpenVPN 服务器</h2>
+<p>用<a href="https://github.com/angristan/openvpn-install">仓库</a>的三步走即可启动安装【VPS 需要在海外，你懂得】。</p>
+<pre><code>root@warm-bump-2:~# curl -O https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 40923  100 40923    0     0  92004      0 --:--:-- --:--:-- --:--:-- 92168
+root@warm-bump-2:~# ls
+openvpn-install.sh  virt-sysprep-firstboot.log
+root@warm-bump-2:~# chmod +x openvpn-install.sh
+root@warm-bump-2:~# ./openvpn-install.sh
+Welcome to the OpenVPN installer!
+...
+</code></pre>
+<p>一路下一步使用默认配置即可。</p>
+<pre><code>root@warm-bump-2:~# ./openvpn-install.sh
+Welcome to the OpenVPN installer!
+The git repository is available at: https://github.com/angristan/openvpn-install
+
+I need to ask you a few questions before starting the setup.
+You can leave the default options and just press enter if you are ok with them.
+
+I need to know the IPv4 address of the network interface you want OpenVPN listening to.
+Unless your server is behind NAT, it should be your public IPv4 address.
+IP address: 28.xxx.xxx.xxx
+
+Checking for IPv6 connectivity...
+
+Your host does not appear to have IPv6 connectivity.
+
+Do you want to enable IPv6 support (NAT)? [y/n]: n
+
+What port do you want OpenVPN to listen to?
+   1) Default: 1194
+   2) Custom
+   3) Random [49152-65535]
+Port choice [1-3]: 1
+
+What protocol do you want OpenVPN to use?
+UDP is faster. Unless it is not available, you shouldn't use TCP.
+   1) UDP
+   2) TCP
+Protocol [1-2]: 1
+
+What DNS resolvers do you want to use with the VPN?
+   1) Current system resolvers (from /etc/resolv.conf)
+   2) Self-hosted DNS Resolver (Unbound)
+   3) Cloudflare (Anycast: worldwide)
+   4) Quad9 (Anycast: worldwide)
+   5) Quad9 uncensored (Anycast: worldwide)
+   6) FDN (France)
+   7) DNS.WATCH (Germany)
+   8) OpenDNS (Anycast: worldwide)
+   9) Google (Anycast: worldwide)
+   10) Yandex Basic (Russia)
+   11) AdGuard DNS (Anycast: worldwide)
+   12) NextDNS (Anycast: worldwide)
+   13) Custom
+DNS [1-12]: 11
+
+Do you want to use compression? It is not recommended since the VORACLE attack makes use of it.
+Enable compression? [y/n]: n
+
+Do you want to customize encryption settings?
+Unless you know what you're doing, you should stick with the default parameters provided by the script.
+Note that whatever you choose, all the choices presented in the script are safe. (Unlike OpenVPN's defaults)
+See https://github.com/angristan/openvpn-install#security-and-encryption to learn more.
+
+Customize encryption settings? [y/n]: n
+
+Okay, that was all I needed. We are ready to setup your OpenVPN server now.
+You will be able to generate a client at the end of the installation.
+Press any key to continue...
+Hit:1 http://archive.ubuntu.com/ubuntu jammy InRelease
+...
+</code></pre>
+<p>等待安装结束，输入文件名并回车即可。</p>
+<pre><code>...
+Created symlink /etc/systemd/system/multi-user.target.wants/iptables-openvpn.service → /etc/systemd/system/iptables-openvpn.service.
+
+Tell me a name for the client.
+The name must consist of alphanumeric character. It may also include an underscore or a dash.
+Client name: mintisan
+
+Do you want to protect the configuration file with a password?
+(e.g. encrypt the private key with a password)
+   1) Add a passwordless client
+   2) Use a password for the client
+Select an option [1-2]: 1
+
+* Using SSL: openssl OpenSSL 3.0.2 15 Mar 2022 (Library: OpenSSL 3.0.2 15 Mar 2022)
+
+* Using Easy-RSA configuration: /etc/openvpn/easy-rsa/vars
+
+* The preferred location for 'vars' is within the PKI folder.
+  To silence this message move your 'vars' file to your PKI
+  or declare your 'vars' file with option: --vars=&lt;FILE&gt;
+-----
+
+Notice
+------
+Keypair and certificate request completed. Your files are:
+req: /etc/openvpn/easy-rsa/pki/reqs/mintisan.req
+key: /etc/openvpn/easy-rsa/pki/private/mintisan.key
+Using configuration from /etc/openvpn/easy-rsa/pki/eb0610d5/temp.a1d0189c
+Check that the request matches the signature
+Signature ok
+The Subject's Distinguished Name is as follows
+commonName            :ASN.1 12:'mintisan'
+Certificate is to be certified until Jul 26 09:57:14 2034 GMT (3650 days)
+
+Write out database with 1 new entries
+Data Base Updated
+
+Notice
+------
+Certificate created at:
+* /etc/openvpn/easy-rsa/pki/issued/mintisan.crt
+
+Notice
+------
+Inline file created:
+* /etc/openvpn/easy-rsa/pki/inline/mintisan.inline
+Client mintisan added.
+
+The configuration file has been written to /root/mintisan.ovpn.
+Download the .ovpn file and import it in your OpenVPN client.
+root@warm-bump-2:~# ls
+mintisan.ovpn  openvpn-install.sh  virt-sysprep-firstboot.log
+root@warm-bump-2:~# 
+
+</code></pre>
+<p>下载生成 <code>ovpn</code> 配置文件到本地</p>
+<pre><code>scp -P [端口号] [用户名]@[远程主机地址]:[远程文件路径] .
+</code></pre>
+<p>附加几个常用命令：</p>
+<pre><code># 查看状态
+sudo systemctl status openvpn-server@server.service
+# 重启服务
+sudo systemctl restart openvpn-server@server.service
+# 停止服务
+sudo systemctl stop openvpn-server@server.service
+# 启动服务
+sudo systemctl start openvpn-server@server.service
+</code></pre>
+<h2 id="下载并配置客户端">下载并配置客户端</h2>
+<p>直接从 <a href="https://openvpn.net/">OpenVPN 官网</a> 下载对应的客户端，并导入即可。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1722162269406.png" alt="" width="400" loading="lazy"></figure>
+<h2 id="tailscale-速度对比">tailscale 速度对比</h2>
+<p>采用同一个节点，对比先后对比测试，可以看到如果是同一个 IP 地址，以及供应商，两者的下载速率相差不大，上传速率 tailscale 优秀不少。</p>
+<p>OpenVPN 速度如下：<br>
+<img src="https://mintisan.github.io/post-images/1722162274089.png" alt="" loading="lazy"></p>
+<p>Tailscale 速率如下：<br>
+<img src="https://mintisan.github.io/post-images/1722162278024.png" alt="" loading="lazy"></p>
+<p>但是如果更换供应商，则速率有不少差异。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1722162282538.png" alt="" loading="lazy"></figure>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://omts.me/blog/openvpn-install/">OpenVPN 快速安装与使用</a></li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Ubuntu 20.04 eGPU CUDA 开发环境搭建]]></title>
+        <id>https://mintisan.github.io/post/ubuntu-2004-egpu-cuda-dev-environment/</id>
+        <link href="https://mintisan.github.io/post/ubuntu-2004-egpu-cuda-dev-environment/">
+        </link>
+        <updated>2024-05-09T04:32:58.000Z</updated>
+        <summary type="html"><![CDATA[<p>因为要用学习深度学习的剪枝量化，看到 <a href="https://github.com/quic/aimet">AI Model Efficiency Toolkit (AIMET)<br>
+</a> 最近更新还行，然后就去安装，发现只支持 Linux 系统，Ubuntu 的系统也有要求，然后加支持特定版本的 CUDA 以及特定版本的 Torch 和 Tensorflow，然后就有了这一篇记录。坑还是挺多的，记录一下方便后续搭建。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>因为要用学习深度学习的剪枝量化，看到 <a href="https://github.com/quic/aimet">AI Model Efficiency Toolkit (AIMET)<br>
+</a> 最近更新还行，然后就去安装，发现只支持 Linux 系统，Ubuntu 的系统也有要求，然后加支持特定版本的 CUDA 以及特定版本的 Torch 和 Tensorflow，然后就有了这一篇记录。坑还是挺多的，记录一下方便后续搭建。</p>
+<!-- more -->
+<h2 id="安装系统">安装系统</h2>
+<p>安装完 Ubuntu 20.04 后重启，如果看到如下提示升级 22.04，不能升级，点击 <code>Don't Upgrade</code>。</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1716127418009.png" alt="" width="400" loading="lazy"></figure>
+<p>并且点击 ok 确认不进行升级。</p>
+<h2 id="安装-no-machine">安装 no-machine</h2>
+<p>需要预先准备好<a href="https://download.nomachine.com/download/8.11/Linux/nomachine_8.11.3_4_amd64.deb">离线 <code>deb</code> 安装包</a>，并用 <code>dbkg</code> 进行本地安装如下【比较好的是安装完设置好了自动重启】：</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sudo dpkg -i ./nomachine_8.11.3_4_amd64.deb 
+[sudo] password for mintisan: 
+Selecting previously unselected package nomachine.
+(Reading database ... 180009 files and directories currently installed.)
+Preparing to unpack ./nomachine_8.11.3_4_amd64.deb ...
+Unpacking nomachine (8.11.3-4) ...
+Setting up nomachine (8.11.3-4) ...
+NX&gt; 700 Starting installation at: Sun, 19 May 2024 21:55:08.
+NX&gt; 700 Using installation profile: Ubuntu.
+NX&gt; 700 Installation log is: /usr/NX/var/log/nxinstall.log.
+NX&gt; 700 Installing nxrunner version: 8.11.3.
+NX&gt; 700 Installing nxplayer version: 8.11.3.
+NX&gt; 700 Installing nxnode version: 8.11.3.
+NX&gt; 700 Installing nxserver version: 8.11.3.
+NX&gt; 700 Installation completed at: Sun, 19 May 2024 21:55:18.
+NX&gt; 700 NoMachine was configured to run the following services:
+NX&gt; 700 NX service on port: 4000
+</code></pre>
+<p>然后在打开 NoMachine Server 可以看到本地的地址以及端口如下：<br>
+<img src="https://mintisan.github.io/post-images/1716127248019.png" alt="" width="400" loading="lazy"></p>
+<p>本地连接，并用安装时候的账号和密码登录即可。</p>
+<p>注意在显示的时候需要适应本地窗口分辨率如下，否则会导致桌面显示不全。<br>
+<img src="https://mintisan.github.io/post-images/1716130310719.png" alt="" width="600" loading="lazy"></p>
+<h2 id="安装-tailscale">安装 tailscale</h2>
+<p>如果不安装 tailscale ，则终端啥的下载很慢，如下所示：<br>
+【当然也可以换源，不过后面还是需要全局翻墙，早换早省心】</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sudo apt-get update -y
+Hit:1 http://security.ubuntu.com/ubuntu focal-security InRelease
+Err:2 http://cn.archive.ubuntu.com/ubuntu focal InRelease     
+  Temporary failure resolving 'cn.archive.ubuntu.com'
+Err:3 http://cn.archive.ubuntu.com/ubuntu focal-updates InRelease
+  Temporary failure resolving 'cn.archive.ubuntu.com'
+Err:4 http://cn.archive.ubuntu.com/ubuntu focal-backports InRelease
+  Temporary failure resolving 'cn.archive.ubuntu.com'
+Reading package lists... Done           
+W: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/dists/focal/InRelease  Temporary failure resolving 'cn.archive.ubuntu.com'
+W: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/dists/focal-updates/InRelease  Temporary failure resolving 'cn.archive.ubuntu.com'
+W: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/dists/focal-backports/InRelease  Temporary failure resolving 'cn.archive.ubuntu.com'
+W: Some index files failed to download. They have been ignored, or old ones used instead.
+</code></pre>
+<p>安装 tailscale 需要登录 tailscale，而我的 tailscale 是用 Google 作为账号，那么就又到了一个鸡生蛋，蛋生鸡的时候。只能借助局域网内其他的代理来让浏览器可以登录 Google。设置本地代理如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1716127871126.png" alt="" width="400" loading="lazy"></figure>
+<p>注：我用的手机端的 SurfBoard 来进行代理，PC 端的 Clash 也可以，也就支持局域网代理中转的都是可以的。当然如果你有全局科学上网环境，也是可以的。</p>
+<p>此时，就可以在 Chrome 端登录 tailscale 账号了。接下来，用<a href="https://tailscale.com/download">命令行安装 tailscale</a> 如下【需要预先安装 curl 等常用工具】：</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ curl -fsSL https://tailscale.com/install.sh | sh
+
+Command 'curl' not found, but can be installed with:
+
+sudo snap install curl  # version 8.1.2, or
+sudo apt  install curl  # version 7.68.0-1ubuntu2.20
+
+See 'snap info curl' for additional versions.
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sudo apt-get install openssh-server tmux git zsh neofetch htop vim python3-pip wget curl hwinfo -y
+...
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ curl -fsSL https://tailscale.com/install.sh | sh
+Installing Tailscale for ubuntu focal, using method apt
+...
+Setting up tailscale (1.66.3) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/tailscaled.service → /lib/systemd/system/tailscaled.service.
++ [ false = true ]
++ set +x
+Installation complete! Log in to start using Tailscale by running:
+
+sudo tailscale up
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sudo tailscale up
+
+
+To authenticate, visit:
+
+	https://login.tailscale.com/a/1aeaea1801138c
+
+Success.
+Some peers are advertising routes but --accept-routes is false
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ 
+</code></pre>
+<p>输入 <code>sudo tailscale up</code> 再打开输出的链接，完成新设备到账号的绑定，绑定后就可以通过以下命令完成使用外部节点，完成所有的流量通过 VPN 来中专访问。</p>
+<p>查看可以用作 <code>exist-node</code> 的 IP 地址：</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ tailscale ip
+100.97.189.1
+fd7a:115c:a1e0::9a01:bd01
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ tailscale status
+100.97.189.1    ubuntu-nuc9vxqnx     fovwin@      linux   -
+100.70.247.65   bandwagong-768.tail1456b.ts.net ran.thinker@ linux   idle; offers exit node
+100.85.156.97   gl-mt3000            fovwin@      linux   -
+100.71.139.27   mac-mini-m1          fovwin@      macOS   offline
+100.122.227.134 mac-studio           fovwin@      macOS   -
+100.74.183.119  macbook-air-m3       fovwin@      macOS   offline
+100.88.126.81   macbook-pro-2018     fovwin@      macOS   offline
+100.70.233.114  nuc13-extreme-980pro fovwin@      windows offline
+100.75.92.65    oneplus-a6010        fovwin@      android offline
+100.123.114.32  r2s-istoreos         fovwin@      linux   offline
+100.122.151.42  r4s-istoreos         fovwin@      linux   -
+100.95.124.152  racknerd-6e9267-2t   fovwin@      linux   idle; offers exit node
+100.103.22.149  racknerd-f16b55-4t   fovwin@      linux   idle; offers exit node
+100.78.129.159  raspberrypi5         fovwin@      linux   -
+100.117.50.87   ser-pro-5800-archlinux fovwin@      linux   -
+100.108.77.59   ser6-pro-vest-windows fovwin@      windows offline
+100.80.43.50    tencent-ubuntu-2mbps fovwin@      linux   -
+100.120.74.6    thinkpad-pibo        fovwin@      windows offline
+100.110.45.44   vmware-ecg-server    fovwin@      linux   offline
+100.113.135.2   vps-bandwagon-1000g  fovwin@      linux   idle; offers exit node
+100.70.95.62    vps-bandwagon-500g   fovwin@      linux   idle; offers exit node
+100.81.105.47   vps-bandwagon-768g   fovwin@      linux   idle; offers exit node
+100.102.191.33  xiaomi-13            fovwin@      android offline
+mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sudo tailscale up --exit-node=100.113.135.2 --reset
+Some peers are advertising routes but --accept-routes is false
+</code></pre>
+<p>再输入以上命令后， no-machine 会自动断开，此时需要在 no-machine 中重新设置 tailscale 的地址如下：<br>
+<img src="https://mintisan.github.io/post-images/1716129321690.png" alt="" loading="lazy"></p>
+<p>此时在终端就可以看到 ping 通 Google 了，完成了本地全局科学上网。</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ ping google.com
+PING google.com (172.217.25.174) 56(84) bytes of data.
+64 bytes from sin01s16-in-f14.1e100.net (172.217.25.174): icmp_seq=1 ttl=118 time=201 ms
+64 bytes from sin01s16-in-f14.1e100.net (172.217.25.174): icmp_seq=2 ttl=118 time=204 ms
+^C
+--- google.com ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1000ms
+rtt min/avg/max/mdev = 200.994/202.248/203.503/1.254 ms
+</code></pre>
+<p>然后把网络代理也可以关掉了。</p>
+<h2 id="安装系统常用工具">安装系统常用工具</h2>
+<p><a href="https://ohmyz.sh/#install">安装 oh-my-zsh</a> 如下，并设置 zsh 为默认 shell：</p>
+<pre><code>mintisan@mintisan-NUC9VXQNX:~/UbuntuApps$ sh -c &quot;$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)&quot;
+Cloning Oh My Zsh...
+remote: Enumerating objects: 1416, done.
+remote: Counting objects: 100% (1416/1416), done.
+remote: Compressing objects: 100% (1361/1361), done.
+remote: Total 1416 (delta 47), reused 1091 (delta 25), pack-reused 0
+Receiving objects: 100% (1416/1416), 3.21 MiB | 6.79 MiB/s, done.
+Resolving deltas: 100% (47/47), done.
+From https://github.com/ohmyzsh/ohmyzsh
+ * [new branch]      master                   -&gt; origin/master
+ * [new branch]      update/plugins/wd/0.3.0  -&gt; origin/update/plugins/wd/0.3.0
+ * [new branch]      update/plugins/wd/v0.7.0 -&gt; origin/update/plugins/wd/v0.7.0
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+Already on 'master'
+/home/mintisan/UbuntuApps
+
+Looking for an existing zsh config...
+Using the Oh My Zsh template file and adding it to /home/mintisan/.zshrc.
+
+Time to change your default shell to zsh:
+Do you want to change your default shell to zsh? [Y/n] Invalid choice. Shell change skipped.
+         __                                     __   
+  ____  / /_     ____ ___  __  __   ____  _____/ /_  
+ / __ \/ __ \   / __ `__ \/ / / /  /_  / / ___/ __ \ 
+/ /_/ / / / /  / / / / / / /_/ /    / /_(__  ) / / / 
+\____/_/ /_/  /_/ /_/ /_/\__, /    /___/____/_/ /_/  
+                        /____/                       ....is now installed!
+
+
+Before you scream Oh My Zsh! look over the `.zshrc` file to select plugins, themes, and options.
+
+• Follow us on Twitter: @ohmyzsh
+• Join our Discord community: Discord server
+• Get stickers, t-shirts, coffee mugs and more: Planet Argon Shop
+
+➜  UbuntuApps chsh -s $(which zsh)
+
+Password: 
+➜  UbuntuApps 
+
+</code></pre>
+<p>将 open-ssh server 加入开机自启动，方便后续通过 ssh 命令行访问本机：</p>
+<pre><code>➜  UbuntuApps sudo systemctl status ssh
+
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/lib/systemd/system/ssh.service; enabled; vendor preset: enabled)
+     Active: active (running) since Sun 2024-05-19 22:19:07 CST; 21min ago
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+   Main PID: 18109 (sshd)
+      Tasks: 1 (limit: 76667)
+     Memory: 1.0M
+     CGroup: /system.slice/ssh.service
+             └─18109 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+
+5月 19 22:19:07 mintisan-NUC9VXQNX systemd[1]: Starting OpenBSD Secure Shell server...
+5月 19 22:19:07 mintisan-NUC9VXQNX sshd[18109]: Server listening on 0.0.0.0 port 22.
+5月 19 22:19:07 mintisan-NUC9VXQNX sshd[18109]: Server listening on :: port 22.
+5月 19 22:19:07 mintisan-NUC9VXQNX systemd[1]: Started OpenBSD Secure Shell server.
+➜  UbuntuApps sudo systemctl enable ssh
+
+Synchronizing state of ssh.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable ssh
+➜  UbuntuApps sudo systemctl restart ssh
+</code></pre>
+<h2 id="安装-nvidia-驱动环境">安装 Nvidia 驱动环境</h2>
+<p>此时没有接入 eGPU，输入如下查询显卡设备相关的命令，是没有输出的。</p>
+<pre><code>➜  UbuntuApps ls /usr/src | grep nvidia
+
+➜  UbuntuApps hwinfo --gfxcard --short   
+graphics card:                                                  
+                       Intel UHD Graphics 630 (Mobile)
+
+Primary display adapter: #34
+➜  UbuntuApps 
+➜  UbuntuApps lspci | grep -i nvidia
+</code></pre>
+<p>此时，输入 poweroff 可以进行关机：</p>
+<pre><code>➜  UbuntuApps sudo poweroff 
+</code></pre>
+<p>重启后，USB 属于热插拔，但是 eGPU 实验表明属于半个热插拔，可以随着系统启动；也可以系统启动后再启动 eGPU ，再把 USB 接上电脑；但是如果已经处于连接的状态，再拔掉 eGPU ，此时系统会卡死，鼠标键盘都不能动，需要强制系统关机重启恢复。正常连接后再未安装驱动的情况下，可以看到如下情况：</p>
+<pre><code>➜  UbuntuApps ls /usr/src | grep nvidia
+➜  UbuntuApps lspci | grep -i nvidia
+3c:00.0 VGA compatible controller: NVIDIA Corporation GP102 [GeForce GTX 1080 Ti] (rev a1)
+3c:00.1 Audio device: NVIDIA Corporation GP102 HDMI Audio Controller (rev a1)
+➜  UbuntuApps hwinfo --gfxcard --short   
+graphics card:                                                  
+                       nVidia GP102 [GeForce GTX 1080 Ti]
+                       Intel UHD Graphics 630 (Mobile)
+
+Primary display adapter: #39
+</code></pre>
+<p>打开限制级驱动，可以看到会自动罗列 nVidia 的驱动列表，如果没有接入显卡，则会显示为空。如果显卡已经被系统识别，就可以看到系统会自动列出可以使用的驱动版本。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1716633387207.png" alt="" width="600" loading="lazy"></figure>
+<p>然后拔掉鼠标键盘，外接显示器【最好用 HDMI 诱骗器接上，也就是一定要让后主机看起来有显示器，不然即使连接也无法看到桌面】，插上 eGPU 【我用 NUC9 的下面那个雷电口，这里只是记录下】，并给 eGPU 电源打开。再打开主机的电源启动系统，等待 tailscale 上线。</p>
+<h3 id="安装驱动">安装驱动</h3>
+<pre><code>➜  ~ ls /usr/src | grep nvidia
+
+➜  ~ sudo ubuntu-drivers list
+[sudo] password for mintisan: 
+nvidia-driver-535, (kernel modules provided by linux-modules-nvidia-535-generic-hwe-20.04)
+nvidia-driver-450-server, (kernel modules provided by linux-modules-nvidia-450-server-generic-hwe-20.04)
+nvidia-driver-390, (kernel modules provided by linux-modules-nvidia-390-generic-hwe-20.04)
+nvidia-driver-470, (kernel modules provided by linux-modules-nvidia-470-generic-hwe-20.04)
+nvidia-driver-535-server, (kernel modules provided by linux-modules-nvidia-535-server-generic-hwe-20.04)
+nvidia-driver-470-server, (kernel modules provided by linux-modules-nvidia-470-server-generic-hwe-20.04)
+nvidia-driver-418-server, (kernel modules provided by linux-modules-nvidia-418-server-generic-hwe-20.04)
+➜  ~ sudo apt install nvidia-driver-535 -y
+...
+➜  ~ nvidia-smi
+NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver. Make sure that the latest NVIDIA driver is installed and running.
+</code></pre>
+<p>在安装完驱动版本后，可以用 <code>nvidia-smi</code> 可执行程序，但是如上所示提示无法和显卡通信。打开后可以看到已经装上了，并且可以看到 535 的版本最高支持 12.2 CUDA 版本。<br>
+<img src="https://mintisan.github.io/post-images/1716635644845.png" alt="" loading="lazy"></p>
+<p>安装完需要重启 <code>sudo reboot</code>，然后就可以用命令行 <code>nvidia-smi</code> 看到驱动安装.</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1716635705626.png" alt="" loading="lazy"></figure>
+<p>也可以用 <code>nvitop</code> 来看 gpu 的实时状态</p>
+<pre><code>➜  ~ pip3 install nvitop
+➜  ~ python3 -m nvitop
+</code></pre>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1716635956542.png" alt="" loading="lazy"></figure>
+<h3 id="安装-cuda">安装 CUDA</h3>
+<p>在选项设置时，需要去掉 Driver，只安装 CUDA 相关的内容即可，显示如下：</p>
+<pre><code>➜  NVIDIA-DRIVER-CUDA-CUDNN sudo sh cuda_11.8.0_520.61.05_linux.run 
+
+[sudo] password for mintisan: 
+===========
+= Summary =
+===========
+
+Driver:   Not Selected
+Toolkit:  Installed in /usr/local/cuda-11.8/
+
+Please make sure that
+ -   PATH includes /usr/local/cuda-11.8/bin
+ -   LD_LIBRARY_PATH includes /usr/local/cuda-11.8/lib64, or, add /usr/local/cuda-11.8/lib64 to /etc/ld.so.conf and run ldconfig as root
+
+To uninstall the CUDA Toolkit, run cuda-uninstaller in /usr/local/cuda-11.8/bin
+***WARNING: Incomplete installation! This installation did not install the CUDA Driver. A driver of version at least 520.00 is required for CUDA 11.8 functionality to work.
+To install the driver using this installer, run the following command, replacing &lt;CudaInstaller&gt; with the name of this run file:
+    sudo &lt;CudaInstaller&gt;.run --silent --driver
+
+Logfile is /var/log/cuda-installer.log
+</code></pre>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1716638757497.png" alt="" loading="lazy"></figure>
+<p>安装完后，就将 cuda 的路径添加到 shell 的配置文件中：</p>
+<pre><code>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-11.8/lib64
+export PATH=$PATH:/usr/local/cuda-11.8/bin
+export CUDA_HOME=$CUDA_HOME:/usr/local/cuda-11.8
+</code></pre>
+<p>添加后， source 重新加载一下，即可以看到安装的 cuda 版本</p>
+<pre><code>  NVIDIA-DRIVER-CUDA-CUDNN nvcc --version
+zsh: command not found: nvcc
+➜  NVIDIA-DRIVER-CUDA-CUDNN vim ~/.zshrc 
+➜  NVIDIA-DRIVER-CUDA-CUDNN 
+➜  NVIDIA-DRIVER-CUDA-CUDNN 
+➜  NVIDIA-DRIVER-CUDA-CUDNN 
+➜  NVIDIA-DRIVER-CUDA-CUDNN source ~/.zshrc 
+➜  NVIDIA-DRIVER-CUDA-CUDNN nvcc --version 
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2022 NVIDIA Corporation
+Built on Wed_Sep_21_10:33:58_PDT_2022
+Cuda compilation tools, release 11.8, V11.8.89
+Build cuda_11.8.r11.8/compiler.31833905_0
+</code></pre>
+<p>注：可以参考<a href="https://qiyuan-z.github.io/2022/01/04/Ubuntu%E5%A4%9A%E7%89%88%E6%9C%ACcuda%E5%AE%89%E8%A3%85%E4%B8%8E%E5%88%87%E6%8D%A2/">这篇文章</a>来进行过个 cuda 版本的管理。</p>
+<h3 id="安装-cudnn">安装 CUDNN</h3>
+<p>目前我们安装的 cuda 是 11.8 版本，查看<a href="https://blog.csdn.net/ly869915532/article/details/124542362">这篇文章</a>可以看到对应需要的 cudnn 版本，我们这里 <a href="https://developer.nvidia.com/rdp/cudnn-archive">下载</a>并安装安装 8.1.1 版本</p>
+<pre><code>➜  NVIDIA-DRIVER-CUDA-CUDNN sudo dpkg -i libcudnn8_8.1.1.33-1+cuda11.2_amd64.deb
+Selecting previously unselected package libcudnn8.
+(Reading database ... 195106 files and directories currently installed.)
+Preparing to unpack libcudnn8_8.1.1.33-1+cuda11.2_amd64.deb ...
+Unpacking libcudnn8 (8.1.1.33-1+cuda11.2) ...
+Setting up libcudnn8 (8.1.1.33-1+cuda11.2) ...
+Processing triggers for libc-bin (2.31-0ubuntu9.9) ...
+➜  NVIDIA-DRIVER-CUDA-CUDNN sudo dpkg -i libcudnn8-dev_8.1.1.33-1+cuda11.2_amd64.deb
+Selecting previously unselected package libcudnn8-dev.
+(Reading database ... 195124 files and directories currently installed.)
+Preparing to unpack libcudnn8-dev_8.1.1.33-1+cuda11.2_amd64.deb ...
+Unpacking libcudnn8-dev (8.1.1.33-1+cuda11.2) ...
+Setting up libcudnn8-dev (8.1.1.33-1+cuda11.2) ...
+update-alternatives: using /usr/include/x86_64-linux-gnu/cudnn_v8.h to provide /usr/include/cudnn.h (libcudnn) in auto mode
+➜  NVIDIA-DRIVER-CUDA-CUDNN sudo dpkg -i libcudnn8-samples_8.1.1.33-1+cuda11.2_amd64.deb
+
+Selecting previously unselected package libcudnn8-samples.
+(Reading database ... 195138 files and directories currently installed.)
+Preparing to unpack libcudnn8-samples_8.1.1.33-1+cuda11.2_amd64.deb ...
+Unpacking libcudnn8-samples (8.1.1.33-1+cuda11.2) ...
+Setting up libcudnn8-samples (8.1.1.33-1+cuda11.2) ...
+➜  NVIDIA-DRIVER-CUDA-CUDNN cat /usr/include/cudnn_version.h | grep CUDNN_MAJOR -A 2
+#define CUDNN_MAJOR 8
+#define CUDNN_MINOR 1
+#define CUDNN_PATCHLEVEL 1
+--
+#define CUDNN_VERSION (CUDNN_MAJOR * 1000 + CUDNN_MINOR * 100 + CUDNN_PATCHLEVEL)
+
+#endif /* CUDNN_VERSION_H */
+</code></pre>
+<h3 id="安装-torch-和-tensorflow">安装 torch 和 tensorflow</h3>
+<p>安装 tenorflow 并确认是否可用</p>
+<pre><code>➜  ~ pip3 install tensorflow-gpu==2.10.0
+Collecting tensorflow-gpu==2.10.0
+...
+  ~ python3 -c &quot;import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))&quot;
+
+2024-05-10 21:55:04.044654: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-10 21:55:04.156741: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2024-05-10 21:55:04.661505: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: :/usr/local/cuda-11.2/lib64
+2024-05-10 21:55:04.661560: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: :/usr/local/cuda-11.2/lib64
+2024-05-10 21:55:04.661570: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+2024-05-10 21:55:05.084535: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:980] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2024-05-10 21:55:05.103192: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:980] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2024-05-10 21:55:05.103398: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:980] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+[PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+➜  ~ 
+
+</code></pre>
+<p>安装 torch 并验证是否可以正确加载 gpu</p>
+<pre><code>➜  NVIDIA-DRIVER-CUDA-CUDNN pip3 install torch==1.13.1+cu116 torchvision==0.14.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
+Looking in indexes: https://pypi.org/simple, https://download.pytorch.org/whl/cu116
+Collecting torch==1.13.1+cu116
+  Downloading https://download.pytorch.org/whl/cu116/torch-1.13.1%2Bcu116-cp38-cp38-linux_x86_64.whl (1977.9 MB)
+     |████████████████████████████████| 1977.9 MB 13 kB/s 
+Collecting torchvision==0.14.1+cu116
+  Downloading https://download.pytorch.org/whl/cu116/torchvision-0.14.1%2Bcu116-cp38-cp38-linux_x86_64.whl (24.2 MB)
+     |████████████████████████████████| 24.2 MB 11.7 MB/s 
+Requirement already satisfied: typing-extensions in /home/mintisan/.local/lib/python3.8/site-packages (from torch==1.13.1+cu116) (4.12.0)
+Requirement already satisfied: pillow!=8.3.*,&gt;=5.3.0 in /usr/lib/python3/dist-packages (from torchvision==0.14.1+cu116) (7.0.0)
+Requirement already satisfied: requests in /usr/lib/python3/dist-packages (from torchvision==0.14.1+cu116) (2.22.0)
+Requirement already satisfied: numpy in /home/mintisan/.local/lib/python3.8/site-packages (from torchvision==0.14.1+cu116) (1.24.4)
+Installing collected packages: torch, torchvision
+  WARNING: The scripts convert-caffe2-to-onnx, convert-onnx-to-caffe2 and torchrun are installed in '/home/mintisan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+Successfully installed torch-1.13.1+cu116 torchvision-0.14.1+cu116
+➜  NVIDIA-DRIVER-CUDA-CUDNN python3 -c 'import torch; print(torch.cuda.is_available())'
+True
+
+</code></pre>
+<p>这里我们下载一个简单的 mnist demo 来进行训练测试看下 gpu 被使用。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1716640124259.png" alt="" loading="lazy"></figure>
+<h3 id="安装-aimet">安装 AIMET</h3>
+<p>在这里终于可以回答为啥之前的 torch 用那个版本，以及需要对应的 cuda 版本。。。</p>
+<p>就是因为需要能用 AIMET，你可以在<a href="https://quic.github.io/aimet-pages/releases/latest/install/index.html">这里</a>找到对 torch 以及 cuda 的版本。</p>
+<pre><code>➜  UbuntuApps pip3 install ./aimet_torch-torch_gpu_1.31.0-cp38-cp38-linux_x86_64.whl
+
+Processing ./aimet_torch-torch_gpu_1.31.0-cp38-cp38-linux_x86_64.whl
+Collecting protobuf==3.20.2
+。。。
+ERROR: Could not find a version that satisfies the requirement torch==1.13.1+cu116 (from aimet-torch==torch-gpu-1.31.0) (from versions: 1.4.0, 1.5.0, 1.5.1, 1.6.0, 1.7.0, 1.7.1, 1.8.0, 1.8.1, 1.9.0, 1.9.1, 1.10.0, 1.10.1, 1.10.2, 1.11.0, 1.12.0, 1.12.1, 1.13.0, 1.13.1, 2.0.0, 2.0.1, 2.1.0, 2.1.1, 2.1.2, 2.2.0, 2.2.1, 2.2.2, 2.3.0)
+ERROR: No matching distribution found for torch==1.13.1+cu116 (from aimet-torch==torch-gpu-1.31.0)
+
+➜  UbuntuApps pip3 install torch==1.13.1+cu116 torchvision==0.14.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
+Looking in indexes: https://pypi.org/simple, https://download.pytorch.org/whl/cu116
+Collecting torch==1.13.1+cu116
+  Downloading https://download.pytorch.org/whl/cu116/torch-1.13.1%2Bcu116-cp38-cp38-linux_x86_64.whl (1977.9 MB)
+     |████████████████████████████████| 1977.9 MB 13 kB/s 
+Collecting torchvision==0.14.1+cu116
+  Downloading https://download.pytorch.org/whl/cu116/torchvision-0.14.1%2Bcu116-cp38-cp38-linux_x86_64.whl (24.2 MB)
+     |████████████████████████████████| 24.2 MB 5.5 MB/s 
+Requirement already satisfied: typing-extensions in /home/mintisan/.local/lib/python3.8/site-packages (from torch==1.13.1+cu116) (4.11.0)
+Requirement already satisfied: pillow!=8.3.*,&gt;=5.3.0 in /usr/lib/python3/dist-packages (from torchvision==0.14.1+cu116) (7.0.0)
+Requirement already satisfied: requests in /usr/lib/python3/dist-packages (from torchvision==0.14.1+cu116) (2.22.0)
+Requirement already satisfied: numpy in /home/mintisan/.local/lib/python3.8/site-packages (from torchvision==0.14.1+cu116) (1.24.4)
+ERROR: torchaudio 2.3.0 has requirement torch==2.3.0, but you'll have torch 1.13.1+cu116 which is incompatible.
+Installing collected packages: torch, torchvision
+  Attempting uninstall: torch
+    Found existing installation: torch 1.13.1
+    Uninstalling torch-1.13.1:
+      Successfully uninstalled torch-1.13.1
+  WARNING: The scripts convert-caffe2-to-onnx, convert-onnx-to-caffe2 and torchrun are installed in '/home/mintisan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  Attempting uninstall: torchvision
+    Found existing installation: torchvision 0.18.0
+    Uninstalling torchvision-0.18.0:
+      Successfully uninstalled torchvision-0.18.0
+Successfully installed torch-1.13.1+cu116 torchvision-0.14.1+cu116
+➜  UbuntuApps python3
+Python 3.8.10 (default, Nov 22 2023, 10:22:35) 
+[GCC 9.4.0] on linux
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt; 
+&gt;&gt;&gt; from aimet_torch.quantsim import QuantizationSimModel
+Traceback (most recent call last):
+  File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;/home/mintisan/.local/lib/python3.8/site-packages/aimet_torch/quantsim.py&quot;, line 53, in &lt;module&gt;
+    import aimet_common.libpymo as libpymo
+ImportError: liblapacke.so.3: cannot open shared object file: No such file or directory
+&gt;&gt;&gt; 
+
+</code></pre>
+<p>是因为少了一个库，参考<a href="https://github.com/quic/aimet/issues/433">这里</a>的说明按安装 <code>liblapacke-dev</code> 后再导入就没有问题了。</p>
+<pre><code>➜  UbuntuApps sudo apt-get install liblapacke-dev
+。。。
+Setting up liblapacke:amd64 (3.9.0-1build1) ...
+Setting up libtmglib-dev:amd64 (3.9.0-1build1) ...
+Setting up liblapacke-dev:amd64 (3.9.0-1build1) ...
+Processing triggers for libc-bin (2.31-0ubuntu9.9) ...
+➜  UbuntuApps python3                            
+Python 3.8.10 (default, Nov 22 2023, 10:22:35) 
+[GCC 9.4.0] on linux
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt; from aimet_torch.quantsim import QuantizationSimModel
+2024-05-25 20:52:34,923 - root - INFO - AIMET
+&gt;&gt;&gt; 
+</code></pre>
+<p>这里记录下 torch 和 tensorflow 的版本。</p>
+<pre><code>➜  UbuntuApps pip list | grep torch
+aimet-torch                  torch-gpu-1.31.0    
+torch                        1.13.1+cu116        
+torchvision                  0.14.1+cu116        
+➜  UbuntuApps pip list | grep tensorflow
+tensorflow-estimator         2.10.0              
+tensorflow-gpu               2.10.0              
+tensorflow-io-gcs-filesystem 0.34.0  
+</code></pre>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://blog.csdn.net/BLC0202/article/details/121564861">ubuntu 20.04 安装 cuda11.2 和cudnn8.2.1和pytorch1.10.0和tensorflow2.7.0（可能是最简单的安装方法，本人亲测成功）</a></li>
+<li><a href="https://qiyuan-z.github.io/2022/01/04/Ubuntu%E5%A4%9A%E7%89%88%E6%9C%ACcuda%E5%AE%89%E8%A3%85%E4%B8%8E%E5%88%87%E6%8D%A2/">Ubuntu多版本cuda安装与切换</a></li>
+<li><a href="https://linuxconfig.org/how-to-uninstall-the-nvidia-drivers-on-ubuntu-20-04-focal-fossa-linux">How to uninstall the NVIDIA drivers on Ubuntu 20.04 Focal Fossa Linux</a></li>
+<li><a href="https://www.cyberciti.biz/faq/ubuntu-linux-install-nvidia-driver-latest-proprietary-driver/">Ubuntu Linux Install Nvidia Driver (Latest Proprietary Driver)</a></li>
+<li><a href="https://blog.csdn.net/sunyuhua_keyboard/article/details/134553439">ubuntu 系统 怎么判断系统有没有GPU</a></li>
+<li>https://developer.nvidia.com/cuda-toolkit</li>
+<li>https://developer.nvidia.com/cuda-12-2-0-download-archive</li>
+<li><a href="https://blog.csdn.net/Flying_sfeng/article/details/103343813">解决nvcc --version显示command not found问题</a></li>
+<li>https://www.tensorflow.org/install/pip?hl=en</li>
+<li><a href="https://blog.csdn.net/ly869915532/article/details/124542362">Tensorflow与Python、CUDA、cuDNN的版本对应表</a></li>
+<li>https://developer.nvidia.com/rdp/cudnn-archive</li>
+<li>https://www.nvidia.com/en-us/drivers/unix/</li>
+<li>https://www.nvidia.com/en-us/drivers/unix/linux-amd64-display-archive/</li>
+<li><a href="https://gist.github.com/kmhofmann/cee7c0053da8cc09d62d74a6a4c1c5e4">Installing the NVIDIA driver, CUDA and cuDNN on Linux (Ubuntu 20.04)</a></li>
+<li><a href="https://solano-todeschini.medium.com/how-to-setup-cuda-and-tensorflow-on-ubuntu-20-04-2022-7d240cffdf1e">How to setup and optimize CUDA and TensorFlow on Ubuntu 20.04 — 2022</a></li>
+<li><a href="https://www.cnblogs.com/flying_bat/p/17562426.html">ubuntu 22.04离线安装cuda 11.7.1、cudnn 8.9.3.28、nccl 2.18.3、tensorrt 8.6.1</a></li>
+<li><a href="https://gist.github.com/kmhofmann/cee7c0053da8cc09d62d74a6a4c1c5e4">Installing the NVIDIA driver, CUDA and cuDNN on Linux (Ubuntu 20.04)</a></li>
+<li><a href="https://blog.csdn.net/qq_44630788/article/details/134535977">AImet在ubuntu18.04上的安装步骤</a></li>
+<li><a href="https://github.com/quic/aimet/issues/433">Issue with python install #433</a> : import libpymo ImportError: liblapacke.so.3: cannot open shared object file: No such file or directory</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[何凯明的从表征学习到深度学习发展进程视频学习笔记]]></title>
+        <id>https://mintisan.github.io/post/hekaiming-from-representation-learning2deep-learning/</id>
+        <link href="https://mintisan.github.io/post/hekaiming-from-representation-learning2deep-learning/">
+        </link>
+        <updated>2024-05-05T09:12:38.000Z</updated>
+        <summary type="html"><![CDATA[<p>之前囤积的很多 <code>Read it later</code> 里面有<a href="https://www.youtube.com/watch?v=D_jt-xO_RmI">何凯明</a> 入职 MIT 之前的 unpaid 课程介绍。一直挂在 Chrome 浏览器那里，想着啥时候看，今天不知咋的想着看看吧，不然就关掉了。幸亏看了，大佬讲的真是的行云流水，娓娓道来。</p>
+<p>从 LeNet 到 AlexNet 到 VGG Nets 到 GoogleNet 到 normalization/initialization module 到 ResNet 到 RNN/1-D CNN 到 Transformer 以及应用 GPT/AlphaFold/ViT ，这里记录下每一步关键节点的意义以及作用。可以很清晰的看到深度学习技术的一步一步发展过程出现的问题，以及对应的解决方案。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>之前囤积的很多 <code>Read it later</code> 里面有<a href="https://www.youtube.com/watch?v=D_jt-xO_RmI">何凯明</a> 入职 MIT 之前的 unpaid 课程介绍。一直挂在 Chrome 浏览器那里，想着啥时候看，今天不知咋的想着看看吧，不然就关掉了。幸亏看了，大佬讲的真是的行云流水，娓娓道来。</p>
+<p>从 LeNet 到 AlexNet 到 VGG Nets 到 GoogleNet 到 normalization/initialization module 到 ResNet 到 RNN/1-D CNN 到 Transformer 以及应用 GPT/AlphaFold/ViT ，这里记录下每一步关键节点的意义以及作用。可以很清晰的看到深度学习技术的一步一步发展过程出现的问题，以及对应的解决方案。</p>
+<!-- more -->
+<h2 id="关键节点">关键节点</h2>
+<h3 id="1989-lenet">1989-LeNet</h3>
+<p>具备了 DNN 的基本雏形：卷积(5x5)/下采样/全连接层/输出层，但是受限于算力和高质量数据的约束，这个技术就被雪藏了 20 年，，，</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1714901067804.png" alt="" loading="lazy"></figure>
+<h3 id="2012-alexnet">2012-AlexNet</h3>
+<p>引入了 ReLu 替换了原来的 Sigmoid 以及 Dropout 来让网络可以更深，以及 data augmentation 的作用</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1714901152096.png" alt="" loading="lazy"></figure>
+<p>注：后续的量化方法其实和 Dropout 作用上有些类似，也可以更好的让网络泛华，不至于过早过拟合；且在这之后，对网络的可视化让大家觉得这条路是对的。</p>
+<h3 id="2014-vgg-nets">2014-VGG Nets</h3>
+<p>证明网络越深越好，并且采用统一的 3x3 卷积，并且在用 stack 逐层添加的训练方法来训练更深的网络，也引出了后续对初始化方法的研究</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1714901203220.png" alt="" loading="lazy"></figure>
+<p>注：更深的网络，开启了预训练的时代，也就是迁移学习思想的落地，可以在无标注上进行大规模学习后，其特征表示可以签到其他类似原理的应用场景。</p>
+<h3 id="2014-googlenet">2014-GoogleNet</h3>
+<p>引入了 1x1 网络模块，相当于一个直连的捷径，也开发了同层不同方式的横向组合阶段，但是破坏了网络设计一致性的哲学，也给初始化方法带来了适配挑战。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1714901227590.png" alt="" loading="lazy"></figure>
+<p>注：这个捷径和后续 ResNet 的作用类似，不知道有没有受这个的启发。</p>
+<h3 id="normalizationinitialization-module-in-deep-learning">normalization/initialization module in deep learning</h3>
+<p>网络越深会进入梯度爆炸或者消失问题，需要一个比较好的初始化方法，因为一个简单通用的模块，在网络的每一层添加一个归一化可以让网络越快收敛但是又不会陷入局部最优解，也就是会有更好的结果。其中又以 batch 和 layer 归一化方法最为普遍和好用。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1714901305933.png" alt="" loading="lazy"></figure>
+<h3 id="2015-resnet">2015-ResNet</h3>
+<p>在网络超过 20 层后，发现再继续深层会导致连训练都开始下降，引入 F(x)=H(x)+x 这样一条线，让网络可以更深后不至于性能下降</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1714901328609.png" alt="" loading="lazy"></figure>
+<p>注：这个真的又简单有好用。</p>
+<h3 id="rnn-for-sequence-modeling">RNN for sequence modeling</h3>
+<p>RNN以及后续的 LSTM/GRU 相当于时间局连接【相比于 CNN 的空间局部连接】，只是和当前时间输入以及前一个输出连接，其在训练上非常不友好，因为需要依赖前一时刻的输出。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1714901349178.png" alt="" loading="lazy"></figure>
+<p>注：RNN 上迭代出来的 LSTM 则稍微优化了下 RNN 相乘导致的快速梯度消失或者爆炸问题，但是还是无法支撑较长的记忆；GRU 则优化了 LSTM 的计算复杂度，基本可以说是平替。</p>
+<h3 id="1-d-cnn-for-sequence-modeling">1-D CNN for sequence modeling</h3>
+<p>如果采用 1-D CNN 的来进行时间序列建模，则可以让训练并行，但是模型的当前节点需要不能依赖未来的输入，且 kernel 的长度决定了感受野的范围，如果通过多层增加范围又会让模型急剧扩张，且也无法感知长久的时间</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1714901372819.png" alt="" loading="lazy"></figure>
+<p>注：TNN 就是 1-D CNN 的演化结果。</p>
+<h3 id="rnn-vs-cnn-vs-attention">RNN vs. CNN vs. Attention</h3>
+<p>可以看到 RNN 只依赖当前时间输入以及前一模块的输出；CNN 则依赖历史状态以及当前时间输入；Attention 则是一个更加通用的 CNN，可以在当前节点直接感知历史更多作为输入。</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1714901393714.png" alt="" loading="lazy"></figure>
+<h3 id="2017-transformer">2017-Transformer</h3>
+<p>集大成者，开启了个时代！</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1714901414877.png" alt="" loading="lazy"></figure>
+<h4 id="2018-gpt">2018-GPT</h4>
+<p>Transformer 在语言领域的应用，被称为 GPT 时刻。<br>
+<img src="https://mintisan.github.io/post-images/1714901470154.png" alt="" loading="lazy"></p>
+<h4 id="2021-alphafold">2021-AlphaFold</h4>
+<p>在生物蛋白质序列也可以学习到蛋白质的表征。<br>
+<img src="https://mintisan.github.io/post-images/1714901475986.png" alt="" loading="lazy"></p>
+<h4 id="2021-vit">2021-ViT</h4>
+<p>并且在视觉领域也可以用 Transformer 进行表征学习的方法统一。</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1714901481439.png" alt="" loading="lazy"></figure>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=D_jt-xO_RmI">Deep Learning Bootcamp: Kaiming He</a></li>
+<li><a href="https://www.youtube.com/watch?v=Z5qJ9IxSuKo">麻省理工 电气工程与计算机科学系副教授何恺明（Kaiming He）在 3 月 7 日走上讲台上完成了自己【人生中教的第一堂课—卷积神经网络】</a></li>
+<li><a href="https://www.youtube.com/watch?v=qZ3ygC04Gg4">重塑人类未来的30篇论文精读！</a></li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Mojo ： AI 原生编程语言初体验]]></title>
+        <id>https://mintisan.github.io/post/mojo-just-simple-try/</id>
+        <link href="https://mintisan.github.io/post/mojo-just-simple-try/">
+        </link>
+        <updated>2024-03-30T05:37:40.000Z</updated>
+        <summary type="html"><![CDATA[<p>随着昨天 Mojo 开源到 <a href="https://github.com/modularml/mojo">GitHub</a> 后，想着刚好到周末，简单安装后跑跑看看语法啥，还挺有意思的。基本继承了 <code>Python</code> 的语法，但是也为了后续效率提供了一些<strong>编译时特性</strong>，比如既可以 REPL 直接动态运行，也可以编译成二进制可执行方式；设定两种函数定义方式，以及对应两种变量声明方式；函数入参有的编译时确定，有的运行时确定；动态内存也是折中的给用户一定规则去管理，而不是完全类似 C 的完全用户管理，或者对用户透明的 <code>Python</code> 放手。<br>
+另外除了语法，另一个我关注的对深度学习模型这块的原生支持【比如设计/调试/训练/压缩/部署等】因为平台还不支持，只能后续待看。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>随着昨天 Mojo 开源到 <a href="https://github.com/modularml/mojo">GitHub</a> 后，想着刚好到周末，简单安装后跑跑看看语法啥，还挺有意思的。基本继承了 <code>Python</code> 的语法，但是也为了后续效率提供了一些<strong>编译时特性</strong>，比如既可以 REPL 直接动态运行，也可以编译成二进制可执行方式；设定两种函数定义方式，以及对应两种变量声明方式；函数入参有的编译时确定，有的运行时确定；动态内存也是折中的给用户一定规则去管理，而不是完全类似 C 的完全用户管理，或者对用户透明的 <code>Python</code> 放手。<br>
+另外除了语法，另一个我关注的对深度学习模型这块的原生支持【比如设计/调试/训练/压缩/部署等】因为平台还不支持，只能后续待看。</p>
+<!-- more -->
+<h2 id="安装">安装</h2>
+<p>目前 <code>Mojo</code> 不支持 Windows，所以我就在我的 <code>macOS</code> 下安装【因为相比我的<code>Linux</code>有稍微好点的 <code>GPU</code>】，直接按照<a href="https://docs.modular.com/mojo/manual/get-started/">官方命令</a>就可以走完。安装成功后如下：</p>
+<pre><code>(base) ➜  ~ modular install max
+modular: error: A compatible package is unavailable for the current operating system and hardware. Please check https://modul.ar/systems for the list of currently supported platforms
+(base) ➜  ~ modular install mojo
+# Found release for https://packages.modular.com/mojo @ 24.2.0-c2427bc5-release
+# Downloading archive: packages/24.2.0-c2427bc5-release/mojo-arm64-apple-darwin22.6.0-24.2.0-c2427bc5-release-11-0.tar.gz
+Done         [ ███████████████████████████████████████████████████████████████████████████████████████████████████████████████ ] 100%     167MiB/167MiB @  30.6MiB/s 
+# Extracting downloaded archives. 
+# Extraction complete, setting configs...
+# Configs complete, running post-install hooks...
+
+🔥 Mojo installed! 🔥
+
+Mojo's Python virtual environment created at /Users/mintisan/.modular/pkg/packages.modular.com_mojo/venv
+
+If you are using ZSH (default on macOS), run the following commands:
+
+echo 'export MODULAR_HOME=&quot;/Users/mintisan/.modular&quot;' &gt;&gt; ~/.zshrc
+echo 'export PATH=&quot;/Users/mintisan/.modular/pkg/packages.modular.com_mojo/bin:$PATH&quot;' &gt;&gt; ~/.zshrc
+source ~/.zshrc
+
+If you are using bash, run the following commands:
+
+BASHRC=$( [ -f &quot;$HOME/.bash_profile&quot; ] &amp;&amp; echo &quot;$HOME/.bash_profile&quot; || echo &quot;$HOME/.bashrc&quot; )
+echo 'export MODULAR_HOME=&quot;/Users/mintisan/.modular&quot;' &gt;&gt; &quot;$BASHRC&quot;
+echo 'export PATH=&quot;/Users/mintisan/.modular/pkg/packages.modular.com_mojo/bin:$PATH&quot;' &gt;&gt; &quot;$BASHRC&quot;
+source &quot;$BASHRC&quot;
+
+Then enter 'mojo' to start the Mojo REPL.
+
+For tool help, enter 'mojo --help'.
+For more docs, see https://docs.modular.com/mojo.
+
+(base) ➜  ~ mojo --version
+mojo 24.2.0 (c2427bc5)
+(base) ➜  ~ brew upgrade modular
+==&gt; Downloading https://formulae.brew.sh/api/formula.jws.json
+##O=#     #
+==&gt; Downloading https://formulae.brew.sh/api/cask.jws.json
+##O=#     #
+Warning: modularml/packages/modular 0.6.0 already installed
+</code></pre>
+<p>注意：目前<code>2024-03-30</code>时候，<code>macOS</code> 无法直接通过 <code>modular</code> 安装 <code>max</code>，会提示如下错误：</p>
+<pre><code>(base) ➜  ~ modular install max
+modular: error: A compatible package is unavailable for the current operating system and hardware. Please check https://modul.ar/systems for the list of currently supported platforms
+</code></pre>
+<h2 id="hello-world">Hello World</h2>
+<p><code>REPL</code> 环境直接输入 <code>mojo</code> 即可启动</p>
+<pre><code>(base) ➜  ~ mojo
+Welcome to Mojo! 🔥
+
+Expressions are delimited by a blank line.
+Type `:quit` to exit the REPL and `:mojo help` for further assistance.
+
+  1&gt; print(&quot;Hello Wordl!&quot;)
+Hello Wordl!
+  2&gt; 
+</code></pre>
+<p>也可以直接运行 <code>mojo</code> 文件名</p>
+<pre><code>(base) ➜  mojo vim hello.mojo
+(base) ➜  mojo
+(base) ➜  mojo mojo hello.mojo 
+Hello World!
+(base) ➜  mojo cat hello.mojo 
+fn main():
+        print(&quot;Hello World!&quot;)
+(base) ➜  mojo
+</code></pre>
+<p>到这里为止，看 <code>mojo</code> 和 <code>Python</code> 类似都是动态解释语言，但是接下来我们可以像 C 一样去编译，，，</p>
+<pre><code>(base) ➜  mojo mojo build hello.mojo 
+(base) ➜  mojo ls
+hello      hello.mojo
+(base) ➜  mojo ./hello 
+Hello World!
+(base) ➜  mojo
+</code></pre>
+<p>哈哈，有点意思。</p>
+<p>也可以下载官方<a href="https://github.com/modularml/mojo/tree/main/examples">例程</a>跑跑看。</p>
+<h2 id="基本语法">基本语法</h2>
+<h3 id="变量">变量</h3>
+<p>在 <code>def</code> 函数内声明【也即定义】需要可以省略 <code>var</code> 描述，但是如果使用 <code>fn</code> 来定义的函数，则必须使用使用 <code>var</code> 放在变量的前面。</p>
+<p>Q : 为啥搞两种形式的方式来支持函数内的变量定义？</p>
+<h3 id="结构体">结构体</h3>
+<p>用 <code>struct</code> 名字好评啊，<code>C</code> 党大爱，而且其特性也更加偏向静态特性，其成员是在编译时就确定了，运行时无法修改。【不过有计划添加 Python-style 类的特性】</p>
+<h3 id="特征traits">特征(Traits)</h3>
+<p>没太看懂这个名字的表达，，，从过程来看，感觉看起来像是通过函数指针方式，传递这个功能【一个函数就是一个功能实现】给到函数或者结构体，也就是将功能赋予其他对象，那后续对象就可以通过内部对象【实现的时候应该就是指针】拥有了某些功能</p>
+<p>注：来自古老 C 魔法师的角度，，，</p>
+<p>Q ：但是这个好处是啥呢，除了抽象和模块化看起来有帮助。</p>
+<h3 id="入参">入参</h3>
+<p><code>parametric</code> 意味着说的编译时确定参数；<code>argument</code>意味着运行时生成。</p>
+<p>这里也有点意思，对函数输入的参数分成两类，一类是编译时确定，一类是运行时确定，这样可以为后续的效率提供一些优化空间。</p>
+<h3 id="块和语句">块和语句</h3>
+<p>基本语法和 <code>Python</code> 类型，采用空格进行缩进【<code>tab</code>和<code>4*空格</code>都可以】标记分块。</p>
+<h3 id="代码注释">代码注释</h3>
+<p>这块和 Python 的 <code>#</code>和<code> &quot;&quot;&quot; &quot;&quot;&quot;</code> 一样，不用再记一种额外的注释符号，来自 <code>C/Python/Matlab</code> 三种语言来回切换的怨念！！！</p>
+<h3 id="python-集成"><code>Python</code> 集成</h3>
+<p>作为 <code>Python</code> 的超级，直接使用 <code>numpy</code> 那是不在话下。</p>
+<h3 id="动态内存管理"><a href="https://docs.modular.com/mojo/manual/values/#memory-management-strategies">动态内存管理</a></h3>
+<p>有点意思，我不知道之前有没有大规模的编程语言用【一定的语法和规则】来让用户内存管理做到【完全由用户行管理，比如C】和【完全和用户无关，编程语言内置垃圾回收器，比如 Python】之间的一种方式。之前自己无聊的时候也想过，难道就没有一种中间态么，只能是这两个极端？表示后续很关注，，，</p>
+<h2 id="跑个模型">跑个模型</h2>
+<p>目前其对应的引擎 <code>max</code> 无法在 <code>macOS</code> 上安装，所以没办法跑起来。</p>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li>https://docs.modular.com/mojo/manual/get-started/</li>
+<li><a href="https://www.youtube.com/watch?v=5Sm9IVMet9c&amp;t=1s&amp;ab_channel=freeCodeCamp.org">Mojo Programming Language – Full Course for Beginners</a></li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Aliyun 通过 WebDav 映射到本地]]></title>
+        <id>https://mintisan.github.io/post/aliyun-webdav-local-disk/</id>
+        <link href="https://mintisan.github.io/post/aliyun-webdav-local-disk/">
+        </link>
+        <updated>2024-03-23T08:37:57.000Z</updated>
+        <summary type="html"><![CDATA[<p>想重温<a href="https://www.aliyundrive.com/s/UaraG332B8q">大剑</a>，然后 Aliyun 资源最容易找到，然后在线不好使会压缩，然后就找到了 Alist，然后Alist 可以很方便挂在各种网盘，比如阿里云盘，但是在实际的使用过程中遇到一个问题就是网页版本显示的内容更新不及时或者说显示不出来，但是通过将 Alist 作为 WebDav 网络协议映射到本地好像可以解决这个问题，这里就记录下用资源管理器[小文件/速度慢]， Clouddrive 2[只能加载一个，但是可以映射为本地磁盘形式] 和 RailDrive[有广告，从网盘到本地磁盘形式需要付钱] 的映射方法以及使用过程中的注意点。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>想重温<a href="https://www.aliyundrive.com/s/UaraG332B8q">大剑</a>，然后 Aliyun 资源最容易找到，然后在线不好使会压缩，然后就找到了 Alist，然后Alist 可以很方便挂在各种网盘，比如阿里云盘，但是在实际的使用过程中遇到一个问题就是网页版本显示的内容更新不及时或者说显示不出来，但是通过将 Alist 作为 WebDav 网络协议映射到本地好像可以解决这个问题，这里就记录下用资源管理器[小文件/速度慢]， Clouddrive 2[只能加载一个，但是可以映射为本地磁盘形式] 和 RailDrive[有广告，从网盘到本地磁盘形式需要付钱] 的映射方法以及使用过程中的注意点。</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1711197209300.png" alt="" loading="lazy"></figure>
+<h2 id="raildrive">RailDrive</h2>
+<p><a href="https://www.raidrive.com/download">下载</a>安装后，打开选择添加，设置输入如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1711195811553.png" alt="" loading="lazy"></figure>
+<p>注意红框中的 <code>/dav/</code> 最后需要添加 <code>/</code> 不然会提示如下 401 错误：</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1711195875380.png" alt="" loading="lazy"></figure>
+<p>注意需要选将 <code>地址</code> 的选择去掉，也就是使用 <code>http</code> 方式，不然会出现如下的 <code>ProtocalVersion</code> 错误【一般 Alist 默认是 <code>http</code> 方式】：</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1711195952267.png" alt="" loading="lazy"></figure>
+<p>如果不付费，则只能作为网络盘如下。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1711197267647.png" alt="" loading="lazy"></figure>
+<h2 id="clouddrive-2">Clouddrive 2</h2>
+<p>安装完后，会默认打开 http://localhost:19798/ 地址，添加 <code>阿里云盘 Open</code>，扫码或者在线获取权限。<br>
+<img src="https://mintisan.github.io/post-images/1711196848041.png" alt="" loading="lazy"></p>
+<p>添加完后，就可以在浏览器里面操作，接着将导入的阿里云盘挂载到本地：</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1711196901719.png" alt="" loading="lazy"></figure>
+<p>这样就可以直接映射为硬盘的形式如下：</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1711196603072.png" alt="" loading="lazy"></figure>
+<p>在使用时，比如直接用 PotPlayer 播放的时候，也可以在网页端看到当前使用的下载速度信息如下：</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1711196469820.png" alt="" loading="lazy"></figure>
+<h2 id="资源管理器">资源管理器</h2>
+<p>资源管理器就太多坑了，不建议使用，这里只是记录这些坑。。。</p>
+<pre><code>计算机\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\WebClient\Parameters
+</code></pre>
+<p><code>services.msc</code></p>
+<pre><code>
+</code></pre>
+<p>修改了以上两个参数后需要重新映射下。</p>
+<p>完成后，在本地显示为网络盘符如下。</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1711197961123.png" alt="" loading="lazy"></figure>
+<h2 id="cyberduck">Cyberduck</h2>
+<p>Cyberduck 无法映射到本地网盘，只能在他的软件内可以下载和查看，不是太好用，设置界面如下。</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1711196154886.png" alt="" loading="lazy"></figure>
+<h2 id="rclone">RClone</h2>
+<p>TBD</p>
+<h2 id="macos">macOS</h2>
+<p>如果是 macOS 可以考虑直接使用 Finder 中的 <a href="https://support.apple.com/zh-cn/guide/mac-help/mchlp1546/mac">连接到服务器</a>，然后输入 Alist 提供的 WebDav 地址信息即可。</p>
+<p>输入地址</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1711201171228.png" alt="" loading="lazy"></figure>
+<p>输入账号密码</p>
+<figure data-type="image" tabindex="12"><img src="https://mintisan.github.io/post-images/1711201186423.png" alt="" loading="lazy"></figure>
+<p>就可以看到 Alist 下挂载的内容</p>
+<figure data-type="image" tabindex="13"><img src="https://mintisan.github.io/post-images/1711201204844.png" alt="" loading="lazy"></figure>
+<p>当然推荐最近推出的比较好用的 VidHub</p>
+<p>可以方便直接导入各种网盘，并解析建库，非常友好和美观</p>
+<figure data-type="image" tabindex="14"><img src="https://mintisan.github.io/post-images/1711201231881.png" alt="" loading="lazy"></figure>
+<p>也可以到输入 Alist 的WebDav 信息</p>
+<figure data-type="image" tabindex="15"><img src="https://mintisan.github.io/post-images/1711201268314.png" alt="" loading="lazy"></figure>
+<p>就可以看到 VidHub 帮你整理的各剧和电影</p>
+<figure data-type="image" tabindex="16"><img src="https://mintisan.github.io/post-images/1711201443264.png" alt="" loading="lazy"></figure>
+<h2 id="android">Android</h2>
+<p>安卓下有两个方法，一个是直接用 <a href="http://m.2265.com/down/261625.html">nPlayer</a>。</p>
+<p>安装完选择新建 WebDav 项目<br>
+<img src="https://mintisan.github.io/post-images/1711244448078.jpg" alt="" width="400" loading="lazy"></p>
+<p>输入 WedDav 设置如下：<br>
+<img src="https://mintisan.github.io/post-images/1711244455258.jpg" alt="" width="400" loading="lazy"></p>
+<p>另一种是 cx 文件管理 + VLC 打开，设置如下。</p>
+<figure data-type="image" tabindex="17"><img src="https://mintisan.github.io/post-images/1711244573211.jpg" alt="" width="400" loading="lazy"></figure>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li>https://alist-doc.nn.ci/docs/webdav</li>
+<li>https://mountainduck.io/</li>
+<li>https://cyberduck.io/</li>
+<li>https://www.thewindowsclub.com/how-to-map-webdav-in-windows</li>
+<li><a href="https://docs.qnap.com/operating-system/qts/4.5.x/zh-cn/GUID-31D5B05F-F29E-4D61-9758-C8CF839C14FD.html">在 Windows 上使用 WebDAV 装载共享文件夹</a></li>
+<li><a href="https://blog.csdn.net/qq_38894585/article/details/128818512">windows10挂载webdav</a></li>
+<li><a href="https://github.com/messense/aliyundrive-webdav/issues/117">windows添加本地位置之后无法打开文件 #117</a></li>
+<li>https://support.microsoft.com/en-us/topic/folder-copy-error-message-when-downloading-a-file-that-is-larger-than-50000000-bytes-from-a-web-folder-815e2949-0f56-ec25-db7d-b6d860a31f77</li>
+<li>https://www.topsite.jp/docs/windows-webdav-limit</li>
+<li><a href="https://sspai.com/post/47830">把网盘变成 Windows 网络硬盘，免费的 WebDAV 客户端：RaiDrive | App+1</a></li>
+<li><a href="https://forums.unraid.net/topic/153061-%E6%9C%80%E5%AE%8C%E6%95%B4rclone%E6%8C%82%E8%BD%BD%E7%BD%91%E7%9B%98%E5%88%B0%E6%9C%AC%E5%9C%B0%EF%BC%88alist%E7%AF%87%EF%BC%89%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">最完整RCLONE挂载网盘到本地（ALIST篇）解决方案</a></li>
+<li><a href="https://www.expoli.tech/articles/2020/12/30/1609327097930">Windows 挂载 WebDAV</a></li>
+<li><a href="https://support.apple.com/zh-cn/guide/mac-help/mchlp1546/mac">在 Mac 上连接到 WebDAV 服务器或断开连接</a></li>
+<li><a href="https://okaapps.com/product/1659622164">VidHub - The Ultimate Video Player for iOS, Mac, and tvOS</a></li>
+</ul>
+<figure data-type="image" tabindex="18"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Ollama 和 Continue.dev 构建 VS Code 本地代码 Copilot]]></title>
+        <id>https://mintisan.github.io/post/ollama-continue-dev-as-vs-code-code-copilot/</id>
+        <link href="https://mintisan.github.io/post/ollama-continue-dev-as-vs-code-code-copilot/">
+        </link>
+        <updated>2024-03-17T06:41:20.000Z</updated>
+        <summary type="html"><![CDATA[<p><a href="https://continue.dev/">Continue.dev</a> 可以方便的【自动提示补全】,【选中代码再编辑】，【选中聊天】以及【错误信息自动提问】，是目前开源框架里面功能比较完善的。结合 <a href="https://ollama.com/">Ollama</a> 后端，再配合本地开源代码模型，比如<a href="https://evalplus.github.io/leaderboard.html">排名</a>比较靠前的 <a href="https://huggingface.co/deepseek-ai/deepseek-coder-33b-instruct">Deepseek</a>。真正做到了 <a href="https://github.com/features/copilot">GitHub Copilot</a> 的低配平替。另外可以通过 <code>@</code> 和 <code>/</code> 比较方便的自定义扩展功能。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p><a href="https://continue.dev/">Continue.dev</a> 可以方便的【自动提示补全】,【选中代码再编辑】，【选中聊天】以及【错误信息自动提问】，是目前开源框架里面功能比较完善的。结合 <a href="https://ollama.com/">Ollama</a> 后端，再配合本地开源代码模型，比如<a href="https://evalplus.github.io/leaderboard.html">排名</a>比较靠前的 <a href="https://huggingface.co/deepseek-ai/deepseek-coder-33b-instruct">Deepseek</a>。真正做到了 <a href="https://github.com/features/copilot">GitHub Copilot</a> 的低配平替。另外可以通过 <code>@</code> 和 <code>/</code> 比较方便的自定义扩展功能。</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1710680220793.png" alt="" loading="lazy"></figure>
+<h2 id="安装插件">安装插件</h2>
+<p>直接在 VS Code 的插件市场输入 <code>continue</code> 就可以看到，然后直接安装即可。</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1710678352940.png" alt="" loading="lazy"></figure>
+<p>安装完后，可以在设置里面看到操作的一些快捷键。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1710678402200.png" alt="" loading="lazy"></figure>
+<h2 id="修改配置文件">修改配置文件</h2>
+<p><code>.config</code> Windows 下的目录如下：<code>C:\Users\mintisan\.continue\config.json</code>，macOS 应该是 <code>~/.continue/config.json</code>，最好备份一个然后再修改为如下：【注意我这里的apiBase！！！是部署在其他电脑上的，如果是本地就使用 <code>localhost</code> 即可。】</p>
+<pre><code>{
+  &quot;slashCommands&quot;:[
+    {
+      &quot;name&quot;: &quot;edit&quot;,
+      &quot;description&quot;: &quot;Edit highlighted code&quot;
+    },
+    {
+      &quot;name&quot;: &quot;comment&quot;,
+      &quot;description&quot;: &quot;Write comments for the highlighted code&quot;
+    },
+    {
+      &quot;name&quot;: &quot;share&quot;,
+      &quot;description&quot;: &quot;Download and share this session&quot;
+    },
+    {
+      &quot;name&quot;: &quot;cmd&quot;,
+      &quot;description&quot;: &quot;Generate a shell command&quot;
+    },
+    {
+      &quot;name&quot;: &quot;commit&quot;,
+      &quot;description&quot;: &quot;Generate a commit message for the current changes&quot;
+    },
+    {
+      &quot;name&quot;: &quot;so&quot;,
+      &quot;description&quot;: &quot;Reference StackOverflow to answer the question&quot;
+    }
+  ],
+  &quot;contextProviders&quot;:[
+    { &quot;name&quot;: &quot;code&quot; },
+    { &quot;name&quot;: &quot;open&quot;, &quot;params&quot;: { &quot;onlyPinned&quot;: false } },
+    {
+      &quot;name&quot;: &quot;codebase&quot;,
+      &quot;params&quot;: {
+        &quot;nRetrieve&quot;: 25,
+        &quot;nFinal&quot;: 5,
+        &quot;useReranking&quot;: true
+      }
+    },
+    { &quot;name&quot;: &quot;folder&quot; },
+    { &quot;name&quot;: &quot;search&quot; },
+    { &quot;name&quot;: &quot;tree&quot; },
+    { &quot;name&quot;: &quot;outline&quot; },
+    { &quot;name&quot;: &quot;highlights&quot; },
+    { &quot;name&quot;: &quot;docs&quot; },
+    { &quot;name&quot;: &quot;terminal&quot; },
+    { &quot;name&quot;: &quot;diff&quot; }
+  ],
+  &quot;systemMessage&quot;: &quot;你是一个嵌入式软件开发专家，供职于汇顶科技蓝牙部门，有丰富使用 ARM Cortex-M4 内核相关芯片的使用经验，也有着丰富的设计低功耗蓝牙 BLE 的经验，也擅长帮助客户解决使用 GR551x_SDK_V2.0.2 过程中出现的问题&quot;,
+  &quot;embeddingsProvider&quot;: {
+    &quot;provider&quot;: &quot;ollama&quot;,
+    &quot;model&quot;: &quot;nomic-embed-text&quot;,
+    &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+  },
+  &quot;models&quot;: [
+    {
+      &quot;title&quot;: &quot;DeepSeek-33b&quot;,
+      &quot;provider&quot;: &quot;ollama&quot;,
+      &quot;model&quot;: &quot;deepseek-coder:33b&quot;,
+      &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+    }
+  ],
+  &quot;tabAutocompleteModel&quot;: {
+    &quot;title&quot;: &quot;Tab Autocomplete Model&quot;,
+    &quot;provider&quot;: &quot;ollama&quot;,
+    &quot;model&quot;: &quot;deepseek-coder:33b-base-q4_K_S&quot;,
+    &quot;apiBase&quot;: &quot;http://100.122.227.134:11434&quot;
+  }
+}
+</code></pre>
+<p>注：一般的模型采用 chat 或者 instruct 模型；自动补全采用 base 模型，<a href="https://continue.dev/docs/walkthroughs/tab-autocomplete">官方文档</a>里面有提。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1710681099742.png" alt="" loading="lazy"></figure>
+<p>如果 Ollama 不是和 VS Code 在同一台电脑上，那么配置完后需要重启下，否则会出现如下错误。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1710678929337.png" alt="" loading="lazy"></figure>
+<h2 id="使用场景">使用场景</h2>
+<p>VS Code 的项目直接把文件夹 <a href="https://www.goodix.com/en/software_tool/gr551x_sdk">GR551x_SDK_V2.0.2</a> 拖进来尽可以了，但是如果需要过滤掉不需要 embedding 的文件，可以在根目录新建 <code>.continueignore</code>，添加如下：</p>
+<pre><code>*.out
+*.pdf
+*.chm
+*.a
+*.dll
+*.pyd
+*.lib
+*.exe
+*.zip
+*.hex
+*.data
+*.svg
+*.bin
+*.enc
+*.doxyfile
+*.function
+*.uvoptx
+*.sln
+*.o
+*.eps
+*.tcl
+</code></pre>
+<p>注意，<a href="https://github.com/continuedev/continue/issues/1026">不能使用 <code>*</code>，然后 <code>!*.c</code> 这种反套路</a>，会导致无法触发无法 embedding，，，</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1711463860863.png" alt="" loading="lazy"></figure>
+<h3 id="自动提示补全">【自动提示补全】</h3>
+<p>Continue 会在后台默认查询你所在编辑内容的上下文，比如当你写完 <code>## write quick_sort in python</code> 后，敲下回车，那么可能就会触发自动提示补全功能，如果你同意就可以按 <code>tab</code> 同意，相当于 Code Snippet 功能。</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1710679133746.png" alt="" loading="lazy"></figure>
+<p>以上前台操作过程显示的后台 Prompt 如下。</p>
+<pre><code>==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b-base-q4_K_S
+maxTokens: 1024
+stop: &lt;｜fim▁begin｜&gt;,&lt;｜fim▁hole｜&gt;,&lt;｜fim▁end｜&gt;,//,
+
+,/src/,```,def,class
+temperature: 0
+
+############################################
+
+&lt;｜fim▁begin｜&gt;&quot;&quot;&quot;Step 4: Use keyboard shortcuts to
+accept [⌘ ⇧ ⏎] or reject [⌘ ⇧ ⌫] the edit&quot;&quot;&quot;
+
+# endregion
+
+# region ———————————————————————————— Part 3: Debug automatically [⌘ ⇧ R] ————————————————————————————
+
+
+&quot;&quot;&quot;Step 1: Run this Python file (it should error!)&quot;&quot;&quot;
+
+
+def print_sum(list_to_print):
+    total = 0
+    for num in list_to_print:
+        if isinstance(num, int):
+            total += num
+        else:
+            raise ValueError(&quot;All elements in the list must be integers.&quot;)
+    print(total)
+
+
+
+&quot;&quot;&quot;Step 2: Use the keyboard shortcut [⌘ ⇧ R]
+to automatically debug the error&quot;&quot;&quot;
+print_sum([&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])
+
+# endregion
+
+## write quick_sort in python
+def quick_sort(arr):
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    for i in range(1, len(arr)):
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    return quick_sort(left) + [pivot] + quick_sort(right)
+&lt;｜fim▁hole｜&gt;&lt;｜fim▁end｜&gt;==========================================================================
+==========================================================================
+Completion:
+
+
+print(quick_sort([3, 2, 1]))
+
+</code></pre>
+<h3 id="选中代码再编辑">【选中代码再编辑】</h3>
+<p>此时，当我们写了一些代码后，我们需要对现有代码进行修改，比如添加注释，编写测试用例，，，</p>
+<p>选中需要处理的代码片段，按压 <code>CTRL + I</code> 可以触发指令输入。</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1710679342700.png" alt="" loading="lazy"></figure>
+<p>等待一会会出现如下修改后的对比，等待确认。</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1710679347079.png" alt="" loading="lazy"></figure>
+<p>以上前台显示的后台 Prompt 如下。</p>
+<pre><code>==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b
+maxTokens: 1024
+
+############################################
+
+### System Prompt
+You are an AI programming assistant, utilizing the DeepSeek Coder model, developed by DeepSeek Company, and you only answer questions related to computer science. For politically sensitive questions, security and privacy issues, and other non-computer science questions, you will refuse to answer.
+### Instruction:
+Rewrite the code to satisfy this request: &quot;add comment&quot;
+
+```python
+## write quick_sort in python
+def quick_sort(arr):
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    for i in range(1, len(arr)):
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    return quick_sort(left) + [pivot] + quick_sort(right)
+
+```&lt;|EOT|&gt;
+### Response:
+Sure! Here's the code you requested:
+
+</code></pre>
+<h3 id="选中聊天">【选中聊天】</h3>
+<p>当我们选中需要了解的代码段后，快捷键 <code>CTRL+L</code> 按下后，代码会自动同步到左侧的聊天框中。</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1710679604156.png" alt="" loading="lazy"></figure>
+<p>此时就可以输入你想要了解的指令说明即可。这里会返回比较快。</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1710679609660.png" alt="" loading="lazy"></figure>
+<p>以上前台显示的后台 Prompt 如下。</p>
+<pre><code>
+
+==========================================================================
+==========================================================================
+Settings:
+contextLength: 4096
+model: deepseek-coder:33b
+maxTokens: 1024
+
+############################################
+
+&lt;user&gt;
+continue_tutorial.py (96-115)
+## write quick_sort in python
+# This function performs a Quick Sort on an input array. 
+def quick_sort(arr):
+  # Base case: if array has less than or equal to one element, it is already sorted
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[0]
+    left = []
+    right = []
+    # Split the array into two parts based on a pivot
+    for i in range(1, len(arr)):
+        # If element is less than pivot, append it to left part. Else, append it to right part.
+        if arr[i] &lt; pivot:
+            left.append(arr[i])
+        else:
+            right.append(arr[i])
+    
+    # Recursive calls for sorting the two parts and merging them with pivot.
+    return quick_sort(left) + [pivot] + quick_sort(right)
+
+
+这段代码有什么问题么
+
+==========================================================================
+==========================================================================
+Completion:
+
+这段代码的实现是正确的，它实现了Quick Sort算法。然而，它选择了数组的第一个元素作为枢轴，在处理已经排序或接近有序的大数据集时，这种方式可能会导致较差的性能。
+
+一个更优化的方法是使用“三者中值”来选择枢轴，即从数组的第一个、中间和最后一个元素中选取中位数作为枢轴。这样可以更好地平衡分区，从而避免最坏情况（例如已经排序或接近有序的数据集）对性能的影响。
+
+此外，这段代码并没有使用原地分区的方式来节省空间，如果输入数组非常大，可能会导致堆栈溢出或者内存问题。在Python中实现Quick Sort时，通常会选择原地分区的版本。
+
+</code></pre>
+<h3 id="错误信息自动提问">【错误信息自动提问】</h3>
+<p>Continue 除了以上 3 个主要的功能外，在应用上还做了一个比较好的功能，就是按压 <code>CTRL+Shift + R</code> 后，可以直接在工作流中抓取错误信息，向 LLM 提出问题，比较方便。</p>
+<figure data-type="image" tabindex="12"><img src="https://mintisan.github.io/post-images/1710680151236.png" alt="" loading="lazy"></figure>
+<p>注：以上的所有过程都可以在 如下的输出窗口中得到确认。</p>
+<figure data-type="image" tabindex="13"><img src="https://mintisan.github.io/post-images/1710678594128.png" alt="" loading="lazy"></figure>
+<h2 id="功能"><a href="https://continue.dev/docs/customization/context-providers">@功能</a></h2>
+<p><code>@Open Files</code> 相当于获取目前在 VS Code 中打印的文件对象内容，可以咨询打开的文件</p>
+<figure data-type="image" tabindex="14"><img src="https://mintisan.github.io/post-images/1711464327384.png" alt="" loading="lazy"></figure>
+<p><code>@ File Tree</code> 相当于得到了代码仓库的所有目录接口和文件名字，LLM 可以查询所有文件信息，以下就是通过目录名字得到 adc 例程的路径。</p>
+<figure data-type="image" tabindex="15"><img src="https://mintisan.github.io/post-images/1711464333397.png" alt="" width="400" loading="lazy"></figure>
+<p><code>@Codebase </code>  相当于代码仓库级别的 RAG，可以索所有代码，可以看到我们 <code>config.json</code> 查询到的片段还是基本都是相关的。</p>
+<figure data-type="image" tabindex="16"><img src="https://mintisan.github.io/post-images/1711464392470.png" alt="" loading="lazy"></figure>
+<h2 id="功能-2"><a href="https://continue.dev/docs/customization/slash-commands">/ 功能</a></h2>
+<p>其实就是 CTRL+I 的另一种形式，可以先通过 CTRL+L将我们关注的代码片段先挪到聊天框，然后后续进一步编辑。这里以  <code>/comment</code> 为例进行演示，其他也类似。</p>
+<figure data-type="image" tabindex="17"><img src="https://mintisan.github.io/post-images/1711465206274.png" alt="" loading="lazy"></figure>
+<h2 id="注意事项">注意事项</h2>
+<ol>
+<li>如果你切换了模型，那么第一次将会等待比较久的时间</li>
+<li>更换了配置文件需要重启 vs code</li>
+</ol>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li><a href="https://continue.dev/">Continue</a> : The easiest way to code with any LLM</li>
+<li>https://github.com/continuedev/continue</li>
+<li>https://www.ycombinator.com/companies/continue</li>
+<li>https://marketplace.visualstudio.com/items?itemName=Continue.continue</li>
+<li>https://continue.dev/docs/reference/Model%20Providers/ollama</li>
+<li>https://continue.dev/docs/walkthroughs/tab-autocomplete</li>
+<li>https://continue.dev/docs/reference/config</li>
+<li>https://github.com/ollama/ollama</li>
+<li><a href="https://www.andreagrandi.it/posts/self-hosting-copilot-replacement/">Self hosting a Copilot replacement: my personal experience</a></li>
+<li><a href="https://www.reddit.com/r/LocalLLaMA/comments/198aq2l/is_there_anything_that_can_complete_with_github/">Is there anything that can complete with GitHub Copilot right now I can run in VS Code?</a></li>
+<li><a href="https://crushingcode.nisrulz.com/en/posts/local-copilot-your-own-off-the-grid-and-local-code-assistant/">Local Copilot: Your own off the grid and local code assistant</a></li>
+<li><a href="https://news.ycombinator.com/item?id=39552826">	Show HN: Continue.dev releases local, open-source tab-autocomplete (continue.dev)</a></li>
+<li><a href="https://news.ycombinator.com/item?id=36882146">Show HN: Continue – Open-source coding autopilot (github.com/continuedev)</a></li>
+<li><a href="https://www.reddit.com/r/LocalLLaMA/comments/17h7j4h/what_coding_llm_is_the_best_today/">What coding llm is the best today?Discussion (self.LocalLLaMA)</a></li>
+</ul>
+<h3 id="问题链接">问题链接</h3>
+<ul>
+<li><a href="https://github.com/continuedev/continue/issues/946">Unresponsive chat when using remote self-hosted Ollama server #946</a></li>
+<li><a href="https://github.com/sourcegraph/cody/issues/3074">bug: cannot configure unstable-ollama provider, ignores model and Server Endpoint settings #3074</a></li>
+</ul>
+<h3 id="同类竞品">同类竞品</h3>
+<ul>
+<li><a href="https://github.com/TabbyML/tabby">Tabby</a> : Self-hosted AI coding assistant[docker + vs code + Jetbrains ][Tabby 需要启动自身 docker 服务器，无法和 Ollama 结合。]</li>
+<li><a href="https://github.com/fauxpilot/fauxpilot">FauxPilot</a> : an open-source alternative to GitHub Copilot server</li>
+<li><a href="https://github.com/sourcegraph/cody">Cody</a> : AI that knows your entire codebase[vs code+ollama+Jetbrains] [Cody 安装使用 Ollama 返回错误；]
+<ul>
+<li><a href="https://sourcegraph.com/blog/local-code-completion-with-ollama-and-cody">Local code completion with Ollama and Cody</a></li>
+<li><a href="https://generativeai.pub/100-local-llama-coding-assistant-bye-bye-gpt-4-cbd2b507b822">100% Open-Source Llama Coding Assistant: Bye, bye GPT-4!</a></li>
+</ul>
+</li>
+<li><a href="https://github.com/Exafunction/codeium.vim">Codeium</a> : Free, ultrafast Copilot alternative for Vim and Neovim[Codeium 也不支持和 Ollama 的结合。]</li>
+<li><a href="https://github.com/rjmacarthy/twinny">Twinny</a> : The most no-nonsense locally hosted (or API hosted) AI code completion plugin for Visual Studio Code, like GitHub Copilot but 100% free and 100% private.[vs code+ollama][可以用时 base 模型进行【行内下一句提示】，只能提示下一句，看起来笨笨的。]</li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ex3ndr.llama-coder">Llama Coder</a></li>
+<li><a href="https://github.com/srikanth235/privy">Privy</a> : An open-source alternative to GitHub copilot that runs locally.</li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=DanielSanMedium.dscodegpt">Code GPT: Chat &amp; AI Agents</a> : [Code GPT 不支持自定义服务器地址，也不支持开源。]</li>
+<li><a href="https://cursor.sh/">Cursor</a> : Build software faster in an editor designed for pair-programming with AI</li>
+<li><a href="https://raccoon.sensetime.com/code">商汤代码小浣熊</a></li>
+<li><a href="https://tongyi.aliyun.com/lingma">阿里通义灵码</a></li>
+<li><a href="https://comate.baidu.com/">百度 Comate</a></li>
+<li><a href="https://codegeex.cn/">智谱 CodeGeeX</a></li>
+<li><a href="https://cloud.tencent.com/product/acc">腾讯云 AI 代码助手</a></li>
+<li><a href="https://iflycode.xfyun.cn/">讯飞 iFlyCode</a></li>
+</ul>
+<figure data-type="image" tabindex="18"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+</feed>

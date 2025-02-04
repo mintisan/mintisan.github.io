@@ -1,0 +1,287 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MT3000 科学上网-安装OpenClash中继一个科学节点 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="MT3000 科学上网-安装OpenClash中继一个科学节点 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="MT3000 本身的系统是基于 OpenWRT 开发，进行科学上网非常方便，本身也支持中继，USB等模式，非常适合出差在酒店用。
+所以如果你想拥有可以利用现有网络【手机/网线/无线】，得到一个可以无需任何设置的科学上网环境【无线有线均可以】..." />
+    <meta name="keywords" content="软路由" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              MT3000 科学上网-安装OpenClash中继一个科学节点
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-05-04
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/ZPwwA7N6j/" class="post-tag">
+                  # 软路由
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/mt3000-with-openclash.jpeg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>MT3000 本身的系统是基于 OpenWRT 开发，进行科学上网非常方便，本身也支持中继，USB等模式，非常适合出差在酒店用。</p>
+<p>所以如果你想拥有可以利用现有网络【手机/网线/无线】，得到一个可以无需任何设置的科学上网环境【无线有线均可以】，那么MT3000是一个比较省心的选择【嗯，439块】【理论上任何一个支持无线的 OpenWRT 的系统应该都是可以的】</p>
+<!-- more -->
+<h2 id="设置模式">设置模式</h2>
+<p>我这里是对我自己无线网络的中继，也就是无线扩展模式：</p>
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1685173520383.png" alt="" loading="lazy"></figure>
+<h2 id="配置-openwrt">配置 OpenWRT</h2>
+<h3 id="配置软件源">配置软件源</h3>
+<p>进入 <code>系统 - 软件包-配置OPKG</code>，配置如下：</p>
+<pre><code>src/gz dllkids https://op.dllkids.xyz/packages/aarch64_cortex-a53
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1685173719999.png" alt="" loading="lazy"></figure>
+<p>配置完后，点击更新列表。</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1685173869580.png" alt="" loading="lazy"></figure>
+<p>如果更新失败，可以尝试多次更新，如果多次更新还是不行，建议重置固件。</p>
+<h3 id="修改主题皮肤">修改主题皮肤</h3>
+<p>在筛选器中输入 <code>argon</code>【只是为了好看一点】，显示如下：<br>
+<img src="https://mintisan.github.io/post-images/1685173991469.png" alt="" loading="lazy"></p>
+<p>安装成功后，切换到系统页面，保存应用即可。</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1685174053350.png" alt="" loading="lazy"></figure>
+<h3 id="下载isotreos">下载iSotreOS</h3>
+<p>在筛选器中输入 <code>luci-app-store</code>【后续装个Alist啥的也方便】，显示如下：<br>
+<img src="https://mintisan.github.io/post-images/1685174117672.png" alt="" loading="lazy"></p>
+<p>安装完后就可以手动安装 ipk/run 的离线安装包，比较直观和方便。</p>
+<p>期间遇到安装如下错误无视即可。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1685174298853.png" alt="" loading="lazy"></figure>
+<h3 id="手动更新-clash-插件">手动更新 Clash 插件</h3>
+<p>打开 <a href="https://github.com/AUK9527/Are-u-ok">Are-u-ok</a> 页面，下载 App 版本的 OpenClash：<br>
+<img src="https://mintisan.github.io/post-images/1685174235149.png" alt="" loading="lazy"></p>
+<p>拖进去安装安装即可：</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1685174336269.png" alt="" loading="lazy"></figure>
+<p>然后就是配置节点啥的【目前已经运行了20多天，没有重启，中间也没有断流，还是蛮稳定的】</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1685174865338.png" alt="" loading="lazy"></figure>
+<h2 id="其他">其他</h2>
+<p>如果支持 mesh 就完美了，，，</p>
+<h2 id="错误">错误</h2>
+<p>如果无法更新源，我这里确实碰到安装完 Clash 后，网页可以打开，但是软件源无法更新的情况。</p>
+<p>如果多次更新后还是不行，复位固件再来就好了。</p>
+<pre><code>我现在可以连接 MT3000 的wifi上网，但是更新包如下错误，感觉连不上服务器：
+Failed to send request: Operation not permitted
+Failed to send request: Operation not permitted
+Failed to send request: Operation not permitted
+Collected errors:
+ * opkg_download: Failed to download https://fw.gl-inet.com/releases/v21.02.3/kmod-4.2.1/aarch64_cortex-a53/mediatek/mt7981/Packages.gz, wget returned 4.
+ * opkg_download: Check your network settings and connectivity.
+
+ * opkg_download: Failed to download https://fw.gl-inet.com/releases/v21.02.3/packages-4.0/aarch64_cortex-a53/glinet/Packages.gz, wget returned 4.
+ * opkg_download: Check your network settings and connectivity.
+
+ * opkg_download: Failed to download https://fw.gl-inet.com/releases/v21.02.3/packages-4.0/aarch64_cortex-a53/packages/Packages.gz, wget returned 4.
+ * opkg_download: Check your network settings and connectivity.
+</code></pre>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1685173566165.png" alt="" loading="lazy"></figure>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=vfbxiaWtkPw&amp;ab_channel=%E6%82%9F%E7%A9%BA%E7%9A%84%E6%97%A5%E5%B8%B8">GL.iNet MT-3000无线wifi6路由器新手使用指南 不刷固件如何使用 | 如何妥善安装必备插件Passwall、OpenClash</a></li>
+<li><a href="https://docs.gl-inet.cn/3/video/istore/">iStore</a></li>
+<li><a href="https://www.bilibili.com/video/BV18Y4y187L5/?spm_id_from=888.80997.embed_other.whitelist&amp;vd_source=941a0e83b3b5f2e01c1c0b4a2083fadb">【iStore】家里OpenWrt路由玩得6， 这个插件一定要装！</a></li>
+<li><a href="https://openwrt.org/faq/failed_to_download_wget_returned_4#:~:text=This%20%E2%80%9Cfamous%E2%80%9D%20wget%204%20error,to%20do%20with%20opkg%20itself.">Failed to download, wget returned 4</a></li>
+<li><a href="https://op.dllkids.xyz/packages/aarch64_cortex-a53/">OpenWrt固件插件: /packages/aarch64_cortex-a53/</a></li>
+<li><a href="https://www.youtube.com/watch?v=0y9QOzpLlD0&amp;ab_channel=%E5%90%91%E5%8C%97">自带OpenWrt的Wi-Fi 6软路由，网速和信号超好跑满千兆，可安装iStore轻松下载插件 | GL-MT3000体验分享</a></li>
+<li><a href="https://github.com/luochongjun/istore/releases">luochongjun/istore</a></li>
+</ul>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E6%A8%A1%E5%BC%8F">设置模式</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE-openwrt">配置 OpenWRT</a>
+<ul>
+<li><a href="#%E9%85%8D%E7%BD%AE%E8%BD%AF%E4%BB%B6%E6%BA%90">配置软件源</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98%E7%9A%AE%E8%82%A4">修改主题皮肤</a></li>
+<li><a href="#%E4%B8%8B%E8%BD%BDisotreos">下载iSotreOS</a></li>
+<li><a href="#%E6%89%8B%E5%8A%A8%E6%9B%B4%E6%96%B0-clash-%E6%8F%92%E4%BB%B6">手动更新 Clash 插件</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%B6%E4%BB%96">其他</a></li>
+<li><a href="#%E9%94%99%E8%AF%AF">错误</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/cloudflware-warp-free-vpn/">
+              <h3 class="post-title">
+                WARP - Cloudflare 家的全平台免费 VPN
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

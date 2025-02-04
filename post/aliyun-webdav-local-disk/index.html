@@ -1,0 +1,299 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aliyun 通过 WebDav 映射到本地 | Mintisan</title>
+<link rel="shortcut icon" href="https://mintisan.github.io/favicon.ico?v=1738671367748">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://mintisan.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Aliyun 通过 WebDav 映射到本地 | Mintisan - Atom Feed" href="https://mintisan.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="想重温大剑，然后 Aliyun 资源最容易找到，然后在线不好使会压缩，然后就找到了 Alist，然后Alist 可以很方便挂在各种网盘，比如阿里云盘，但是在实际的使用过程中遇到一个问题就是网页版本显示的内容更新不及时或者说显示不出来，但是通..." />
+    <meta name="keywords" content="工具使用,自建服务" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://mintisan.github.io">
+  <img class="avatar" src="https://mintisan.github.io/images/avatar.png?v=1738671367748" alt="">
+  </a>
+  <h1 class="site-title">
+    Mintisan
+  </h1>
+  <p class="site-description">
+    On the way to be a practical idealism
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/mintisan" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+        <a href="https://twitter.com/fovwin" target="_blank">
+          <i class="ri-twitter-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Aliyun 通过 WebDav 映射到本地
+            </h2>
+            <div class="post-info">
+              <span>
+                2024-03-23
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://mintisan.github.io/tag/OmJcmlrTwY/" class="post-tag">
+                  # 工具使用
+                </a>
+              
+                <a href="https://mintisan.github.io/tag/AxHqWYja8/" class="post-tag">
+                  # 自建服务
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://mintisan.github.io/post-images/aliyun-webdav-local-disk.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>想重温<a href="https://www.aliyundrive.com/s/UaraG332B8q">大剑</a>，然后 Aliyun 资源最容易找到，然后在线不好使会压缩，然后就找到了 Alist，然后Alist 可以很方便挂在各种网盘，比如阿里云盘，但是在实际的使用过程中遇到一个问题就是网页版本显示的内容更新不及时或者说显示不出来，但是通过将 Alist 作为 WebDav 网络协议映射到本地好像可以解决这个问题，这里就记录下用资源管理器[小文件/速度慢]， Clouddrive 2[只能加载一个，但是可以映射为本地磁盘形式] 和 RailDrive[有广告，从网盘到本地磁盘形式需要付钱] 的映射方法以及使用过程中的注意点。</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://mintisan.github.io/post-images/1711197209300.png" alt="" loading="lazy"></figure>
+<h2 id="raildrive">RailDrive</h2>
+<p><a href="https://www.raidrive.com/download">下载</a>安装后，打开选择添加，设置输入如下：</p>
+<figure data-type="image" tabindex="2"><img src="https://mintisan.github.io/post-images/1711195811553.png" alt="" loading="lazy"></figure>
+<p>注意红框中的 <code>/dav/</code> 最后需要添加 <code>/</code> 不然会提示如下 401 错误：</p>
+<figure data-type="image" tabindex="3"><img src="https://mintisan.github.io/post-images/1711195875380.png" alt="" loading="lazy"></figure>
+<p>注意需要选将 <code>地址</code> 的选择去掉，也就是使用 <code>http</code> 方式，不然会出现如下的 <code>ProtocalVersion</code> 错误【一般 Alist 默认是 <code>http</code> 方式】：</p>
+<figure data-type="image" tabindex="4"><img src="https://mintisan.github.io/post-images/1711195952267.png" alt="" loading="lazy"></figure>
+<p>如果不付费，则只能作为网络盘如下。</p>
+<figure data-type="image" tabindex="5"><img src="https://mintisan.github.io/post-images/1711197267647.png" alt="" loading="lazy"></figure>
+<h2 id="clouddrive-2">Clouddrive 2</h2>
+<p>安装完后，会默认打开 http://localhost:19798/ 地址，添加 <code>阿里云盘 Open</code>，扫码或者在线获取权限。<br>
+<img src="https://mintisan.github.io/post-images/1711196848041.png" alt="" loading="lazy"></p>
+<p>添加完后，就可以在浏览器里面操作，接着将导入的阿里云盘挂载到本地：</p>
+<figure data-type="image" tabindex="6"><img src="https://mintisan.github.io/post-images/1711196901719.png" alt="" loading="lazy"></figure>
+<p>这样就可以直接映射为硬盘的形式如下：</p>
+<figure data-type="image" tabindex="7"><img src="https://mintisan.github.io/post-images/1711196603072.png" alt="" loading="lazy"></figure>
+<p>在使用时，比如直接用 PotPlayer 播放的时候，也可以在网页端看到当前使用的下载速度信息如下：</p>
+<figure data-type="image" tabindex="8"><img src="https://mintisan.github.io/post-images/1711196469820.png" alt="" loading="lazy"></figure>
+<h2 id="资源管理器">资源管理器</h2>
+<p>资源管理器就太多坑了，不建议使用，这里只是记录这些坑。。。</p>
+<pre><code>计算机\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\WebClient\Parameters
+</code></pre>
+<p><code>services.msc</code></p>
+<pre><code>
+</code></pre>
+<p>修改了以上两个参数后需要重新映射下。</p>
+<p>完成后，在本地显示为网络盘符如下。</p>
+<figure data-type="image" tabindex="9"><img src="https://mintisan.github.io/post-images/1711197961123.png" alt="" loading="lazy"></figure>
+<h2 id="cyberduck">Cyberduck</h2>
+<p>Cyberduck 无法映射到本地网盘，只能在他的软件内可以下载和查看，不是太好用，设置界面如下。</p>
+<figure data-type="image" tabindex="10"><img src="https://mintisan.github.io/post-images/1711196154886.png" alt="" loading="lazy"></figure>
+<h2 id="rclone">RClone</h2>
+<p>TBD</p>
+<h2 id="macos">macOS</h2>
+<p>如果是 macOS 可以考虑直接使用 Finder 中的 <a href="https://support.apple.com/zh-cn/guide/mac-help/mchlp1546/mac">连接到服务器</a>，然后输入 Alist 提供的 WebDav 地址信息即可。</p>
+<p>输入地址</p>
+<figure data-type="image" tabindex="11"><img src="https://mintisan.github.io/post-images/1711201171228.png" alt="" loading="lazy"></figure>
+<p>输入账号密码</p>
+<figure data-type="image" tabindex="12"><img src="https://mintisan.github.io/post-images/1711201186423.png" alt="" loading="lazy"></figure>
+<p>就可以看到 Alist 下挂载的内容</p>
+<figure data-type="image" tabindex="13"><img src="https://mintisan.github.io/post-images/1711201204844.png" alt="" loading="lazy"></figure>
+<p>当然推荐最近推出的比较好用的 VidHub</p>
+<p>可以方便直接导入各种网盘，并解析建库，非常友好和美观</p>
+<figure data-type="image" tabindex="14"><img src="https://mintisan.github.io/post-images/1711201231881.png" alt="" loading="lazy"></figure>
+<p>也可以到输入 Alist 的WebDav 信息</p>
+<figure data-type="image" tabindex="15"><img src="https://mintisan.github.io/post-images/1711201268314.png" alt="" loading="lazy"></figure>
+<p>就可以看到 VidHub 帮你整理的各剧和电影</p>
+<figure data-type="image" tabindex="16"><img src="https://mintisan.github.io/post-images/1711201443264.png" alt="" loading="lazy"></figure>
+<h2 id="android">Android</h2>
+<p>安卓下有两个方法，一个是直接用 <a href="http://m.2265.com/down/261625.html">nPlayer</a>。</p>
+<p>安装完选择新建 WebDav 项目<br>
+<img src="https://mintisan.github.io/post-images/1711244448078.jpg" alt="" width="400" loading="lazy"></p>
+<p>输入 WedDav 设置如下：<br>
+<img src="https://mintisan.github.io/post-images/1711244455258.jpg" alt="" width="400" loading="lazy"></p>
+<p>另一种是 cx 文件管理 + VLC 打开，设置如下。</p>
+<figure data-type="image" tabindex="17"><img src="https://mintisan.github.io/post-images/1711244573211.jpg" alt="" width="400" loading="lazy"></figure>
+<h2 id="参考链接">参考链接</h2>
+<ul>
+<li>https://alist-doc.nn.ci/docs/webdav</li>
+<li>https://mountainduck.io/</li>
+<li>https://cyberduck.io/</li>
+<li>https://www.thewindowsclub.com/how-to-map-webdav-in-windows</li>
+<li><a href="https://docs.qnap.com/operating-system/qts/4.5.x/zh-cn/GUID-31D5B05F-F29E-4D61-9758-C8CF839C14FD.html">在 Windows 上使用 WebDAV 装载共享文件夹</a></li>
+<li><a href="https://blog.csdn.net/qq_38894585/article/details/128818512">windows10挂载webdav</a></li>
+<li><a href="https://github.com/messense/aliyundrive-webdav/issues/117">windows添加本地位置之后无法打开文件 #117</a></li>
+<li>https://support.microsoft.com/en-us/topic/folder-copy-error-message-when-downloading-a-file-that-is-larger-than-50000000-bytes-from-a-web-folder-815e2949-0f56-ec25-db7d-b6d860a31f77</li>
+<li>https://www.topsite.jp/docs/windows-webdav-limit</li>
+<li><a href="https://sspai.com/post/47830">把网盘变成 Windows 网络硬盘，免费的 WebDAV 客户端：RaiDrive | App+1</a></li>
+<li><a href="https://forums.unraid.net/topic/153061-%E6%9C%80%E5%AE%8C%E6%95%B4rclone%E6%8C%82%E8%BD%BD%E7%BD%91%E7%9B%98%E5%88%B0%E6%9C%AC%E5%9C%B0%EF%BC%88alist%E7%AF%87%EF%BC%89%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">最完整RCLONE挂载网盘到本地（ALIST篇）解决方案</a></li>
+<li><a href="https://www.expoli.tech/articles/2020/12/30/1609327097930">Windows 挂载 WebDAV</a></li>
+<li><a href="https://support.apple.com/zh-cn/guide/mac-help/mchlp1546/mac">在 Mac 上连接到 WebDAV 服务器或断开连接</a></li>
+<li><a href="https://okaapps.com/product/1659622164">VidHub - The Ultimate Video Player for iOS, Mac, and tvOS</a></li>
+</ul>
+<figure data-type="image" tabindex="18"><img src="https://mintisan.github.io/post-images/1708762915618.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#raildrive">RailDrive</a></li>
+<li><a href="#clouddrive-2">Clouddrive 2</a></li>
+<li><a href="#%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E5%99%A8">资源管理器</a></li>
+<li><a href="#cyberduck">Cyberduck</a></li>
+<li><a href="#rclone">RClone</a></li>
+<li><a href="#macos">macOS</a></li>
+<li><a href="#android">Android</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://mintisan.github.io/post/ollama-continue-dev-as-vs-code-code-copilot/">
+              <h3 class="post-title">
+                Ollama 和 Continue.dev 构建 VS Code 本地代码 Copilot
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '7d3b3c195f68069dfccf',
+    clientSecret: 'f63c7517d3698ab600d8467477e4af8d0d661913',
+    repo: 'mintisan.github.io',
+    owner: 'mintisan',
+    admin: ['mintisan'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://mintisan.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
